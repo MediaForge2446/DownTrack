@@ -12,6 +12,7 @@
 
         <!-- Hero -->
         <Border Grid.Row="0"
+                Effect="{StaticResource SoftShadowEffect}"
                 MinHeight="192"
                 Margin="0,0,0,20"
                 Padding="28"
@@ -115,6 +116,7 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0"
+                    Effect="{StaticResource SoftShadowEffect}"
                     Padding="16"
                     Background="{StaticResource SurfaceBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -137,6 +139,7 @@
             </Border>
 
             <Border Grid.Column="2"
+                    Effect="{StaticResource SoftShadowEffect}"
                     Padding="16"
                     Background="{StaticResource SurfaceBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -160,6 +163,7 @@
             </Border>
 
             <Border Grid.Column="4"
+                    Effect="{StaticResource SoftShadowEffect}"
                     Padding="16"
                     Background="{StaticResource SurfaceBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -369,6 +373,7 @@
 
         <!-- Media engine footer -->
         <Border Grid.Row="3"
+                Effect="{StaticResource SoftShadowEffect}"
                 Margin="0,18,0,0"
                 Padding="13,10"
                 Background="{StaticResource SurfaceSoftBrush}"
