@@ -30,7 +30,7 @@ public partial class App : System.Windows.Application
             var staging = new StagingService(stateStore, commitService);
             var folderPicker = new WindowsFolderPicker();
             var prompt = new WpfTextPromptService();
-            var resolver = new YouTubeMetadataResolver(locator, processRunner);
+            var resolver = new YouTubeMetadataResolver(locator, processRunner, toolManager);
             var mediaDialog = new WpfMediaDialogService(resolver);
 
             var viewModel = new ViewModels.MainWindowViewModel(
