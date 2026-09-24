@@ -1,5 +1,5 @@
-using System.Net.Http;
 using System.IO.Compression;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -28,7 +28,9 @@ public sealed class ToolManager : IAppToolManager
 
     public bool IsReady =>
         File.Exists(AppPaths.YtDlpPath) &&
-        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe"));
+        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe")) &&
+        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe")) &&
+        File.Exists(AppPaths.DenoPath);
 
     public string Status =>
         IsReady
@@ -50,15 +52,29 @@ public sealed class ToolManager : IAppToolManager
 
             Directory.CreateDirectory(AppPaths.ToolsDirectory);
 
-            progress?.Report("Downloading yt-dlp…");
-            await DownloadAndVerifyAsync(
-                YtDlpUrl,
-                YtDlpChecksumsUrl,
-                "yt-dlp.exe",
-                cancellationToken);
+            if (!File.Exists(AppPaths.YtDlpPath))
+            {
+                progress?.Report("Downloading yt-dlp…");
+                await DownloadAndVerifyAsync(
+                    YtDlpUrl,
+                    YtDlpChecksumsUrl,
+                    "yt-dlp.exe",
+                    cancellationToken);
+            }
 
-            progress?.Report("Downloading FFmpeg…");
-            await DownloadAndExtractFfmpegAsync(progress, cancellationToken);
+            var ffmpeg = Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe");
+            var ffprobe = Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe");
+            if (!File.Exists(ffmpeg) || !File.Exists(ffprobe))
+            {
+                progress?.Report("Downloading FFmpeg…");
+                await DownloadAndExtractFfmpegAsync(progress, cancellationToken);
+            }
+
+            if (!File.Exists(AppPaths.DenoPath))
+            {
+                progress?.Report("Installing YouTube runtime…");
+                await DownloadAndExtractDenoAsync(cancellationToken);
+            }
 
             progress?.Report("Media engine ready.");
         }
@@ -154,7 +170,8 @@ public sealed class ToolManager : IAppToolManager
         Directory.Delete(extractPath, recursive: true);
     }
 
-    private static async Task DownloadAndExtractDenoAsync(CancellationToken cancellationToken)
+    private static async Task DownloadAndExtractDenoAsync(
+        CancellationToken cancellationToken)
     {
         var zipPath = Path.Combine(AppPaths.ToolsDirectory, "deno-download.zip");
         var extractPath = Path.Combine(AppPaths.ToolsDirectory, "deno-extract");
@@ -166,7 +183,9 @@ public sealed class ToolManager : IAppToolManager
         }
 
         var checksumText = await Client.GetStringAsync(DenoChecksumUrl, cancellationToken);
-        var expected = ExtractChecksum(checksumText, Path.GetFileName(DenoUrl))
+        var expected = ExtractChecksum(
+            checksumText,
+            Path.GetFileName(DenoUrl))
             ?? throw new InvalidOperationException("No SHA-256 checksum was found for Deno.");
 
         var actual = await ComputeSha256Async(zipPath, cancellationToken);
