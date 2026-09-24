@@ -17,10 +17,17 @@ public sealed class MediaRowViewModel : ObservableObject
         SourceUrl = source.SourceUrl;
         ThumbnailUrl = source.ThumbnailUrl;
         _title = source.Title;
+        _format = source.Format;
+        _audioQuality = source.AudioQuality;
+        _videoQuality = source.VideoQuality;
     }
 
     public string SourceUrl { get; }
     public string? ThumbnailUrl { get; }
+
+    public IReadOnlyList<MediaFormat> Formats { get; } = Enum.GetValues<MediaFormat>();
+    public IReadOnlyList<AudioQuality> AudioQualities { get; } = Enum.GetValues<AudioQuality>();
+    public IReadOnlyList<VideoQuality> VideoQualities { get; } = Enum.GetValues<VideoQuality>();
 
     public string Title
     {
