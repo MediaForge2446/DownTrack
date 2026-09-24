@@ -47,45 +47,35 @@ jobs:
           $download = Join-Path $env:RUNNER_TEMP "downtrack-tools"
           New-Item -ItemType Directory -Force -Path $tools,$download | Out-Null
 
-          function Get-VerifiedFile {
-            param([string]$Url,[string]$ChecksumsUrl,[string]$OutputPath,[string]$AssetName)
+          function Download-VerifiedAsset {
+            param([string]$Url,[string]$ChecksumUrl,[string]$OutputPath,[string]$AssetName)
             $tempPath = Join-Path $download ([IO.Path]::GetFileName($OutputPath) + ".download")
+            $checksumPath = Join-Path $download ($AssetName + ".sha256")
             Invoke-WebRequest -Uri $Url -OutFile $tempPath -UseBasicParsing
-            $checksumText = (Invoke-WebRequest -Uri $ChecksumsUrl -UseBasicParsing).Content
-            $expected = $null
-            foreach ($line in ($checksumText -split "\n")) {
-              if ($line -match "(?i)\b([a-f0-9]{64})\b" -and $line -like "*$AssetName*") { $expected = $matches[1]; break }
-            }
-            if (-not $expected) { throw "No SHA-256 checksum was found for $AssetName." }
-            $actual = (Get-FileHash -Algorithm SHA256 $tempPath).Hash
+            Invoke-WebRequest -Uri $ChecksumUrl -OutFile $checksumPath -UseBasicParsing
+            $checksumText = Get-Content -Path $checksumPath -Raw
+            $pattern = "(?im)([a-f0-9]{64}).*" + [regex]::Escape($AssetName)
+            $match = [regex]::Match($checksumText,$pattern)
+            if (-not $match.Success) { throw "No SHA-256 checksum was found for $AssetName." }
+            $expected = $match.Groups[1].Value.ToUpperInvariant()
+            $actual = (Get-FileHash -Algorithm SHA256 $tempPath).Hash.ToUpperInvariant()
             if ($actual -ne $expected) { throw "SHA-256 verification failed for $AssetName. Expected $expected but received $actual." }
             Move-Item -Force $tempPath $OutputPath
           }
 
-          Get-VerifiedFile "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe" "https://github.com/yt-dlp/yt-dlp/releases/latest/download/SHA2-256SUMS" (Join-Path $tools "yt-dlp.exe") "yt-dlp.exe"
+          Download-VerifiedAsset "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe" "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/SHA2-256SUMS" (Join-Path $tools "yt-dlp.exe") "yt-dlp.exe"
+          Download-VerifiedAsset "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-pc-windows-msvc.zip" "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-pc-windows-msvc.zip.sha256sum" (Join-Path $download "deno.zip") "deno-x86_64-pc-windows-msvc.zip"
 
-          $denoZip = Join-Path $download "deno.zip"
-          Invoke-WebRequest -Uri "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip" -OutFile $denoZip -UseBasicParsing
-          $denoChecksum = (Invoke-WebRequest -Uri "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip.sha256sum" -UseBasicParsing).Content
-          if ($denoChecksum -notmatch "(?i)\b([a-f0-9]{64})\b") { throw "No SHA-256 checksum was found for Deno." }
-          $denoExpected = $matches[1]
-          $denoActual = (Get-FileHash -Algorithm SHA256 $denoZip).Hash
-          if ($denoActual -ne $denoExpected) { throw "SHA-256 verification failed for Deno." }
           $denoExtract = Join-Path $download "deno-extract"
-          Expand-Archive -Path $denoZip -DestinationPath $denoExtract -Force
+          Expand-Archive -Path (Join-Path $download "deno.zip") -DestinationPath $denoExtract -Force
           $deno = Get-ChildItem $denoExtract -Filter "deno.exe" -Recurse | Select-Object -First 1
           if (-not $deno) { throw "Deno archive did not contain deno.exe." }
           Copy-Item $deno.FullName (Join-Path $tools "deno.exe") -Force
 
-          $ffmpegZip = Join-Path $download "ffmpeg.zip"
-          Invoke-WebRequest -Uri "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip" -OutFile $ffmpegZip -UseBasicParsing
-          $ffmpegChecksum = (Invoke-WebRequest -Uri "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip.sha256" -UseBasicParsing).Content
-          if ($ffmpegChecksum -notmatch "(?i)\b([a-f0-9]{64})\b") { throw "No SHA-256 checksum was found for FFmpeg." }
-          $ffmpegExpected = $matches[1]
-          $ffmpegActual = (Get-FileHash -Algorithm SHA256 $ffmpegZip).Hash
-          if ($ffmpegActual -ne $ffmpegExpected) { throw "SHA-256 verification failed for FFmpeg." }
+          Download-VerifiedAsset "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip" "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip.sha256" (Join-Path $download "ffmpeg.zip") "ffmpeg-release-essentials.zip"
+
           $ffmpegExtract = Join-Path $download "ffmpeg-extract"
-          Expand-Archive -Path $ffmpegZip -DestinationPath $ffmpegExtract -Force
+          Expand-Archive -Path (Join-Path $download "ffmpeg.zip") -DestinationPath $ffmpegExtract -Force
           $ffmpeg = Get-ChildItem $ffmpegExtract -Filter "ffmpeg.exe" -Recurse | Select-Object -First 1
           $ffprobe = Get-ChildItem $ffmpegExtract -Filter "ffprobe.exe" -Recurse | Select-Object -First 1
           if (-not $ffmpeg -or -not $ffprobe) { throw "FFmpeg package did not contain ffmpeg.exe and ffprobe.exe." }
@@ -102,7 +92,6 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Bundled ffprobe self-test failed." }
 
           Get-ChildItem $tools | Select-Object Name,Length
-
       - name: Verify installer payload contains Media Engine
         shell: pwsh
         run: |
