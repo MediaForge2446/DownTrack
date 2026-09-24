@@ -328,7 +328,6 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
             ["Explorer.EmptySubtitle"] = "Create a folder or add media. New items will appear here immediately as staged changes.",
             ["Explorer.PendingTitle"] = "Pending changes",
             ["Explorer.PendingSubtitle"] = "These changes are still virtual.",
-            ["Explorer.Queued"] = "{0} queued",
             ["Explorer.NonePending"] = "No pending changes",
             ["Explorer.Cancel"] = "Cancel",
             ["Explorer.SaveChanges"] = "Save changes",
