@@ -46,8 +46,13 @@ jobs:
       - name: Build installer
         shell: pwsh
         run: |
-          $issc = Join-Path \${env:ProgramFiles(x86)} "Inno Setup 6\ISCC.exe"
-          if (-not (Test-Path $issc)) {
+          $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+          $issc = if ($programFilesX86) {
+            Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe"
+          } else {
+            $null
+          }
+          if (-not $issc -or -not (Test-Path $issc)) {
             $issc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe"
           }
           if (-not (Test-Path $issc)) {
