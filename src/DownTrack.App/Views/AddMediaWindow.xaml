@@ -25,8 +25,7 @@
                  StretchDirection="Both"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center">
-            <Grid Width="1068" Height="678" Margin="26"
-                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+            <Grid Width="1068" Height="678" Margin="26">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -35,7 +34,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Grid>
+                <Grid MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Border Width="8" Height="34" CornerRadius="4"
