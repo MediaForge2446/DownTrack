@@ -70,24 +70,27 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal"
-                                VerticalAlignment="Center">
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
                         <TextBlock Text="{loc:Loc Key=Explorer.Name}"
                                    FontSize="9"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource MutedTextBrush}"
-                                   Width="*"/>
-                        <TextBlock Text="{loc:Loc Key=Explorer.Type}"
+                                   Foreground="{StaticResource MutedTextBrush}"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{loc:Loc Key=Explorer.Type}"
                                    FontSize="9"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource MutedTextBrush}"
-                                   Width="90"/>
-                        <TextBlock Text="{loc:Loc Key=Explorer.State}"
+                                   Foreground="{StaticResource MutedTextBrush}"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="{loc:Loc Key=Explorer.State}"
                                    FontSize="9"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource MutedTextBrush}"
-                                   Width="100"/>
-                    </StackPanel>
+                                   Foreground="{StaticResource MutedTextBrush}"/>
+                    </Grid>
 
                     <StackPanel Grid.Column="1"
                                 Orientation="Horizontal">
