@@ -1,0 +1,50 @@
+name: DownTrack Windows Build
+
+on:
+  push:
+    branches: [ main, "**" ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-package:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.x"
+
+      - name: Restore
+        run: dotnet restore DownTrack.sln
+
+      - name: Build
+        run: dotnet build DownTrack.sln -c Release --no-restore -p:Platform=x64
+
+      - name: Publish self-contained x64
+        run: >
+          dotnet publish src/DownTrack.App/DownTrack.App.csproj
+          -c Release -r win-x64 --self-contained true
+          --no-restore -o artifacts/publish -p:Platform=x64
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: '& "$env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" "installer\DownTrack.iss"'
+
+      - name: Upload Setup.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: DownTrack-Setup
+          path: artifacts/installer/Setup.exe
+          if-no-files-found: error
