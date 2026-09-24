@@ -268,7 +268,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
 
     public async Task SaveChangesAsync(
         RootFolder root,
-        IProgress<string>? progress = null,
+        IProgress<StagedChangeProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
         var ordered = GetPendingChanges(root.Id)
@@ -283,24 +283,69 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
             .ThenBy(x => x.TargetPath ?? x.SourcePath ?? string.Empty, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
+        var total = ordered.Count;
+        var completed = 0;
+
         foreach (var change in ordered)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
             change.Status = PendingChangeStatus.Processing;
             change.ErrorMessage = null;
             await PersistAsync();
 
-            progress?.Report(change.Description);
+            progress?.Report(new StagedChangeProgress(
+                change.Id,
+                completed,
+                total,
+                5,
+                LocalizationService.Instance.T("Pending.Processing"),
+                false));
 
             try
             {
-                await _commitService.ApplyAsync(change, progress, cancellationToken);
+                var changeProgress = new Progress<string>(status =>
+                {
+                    var current = change.ChangeType == PendingChangeType.Download ? 45 : 70;
+                    if (status.Contains("prepar", StringComparison.OrdinalIgnoreCase))
+                        current = 20;
+                    else if (status.Contains("download", StringComparison.OrdinalIgnoreCase))
+                        current = 55;
+
+                    progress?.Report(new StagedChangeProgress(
+                        change.Id,
+                        completed,
+                        total,
+                        current,
+                        status,
+                        false));
+                });
+
+                await _commitService.ApplyAsync(change, changeProgress, cancellationToken);
+
                 _state.PendingChanges.RemoveAll(x => x.Id == change.Id);
+                completed++;
+
+                progress?.Report(new StagedChangeProgress(
+                    change.Id,
+                    completed,
+                    total,
+                    100,
+                    LocalizationService.Instance.T("Pending.Completed"),
+                    false));
             }
             catch (Exception ex)
             {
                 change.Status = PendingChangeStatus.Error;
                 change.ErrorMessage = ex.Message;
+
+                progress?.Report(new StagedChangeProgress(
+                    change.Id,
+                    completed,
+                    total,
+                    100,
+                    ex.Message,
+                    true));
             }
 
             await PersistAsync();
