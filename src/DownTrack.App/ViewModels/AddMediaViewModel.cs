@@ -12,17 +12,23 @@ public sealed class AddMediaViewModel : ObservableObject
     private string _url = string.Empty;
     private string _status = "Paste a YouTube video or playlist URL.";
     private bool _isResolving;
+    private CancellationTokenSource? _analysisCts;
 
     public AddMediaViewModel(IMediaResolver resolver, string currentFolder)
     {
         _resolver = resolver;
         CurrentFolder = currentFolder;
-        AnalyzeCommand = new AsyncRelayCommand(AnalyzeAsync, () => !_isResolving && !string.IsNullOrWhiteSpace(Url));
+
+        AnalyzeCommand = new AsyncRelayCommand(
+            AnalyzeAsync,
+            () => !_isResolving && !string.IsNullOrWhiteSpace(Url));
+
         SelectAllCommand = new RelayCommand(_ =>
         {
             foreach (var row in Items)
                 row.Selected = true;
         });
+
         ApplyMp3Command = new RelayCommand(_ =>
         {
             foreach (var row in Items)
@@ -67,39 +73,59 @@ public sealed class AddMediaViewModel : ObservableObject
     private async Task AnalyzeAsync()
     {
         IsResolving = true;
-        Status = "Analyzing link…";
+        Status = "Preparing media engine…";
         AnalyzeCommand.RaiseCanExecuteChanged();
+
+        _analysisCts?.Cancel();
+        _analysisCts?.Dispose();
+        _analysisCts = new CancellationTokenSource();
 
         try
         {
             var progress = new Progress<string>(message => Status = message);
-            var resolved = await _resolver.ResolveAsync(Url, progress);
+            var resolved = await _resolver.ResolveAsync(
+                Url,
+                progress,
+                _analysisCts.Token);
+
             Items.Clear();
 
             foreach (var spec in resolved)
             {
-                var row = new MediaRowViewModel(spec);
-                row.PropertyChanged += (_, _) => OnPropertyChanged(nameof(Items));
-                Items.Add(row);
+                if (string.IsNullOrWhiteSpace(spec.SourceUrl))
+                    continue;
+
+                Items.Add(new MediaRowViewModel(spec));
             }
 
             Status = Items.Count switch
             {
-                0 => "Nothing was found.",
+                0 => "Nothing was found. Check the link and try again.",
                 1 => "1 media item ready. Edit the options before adding.",
                 _ => $"{Items.Count} media items ready. Each row is independent."
             };
         }
+        catch (OperationCanceledException)
+        {
+            Status = "Analysis cancelled.";
+        }
         catch (Exception ex)
         {
             Items.Clear();
-            Status = ex.Message;
+            Status = BuildUserSafeError(ex);
         }
         finally
         {
+            _analysisCts?.Dispose();
+            _analysisCts = null;
             IsResolving = false;
             AnalyzeCommand.RaiseCanExecuteChanged();
         }
+    }
+
+    public void CancelAnalysis()
+    {
+        _analysisCts?.Cancel();
     }
 
     public void Accept()
@@ -111,5 +137,17 @@ public sealed class AddMediaViewModel : ObservableObject
 
         if (specs.Count > 0)
             Accepted?.Invoke(specs);
+    }
+
+    private static string BuildUserSafeError(Exception exception)
+    {
+        var message = exception.GetBaseException().Message.Trim();
+
+        if (message.Length > 480)
+            message = message[..480] + "…";
+
+        return string.IsNullOrWhiteSpace(message)
+            ? "We couldn't analyze this link. Please try again."
+            : message;
     }
 }
