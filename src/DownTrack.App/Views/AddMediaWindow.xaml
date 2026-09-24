@@ -261,7 +261,7 @@
                                                                Foreground="{StaticResource MutedTextBrush}"/>
                                                     <ComboBox ItemsSource="{Binding AudioQualities}"
                                                               SelectedItem="{Binding AudioQuality}"
-                                                              Margin="0,4,0,0}">
+                                                              Margin="0,4,0,0">
                                                         <ComboBox.ItemTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
@@ -279,7 +279,7 @@
                                                     <ComboBox ItemsSource="{Binding VideoQualities}"
                                                               SelectedItem="{Binding VideoQuality}"
                                                               IsEnabled="{Binding IsVideo}"
-                                                              Margin="0,4,0,0}">
+                                                              Margin="0,4,0,0">
                                                         <ComboBox.ItemTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
