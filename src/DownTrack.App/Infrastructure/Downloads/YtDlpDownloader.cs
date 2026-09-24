@@ -16,7 +16,7 @@ public sealed class YtDlpDownloader(
         CancellationToken cancellationToken = default)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(targetPath)
-            ?? throw new InvalidOperationException("The destination folder is invalid."));
+            ?? throw new InvalidOperationException(LocalizationService.Instance.T("Errors.DestinationInvalid")));
 
         var executable = locator.GetYtDlpPath();
         var toolsDirectory = locator.GetToolsDirectory();
@@ -48,7 +48,7 @@ public sealed class YtDlpDownloader(
 
                 lastError = new InvalidOperationException(
                     string.IsNullOrWhiteSpace(detail)
-                        ? $"yt-dlp exited with code {result.ExitCode}."
+                        ? LocalizationService.Instance.T("Errors.YtDlpExit", result.ExitCode)
                         : detail.Trim());
 
                 if (attempt < 2)
@@ -56,16 +56,16 @@ public sealed class YtDlpDownloader(
             }
             catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
             {
-                throw new TimeoutException("The media download timed out after 30 minutes.");
+                throw new TimeoutException(LocalizationService.Instance.T("Errors.DownloadTimeout"));
             }
         }
 
         if (result is null || result.ExitCode != 0)
-            throw lastError ?? new InvalidOperationException("The media download failed.");
+            throw lastError ?? new InvalidOperationException(LocalizationService.Instance.T("Errors.DownloadFailed"));
 
         if (!File.Exists(targetPath))
             throw new InvalidOperationException(
-                $"yt-dlp reported success, but the expected file was not created: {targetPath}");
+                LocalizationService.Instance.T("Errors.OutputMissing", targetPath));
 
         var length = new FileInfo(targetPath).Length;
         if (length <= 0)
@@ -105,7 +105,9 @@ public sealed class YtDlpDownloader(
             MediaFormat.Mp4 =>
                 $"{common} -f {Quote(GetVideoSelector(spec.VideoQuality))} --merge-output-format mp4 -o {output} {url}",
 
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(
+                name: nameof(spec.Format),
+                message: LocalizationService.Instance.T("Errors.UnsupportedFormat"));
         };
     }
 
