@@ -4,501 +4,337 @@
              xmlns:loc="clr-namespace:DownTrack.Infrastructure.Localization"
              FlowDirection="{Binding FlowDirection, Source={x:Static loc:LocalizationService.Instance}}"
              Background="Transparent">
-    <Grid Margin="28,24,28,22">
+    <Grid Margin="36,30,36,22">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="174"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="220"/>
         </Grid.RowDefinitions>
 
-        <!-- Explorer header -->
+        <!-- Header -->
         <Grid Grid.Row="0"
-              Margin="0,0,0,18">
+              Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="{loc:Loc Key=Explorer.Badge}"
+                <TextBlock Text="{loc:Loc Key=Explorer.Overline}"
                            FontSize="10"
                            FontWeight="Bold"
-                           Foreground="{StaticResource CyanBrush}"/>
+                           Foreground="{StaticResource AccentBrush}"/>
                 <TextBlock Text="{Binding RootName}"
-                           Margin="0,5,0,0"
-                           FontSize="27"
+                           Margin="0,6,0,0"
+                           FontSize="29"
                            FontWeight="SemiBold"/>
-            </StackPanel>
-
-            <Border HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    MinWidth="320"
-                    MaxWidth="620"
-                    Height="40"
-                    Padding="13,0"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="11">
                 <TextBlock Text="{Binding CurrentPath}"
-                           Foreground="{StaticResource MutedTextBrush}"
-                           FontSize="11"
-                           TextTrimming="CharacterEllipsis"
-                           VerticalAlignment="Center"/>
-            </Border>
-        </Grid>
-
-        <!-- Navigation + actions -->
-        <Grid Grid.Row="1"
-              Margin="0,0,0,14">
-            <StackPanel Orientation="Horizontal">
-                <Button Style="{StaticResource IconButton}"
-                        Command="{Binding BackCommand}"
-                        Content="←"
-                        ToolTip="{loc:Loc Key=Explorer.Back}"/>
-                <Button Style="{StaticResource IconButton}"
-                        Command="{Binding ForwardCommand}"
-                        Content="→"
-                        Margin="4,0,0,0"
-                        ToolTip="{loc:Loc Key=Explorer.Forward}"/>
-                <Button Style="{StaticResource SecondaryButton}"
-                        Command="{Binding HomeCommand}"
-                        Content="{loc:Loc Key=Explorer.Home}"
-                        Margin="8,0,0,0"
-                        MinWidth="72"/>
-
-                <Border Width="1"
-                        Height="24"
-                        Background="{StaticResource BorderBrush}"
-                        Margin="14,0"/>
-
-                <Button Style="{StaticResource SecondaryButton}"
-                        Command="{Binding NewFolderCommand}"
-                        MinWidth="126">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="＋"
-                                   FontSize="14"
-                                   Margin="0,0,5,0"/>
-                        <TextBlock Text="{loc:Loc Key=Explorer.NewFolder}"/>
-                    </StackPanel>
-                </Button>
-
-                <Button Style="{StaticResource GhostButton}"
-                        Command="{Binding RenameCommand}"
-                        Content="{loc:Loc Key=Explorer.Rename}"
-                        Margin="7,0,0,0"
-                        MinWidth="82"/>
-
-                <Button Style="{StaticResource DangerButton}"
-                        Command="{Binding DeleteCommand}"
-                        Content="{loc:Loc Key=Explorer.Delete}"
-                        Margin="7,0,0,0"
-                        MinWidth="72"/>
-
-                <Button Style="{StaticResource PrimaryButton}"
-                        Command="{Binding AddMediaCommand}"
-                        Margin="10,0,0,0"
-                        MinWidth="128">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="＋"
-                                   FontSize="15"
-                                   Margin="0,0,5,0"/>
-                        <TextBlock Text="{loc:Loc Key=Explorer.AddMedia}"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-
-            <Border HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Padding="9,6"
-                    CornerRadius="9"
-                    Background="{StaticResource SurfaceSoftBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1">
-                <StackPanel Orientation="Horizontal">
-                    <Ellipse Width="7"
-                             Height="7"
-                             Fill="{StaticResource SuccessBrush}"
-                             VerticalAlignment="Center"/>
-                    <TextBlock Text="{loc:Loc Key=Explorer.Staged}"
-                               FontSize="10"
-                               Foreground="{StaticResource MutedTextBrush}"/>
-                </StackPanel>
-            </Border>
-        </Grid>
-
-        <!-- Main explorer area -->
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="230"
-                                  MinWidth="175"/>
-                <ColumnDefinition Width="14"/>
-                <ColumnDefinition Width="*"
-                                  MinWidth="360"/>
-            </Grid.ColumnDefinitions>
-
-            <!-- Folder rail -->
-            <Border Grid.Column="0"
-                    Effect="{StaticResource SoftShadowEffect}"
-                    Padding="12"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="17">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid>
-                        <StackPanel>
-                            <TextBlock Text="{loc:Loc Key=Explorer.Folders}"
-                                       FontSize="9"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource MutedTextBrush}"/>
-                            <TextBlock Text="{Binding Folders.Count, StringFormat={}{0} folders}"
-                                       Margin="0,4,0,0"
-                                       FontSize="11"
-                                       Foreground="{StaticResource TextBrush}"/>
-                        </StackPanel>
-
-                        <Border HorizontalAlignment="Right"
-                                Width="32"
-                                Height="32"
-                                CornerRadius="10"
-                                Background="{StaticResource AccentSoftBrush}">
-                            <TextBlock Text="▣"
-                                       FontSize="15"
-                                       Foreground="{StaticResource AccentBlueBrush}"
-                                       HorizontalAlignment="Center"/>
-                        </Border>
-                    </Grid>
-
-                    <ListBox Grid.Row="1"
-                             ItemsSource="{Binding Folders}"
-                             Margin="0,13,0,0"
-                             MouseDoubleClick="Folder_DoubleClick">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Padding="10,9"
-                                        Margin="0,2"
-                                        CornerRadius="10">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Border Width="28"
-                                                Height="28"
-                                                CornerRadius="8"
-                                                Background="{StaticResource SoftGradientBrush}">
-                                            <TextBlock Text="▣"
-                                                       FontSize="13"
-                                                       Foreground="{StaticResource AccentBrush}"
-                                                       HorizontalAlignment="Center"/>
-                                        </Border>
-
-                                        <TextBlock Grid.Column="1"
-                                                   Text="{Binding Name}"
-                                                   Margin="9,0,5,0"
-                                                   FontSize="12"
-                                                   TextTrimming="CharacterEllipsis"/>
-
-                                        <TextBlock Grid.Column="2"
-                                                   Text="›"
-                                                   FontSize="18"
-                                                   Foreground="{StaticResource MutedTextBrush}"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </Border>
-
-            <!-- Entry area -->
-            <Border Grid.Column="2"
-                    Effect="{StaticResource SoftShadowEffect}"
-                    Padding="12"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="17">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="34"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid Margin="10,0,10,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="105"/>
-                            <ColumnDefinition Width="105"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Text="{loc:Loc Key=Explorer.Name}"
-                                   FontSize="9"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource MutedTextBrush}"/>
-                        <TextBlock Grid.Column="1"
-                                   Text="{loc:Loc Key=Explorer.Type}"
-                                   FontSize="9"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource MutedTextBrush}"/>
-                        <TextBlock Grid.Column="2"
-                                   Text="{loc:Loc Key=Explorer.State}"
-                                   FontSize="9"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource MutedTextBrush}"/>
-                    </Grid>
-
-                    <ListView Grid.Row="1"
-                              ItemsSource="{Binding Entries}"
-                              SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
-                              MouseDoubleClick="Entry_DoubleClick"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="2,1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="105"/>
-                                        <ColumnDefinition Width="105"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Grid Grid.Column="0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="38"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Border Width="34"
-                                                Height="34"
-                                                CornerRadius="9"
-                                                Background="{StaticResource SurfaceRaisedBrush}">
-                                            <TextBlock Text="{Binding IsDirectory, Converter={StaticResource EntryIconConverter}}"
-                                                       FontSize="15"
-                                                       Foreground="{Binding State, Converter={StaticResource EntryStateBrushConverter}}"
-                                                       HorizontalAlignment="Center"/>
-                                        </Border>
-
-                                        <StackPanel Grid.Column="1"
-                                                    Margin="10,0,14,0">
-                                            <TextBlock Text="{Binding Name}"
-                                                       FontSize="12"
-                                                       FontWeight="SemiBold"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                            <TextBlock Text="{Binding FullPath}"
-                                                       Margin="0,3,0,0"
-                                                       FontSize="9"
-                                                       Foreground="{StaticResource MutedTextBrush}"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding Kind}"
-                                               FontSize="11"
-                                               Foreground="{StaticResource MutedTextBrush}"/>
-
-                                    <Border Grid.Column="2"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Padding="8,4"
-                                            CornerRadius="8">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="{StaticResource CyanSoftBrush}"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding State}" Value="Pending">
-                                                        <Setter Property="Background" Value="#FFF5D7"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding State}" Value="Error">
-                                                        <Setter Property="Background" Value="{StaticResource DangerSoftBrush}"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <TextBlock Text="{Binding StateText}"
-                                                   FontSize="10"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{Binding State, Converter={StaticResource EntryStateBrushConverter}}"/>
-                                    </Border>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-
-                    <Border HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Width="360"
-                            Padding="24"
-                            Background="{StaticResource SurfaceSoftBrush}"
-                            BorderBrush="{StaticResource BorderStrongBrush}"
-                            BorderThickness="1"
-                            CornerRadius="16">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Entries.Count}" Value="0">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="{loc:Loc Key=Explorer.EmptyTitle}"
-                                       FontSize="15"
-                                       FontWeight="SemiBold"
-                                       HorizontalAlignment="Center"/>
-                            <TextBlock Text="{loc:Loc Key=Explorer.EmptySubtitle}"
-                                       Margin="0,7,0,0"
-                                       FontSize="11"
-                                       Foreground="{StaticResource MutedTextBrush}"
-                                       TextAlignment="Center"
-                                       TextWrapping="Wrap"/>
-                            <Button Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding AddMediaCommand}"
-                                    Margin="0,16,0,0"
-                                    Content="{loc:Loc Key=Explorer.AddMedia}"
-                                    MinWidth="115"
-                                    HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Border>
-        </Grid>
-
-        <!-- Pending queue -->
-        <Border Grid.Row="3"
-                Effect="{StaticResource SoftShadowEffect}"
-                Margin="0,14,0,0"
-                Padding="14"
-                Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="17">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Grid>
-                    <StackPanel Orientation="Horizontal">
-                        <Border Width="28"
-                                Height="28"
-                                CornerRadius="9"
-                                Background="#FFF5D7">
-                            <TextBlock Text="•"
-                                       FontSize="22"
-                                       Foreground="{StaticResource PendingBrush}"
-                                       HorizontalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Margin="9,0,0,0">
-                            <TextBlock Text="{loc:Loc Key=Explorer.PendingTitle}"
-                                       FontSize="13"
-                                       FontWeight="SemiBold"/>
-                            <TextBlock Text="{loc:Loc Key=Explorer.PendingSubtitle}"
-                                       Margin="0,2,0,0"
-                                       FontSize="10"
-                                       Foreground="{StaticResource MutedTextBrush}"/>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <Border HorizontalAlignment="Right"
-                            Padding="9,5"
-                            CornerRadius="9"
-                            Background="{StaticResource SurfaceSoftBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
-                            BorderThickness="1">
-                        <TextBlock Text="{Binding PendingCountText}"
-                                   FontSize="10"
-                                   Foreground="{StaticResource MutedTextBrush}"/>
-                    </Border>
-                </Grid>
-
-                <Grid Grid.Row="1"
-                      Margin="0,10,0,0">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding PendingChanges}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,0,0,6">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Ellipse Width="8"
-                                                 Height="8"
-                                                 VerticalAlignment="Center"
-                                                 Fill="{Binding Status, Converter={StaticResource PendingStatusBrushConverter}}"/>
-
-                                        <StackPanel Grid.Column="1">
-                                            <TextBlock Text="{Binding Description}"
-                                                       FontSize="11"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                            <TextBlock Text="{Binding ErrorMessage}"
-                                                       FontSize="10"
-                                                       Foreground="{StaticResource ErrorBrush}"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                        </StackPanel>
-
-                                        <Button Grid.Column="2"
-                                                Content="{loc:Loc Key=Explorer.Cancel}"
-                                                Style="{StaticResource GhostButton}"
-                                                Padding="10,5"
-                                                Click="CancelPending_Click"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-
-                    <TextBlock Text="{loc:Loc Key=Explorer.NonePending}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               FontSize="11"
-                               Foreground="{StaticResource MutedTextBrush}">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding PendingChanges.Count}" Value="0">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <!-- Commit footer -->
-        <Grid Grid.Row="4"
-              Margin="2,12,2,0">
-            <StackPanel Orientation="Horizontal"
-                        VerticalAlignment="Center">
-                <Ellipse Width="8"
-                         Height="8"
-                         Fill="{StaticResource SuccessBrush}"/>
-                <TextBlock Text="{Binding StatusMessage}"
-                           Margin="8,0,0,0"
-                           FontSize="11"
+                           Margin="0,4,0,0"
+                           FontSize="10"
                            Foreground="{StaticResource MutedTextBrush}"
                            TextTrimming="CharacterEllipsis"/>
             </StackPanel>
 
-            <Button HorizontalAlignment="Right"
-                    Style="{StaticResource PrimaryButton}"
-                    Command="{Binding SaveChangesCommand}"
-                    Content="{Binding SaveButtonText}"
-                    MinWidth="180"/>
+            <StackPanel HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                <Button Style="{StaticResource IconButton}"
+                        Command="{Binding HomeCommand}"
+                        Content="⌂"
+                        ToolTip="{loc:Loc Key=Shell.Home}"/>
+                <Button Style="{StaticResource IconButton}"
+                        Command="{Binding BackCommand}"
+                        Content="←"
+                        Margin="4,0,0,0"
+                        ToolTip="{loc:Loc Key=Shell.Back}"/>
+                <Button Style="{StaticResource IconButton}"
+                        Command="{Binding ForwardCommand}"
+                        Content="→"
+                        Margin="4,0,0,0"
+                        ToolTip="{loc:Loc Key=Shell.Forward}"/>
+            </StackPanel>
         </Grid>
+
+        <!-- File area -->
+        <Border Grid.Row="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="17"
+                Effect="{StaticResource SoftShadowEffect}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="54"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0"
+                      Margin="18,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="{loc:Loc Key=Explorer.Name}"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Width="*"/>
+                        <TextBlock Text="{loc:Loc Key=Explorer.Type}"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Width="90"/>
+                        <TextBlock Text="{loc:Loc Key=Explorer.State}"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Width="100"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal">
+                        <Button Style="{StaticResource GhostButton}"
+                                Command="{Binding RenameCommand}"
+                                Visibility="{Binding SelectedEntry, Converter={StaticResource BooleanModeConverter}, ConverterParameter=Visibility}"
+                                Content="{loc:Loc Key=Shell.Rename}"
+                                Height="34"
+                                MinWidth="78"
+                                Margin="0,0,7,0"/>
+                        <Button Style="{StaticResource DangerButton}"
+                                Command="{Binding DeleteCommand}"
+                                Visibility="{Binding SelectedEntry, Converter={StaticResource BooleanModeConverter}, ConverterParameter=Visibility}"
+                                Content="{loc:Loc Key=Shell.Delete}"
+                                Height="34"
+                                MinWidth="68"/>
+                    </StackPanel>
+                </Grid>
+
+                <ListView Grid.Row="1"
+                          ItemsSource="{Binding Entries}"
+                          SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
+                          MouseDoubleClick="Entry_DoubleClick"
+                          BorderThickness="0"
+                          Background="Transparent"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="8,2"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <Border x:Name="Row"
+                                                Padding="10,9"
+                                                CornerRadius="11"
+                                                Background="Transparent">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Row" Property="Background" Value="{StaticResource SurfaceHoverBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Row" Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="48">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="100"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="40"
+                                            Height="40"
+                                            CornerRadius="12"
+                                            Background="{StaticResource SoftGradientBrush}">
+                                        <TextBlock Text="{Binding IsDirectory, Converter={StaticResource EntryIconConverter}}"
+                                                   FontSize="17"
+                                                   Foreground="{Binding State, Converter={StaticResource EntryStateBrushConverter}}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Margin="12,0,0,0"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding FullPath}"
+                                                   Margin="0,2,0,0"
+                                                   FontSize="8"
+                                                   Foreground="{StaticResource MutedTextBrush}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Kind}"
+                                           FontSize="10"
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           VerticalAlignment="Center"/>
+
+                                <Border Grid.Column="2"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Padding="9,5"
+                                        CornerRadius="9"
+                                        Background="{StaticResource CyanSoftBrush}">
+                                    <TextBlock Text="{Binding StateText}"
+                                               FontSize="9"
+                                               FontWeight="SemiBold"
+                                               Foreground="{Binding State, Converter={StaticResource EntryStateBrushConverter}}"/>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Border HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="390"
+                        Padding="26"
+                        Background="{StaticResource SurfaceSoftBrush}"
+                        BorderBrush="{StaticResource BorderStrongBrush}"
+                        BorderThickness="1"
+                        CornerRadius="16">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <DataTrigger Binding="{Binding Entries.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="{loc:Loc Key=Explorer.EmptyTitle}"
+                                   FontSize="17"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="{loc:Loc Key=Explorer.EmptySubtitle}"
+                                   Margin="0,8,0,0"
+                                   FontSize="10"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                        <Button Style="{StaticResource PrimaryButton}"
+                                Command="{Binding AddMediaCommand}"
+                                Content="{loc:Loc Key=Shell.AddMedia}"
+                                MinWidth="118"
+                                Height="38"
+                                Margin="0,16,0,0"
+                                HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Pending changes and progress -->
+        <Border Grid.Row="2"
+                Margin="0,16,0,0"
+                Padding="15"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="17"
+                Effect="{StaticResource SoftShadowEffect}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc Key=Pending.Title}"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="{loc:Loc Key=Pending.Subtitle}"
+                                   Margin="0,3,0,0"
+                                   FontSize="9"
+                                   Foreground="{StaticResource MutedTextBrush}"/>
+                    </StackPanel>
+
+                    <StackPanel HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   FontSize="9"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,12,0"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxWidth="420"/>
+                        <Button Style="{StaticResource PrimaryButton}"
+                                Command="{Binding SaveChangesCommand}"
+                                Content="{Binding SaveButtonText}"
+                                Height="38"
+                                MinWidth="134"/>
+                    </StackPanel>
+                </Grid>
+
+                <ProgressBar Grid.Row="1"
+                             Height="5"
+                             Minimum="0"
+                             Maximum="100"
+                             Value="{Binding OverallProgress}"
+                             Foreground="{StaticResource AccentBrush}"/>
+
+                <ScrollViewer Grid.Row="2"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              Margin="0,9,0,4">
+                    <ItemsControl ItemsSource="{Binding PendingChanges}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="170"/>
+                                        <ColumnDefinition Width="36"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Converter={StaticResource PendingDescriptionConverter}}"
+                                                   FontSize="10"
+                                                   FontWeight="SemiBold"/>
+                                        <ProgressBar Height="4"
+                                                     Margin="0,6,0,0"
+                                                     Minimum="0"
+                                                     Maximum="100"
+                                                     Value="{Binding ProgressPercent}"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding ErrorMessage}"
+                                               Foreground="{StaticResource ErrorBrush}"
+                                               FontSize="9"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"
+                                               Margin="10,0"/>
+                                    <Button Grid.Column="2"
+                                            Style="{StaticResource IconButton}"
+                                            Content="×"
+                                            Click="CancelPending_Click"
+                                            ToolTip="{loc:Loc Key=Shell.Cancel}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <TextBlock Grid.Row="3"
+                           Text="{Binding PendingCountText}"
+                           FontSize="9"
+                           Foreground="{StaticResource MutedTextBrush}"/>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>
