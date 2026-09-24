@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using DownTrack.Application.Services;
 using DownTrack.ViewModels;
 
 namespace DownTrack.Views;
@@ -8,18 +9,29 @@ public partial class SettingsWindow : Window
 {
     private readonly SettingsViewModel _viewModel;
 
-    public SettingsWindow()
+    public SettingsWindow(IAppToolManager toolManager)
     {
         InitializeComponent();
 
-        _viewModel = new SettingsViewModel();
+        _viewModel = new SettingsViewModel(toolManager);
         DataContext = _viewModel;
     }
 
     private async void Save_Click(object sender, RoutedEventArgs e)
     {
-        await _viewModel.SaveAsync();
-        DialogResult = true;
+        try
+        {
+            await _viewModel.SaveAsync();
+            DialogResult = true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                ex.Message,
+                "DownTrack",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
     }
 
     private void Close_Click(object sender, RoutedEventArgs e) =>
