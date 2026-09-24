@@ -248,7 +248,13 @@
                                                Foreground="{StaticResource MutedTextBrush}"/>
                                     <ComboBox x:Name="FormatBox"
                                               Margin="0,7,0,0"
-                                              MinHeight="42"/>
+                                              MinHeight="42">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="2">
@@ -258,7 +264,13 @@
                                                Foreground="{StaticResource MutedTextBrush}"/>
                                     <ComboBox x:Name="AudioQualityBox"
                                               Margin="0,7,0,0"
-                                              MinHeight="42"/>
+                                              MinHeight="42">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="4">
@@ -268,7 +280,13 @@
                                                Foreground="{StaticResource MutedTextBrush}"/>
                                     <ComboBox x:Name="VideoQualityBox"
                                               Margin="0,7,0,0"
-                                              MinHeight="42"/>
+                                              MinHeight="42">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
