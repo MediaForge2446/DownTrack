@@ -691,8 +691,6 @@ begin
   LogoText.Caption := CustomMessage('Title');
   LogoText.Font.Size := 22;
   LogoText.Font.Style := [fsBold];
-  LogoText.Transparent := True;
-
   TaglineText := TNewStaticText.Create(SetupForm);
   TaglineText.Parent := SetupForm;
   TaglineText.Left := ScaleX(51);
@@ -702,8 +700,6 @@ begin
   TaglineText.Caption := CustomMessage('Tagline');
   TaglineText.Font.Size := 9;
   TaglineText.Font.Color := $0069788A;
-  TaglineText.Transparent := True;
-
   StatusText := TNewStaticText.Create(SetupForm);
   StatusText.Parent := SetupForm;
   StatusText.Left := ScaleX(50);
@@ -713,8 +709,6 @@ begin
   StatusText.Caption := CustomMessage('Checking');
   StatusText.Font.Size := 11;
   StatusText.Font.Style := [fsBold];
-  StatusText.Transparent := True;
-
   VersionText := TNewStaticText.Create(SetupForm);
   VersionText.Parent := SetupForm;
   VersionText.Left := ScaleX(50);
@@ -724,8 +718,6 @@ begin
   VersionText.Caption := CustomMessage('Progress');
   VersionText.Font.Size := 9;
   VersionText.Font.Color := $0069788A;
-  VersionText.Transparent := True;
-
   ProgressBar := TNewProgressBar.Create(SetupForm);
   ProgressBar.Parent := SetupForm;
   ProgressBar.Left := ScaleX(50);
