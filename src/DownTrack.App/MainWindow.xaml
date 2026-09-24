@@ -53,6 +53,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="18"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <Button Style="{StaticResource PrimaryButton}"
@@ -160,10 +161,9 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="8"
+                    <StackPanel Grid.Column="9"
                                 Orientation="Horizontal"
-                                HorizontalAlignment="Left"
-                                Margin="185,0,0,0">
+                                HorizontalAlignment="Right"
                         <Button Content="—"
                                 Style="{StaticResource IconButton}"
                                 ToolTip="{loc:Loc Key=Window.Minimize}"
