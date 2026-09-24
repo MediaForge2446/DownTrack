@@ -72,7 +72,8 @@ public sealed class AddMediaViewModel : ObservableObject
 
         try
         {
-            var resolved = await _resolver.ResolveAsync(Url);
+            var progress = new Progress<string>(message => Status = message);
+            var resolved = await _resolver.ResolveAsync(Url, progress);
             Items.Clear();
 
             foreach (var spec in resolved)
