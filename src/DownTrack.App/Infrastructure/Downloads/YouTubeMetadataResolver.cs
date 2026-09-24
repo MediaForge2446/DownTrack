@@ -22,7 +22,8 @@ public sealed class YouTubeMetadataResolver(
             throw new ArgumentException("Please paste a valid YouTube video or playlist URL.");
         }
 
-        await toolManager.EnsureReadyAsync(cancellationToken: cancellationToken);
+        var progress = new Progress<string>(message => { });
+        await toolManager.EnsureReadyAsync(progress, cancellationToken);
 
         var executable = locator.GetYtDlpPath();
         var deno = locator.GetDenoPath();
