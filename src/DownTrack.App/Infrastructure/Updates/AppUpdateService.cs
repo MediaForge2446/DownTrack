@@ -115,7 +115,8 @@ public sealed class AppUpdateService
                 CreateNoWindow = true
             };
 
-            if (!Process.Start(psi) is null)
+            using var process = Process.Start(psi);
+            if (process is not null)
                 return;
 
             throw new InvalidOperationException(
