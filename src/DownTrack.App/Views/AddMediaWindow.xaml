@@ -244,7 +244,7 @@
                                                                Foreground="{StaticResource MutedTextBrush}"/>
                                                     <ComboBox ItemsSource="{Binding Formats}"
                                                               SelectedItem="{Binding Format}"
-                                                              Margin="0,4,0,0}">
+                                                              Margin="0,4,0,0">
                                                         <ComboBox.ItemTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
