@@ -23,12 +23,12 @@
                             UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
-    <Border Background="{StaticResource WindowBrush}"
-            BorderBrush="{StaticResource BorderStrongBrush}"
+    <Border Background="{DynamicResource WindowBrush}"
+            BorderBrush="{DynamicResource BorderStrongBrush}"
             BorderThickness="1"
             CornerRadius="18"
             Padding="26"
-            Effect="{StaticResource DialogShadowEffect}">
+            Effect="{DynamicResource DialogShadowEffect}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -44,7 +44,7 @@
                     <TextBlock Text="{loc:Loc Key=Settings.LanguageDescription}"
                                Margin="0,6,50,0"
                                FontSize="12"
-                               Foreground="{StaticResource MutedTextBrush}"
+                               Foreground="{DynamicResource MutedTextBrush}"
                                TextWrapping="Wrap"/>
                 </StackPanel>
 
@@ -60,8 +60,8 @@
             <Border Grid.Row="1"
                     Margin="0,22,0,20"
                     Padding="18"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="15">
                 <StackPanel>
@@ -71,7 +71,7 @@
                     <TextBlock Text="{loc:Loc Key=Settings.Current}"
                                Margin="0,4,0,12"
                                FontSize="10"
-                               Foreground="{StaticResource MutedTextBrush}"/>
+                               Foreground="{DynamicResource MutedTextBrush}"/>
 
                     <ComboBox x:Name="LanguageBox"
                               DisplayMemberPath="DisplayName"
@@ -80,13 +80,13 @@
                     
                     <Border Margin="0,14,0,0"
                             Padding="12,9"
-                            Background="{StaticResource CyanSoftBrush}"
+                            Background="{DynamicResource CyanSoftBrush}"
                             BorderBrush="#B9E4DE"
                             BorderThickness="1"
                             CornerRadius="10">
                         <TextBlock Text="{loc:Loc Key=Settings.RestartNotNeeded}"
                                    FontSize="10"
-                                   Foreground="{StaticResource CyanBrush}"/>
+                                   Foreground="{DynamicResource CyanBrush}"/>
                     </Border>
                 </StackPanel>
             </Border>
