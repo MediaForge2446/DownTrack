@@ -172,16 +172,12 @@ public partial class SettingsWindow : Window
 
     private async void CheckTools_Click(object sender, RoutedEventArgs e)
     {
-        CheckAppButton.IsEnabled = false;
         try
         {
             ToolUpdateStatus.Text = _toolManager.IsReady
                 ? LocalizationService.Instance.T("Settings.ToolsReady")
                 : LocalizationService.Instance.T("Settings.ToolsMissing");
         }
-        finally
-        {
-            CheckAppButton.IsEnabled = true;
         }
     }
 
