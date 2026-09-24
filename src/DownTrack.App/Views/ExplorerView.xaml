@@ -92,22 +92,7 @@
                                    Foreground="{StaticResource MutedTextBrush}"/>
                     </Grid>
 
-                    <StackPanel Grid.Column="1"
-                                Orientation="Horizontal">
-                        <Button Style="{StaticResource GhostButton}"
-                                Command="{Binding RenameCommand}"
-                                Visibility="{Binding SelectedEntry, Converter={StaticResource NullToVisibilityConverter}}"
-                                Content="{loc:Loc Key=Shell.Rename}"
-                                Height="34"
-                                MinWidth="78"
-                                Margin="0,0,7,0"/>
-                        <Button Style="{StaticResource DangerButton}"
-                                Command="{Binding DeleteCommand}"
-                                Visibility="{Binding SelectedEntry, Converter={StaticResource BooleanModeConverter}, ConverterParameter=Visibility}"
-                                Content="{loc:Loc Key=Shell.Delete}"
-                                Height="34"
-                                MinWidth="68"/>
-                    </StackPanel>
+
                 </Grid>
 
                 <ListView Grid.Row="1"
@@ -147,11 +132,12 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Height="48">
+                            <Grid Height="52">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="90"/>
                                     <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="152"/>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Horizontal">
@@ -196,6 +182,23 @@
                                                FontWeight="SemiBold"
                                                Foreground="{Binding State, Converter={StaticResource EntryStateBrushConverter}}"/>
                                 </Border>
+                                <StackPanel Grid.Column="3"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Visibility="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Button Style="{StaticResource GhostButton}"
+                                            Command="{Binding DataContext.RenameCommand, RelativeSource={RelativeSource AncestorType=ListViewItem}}"
+                                            Content="{loc:Loc Key=Shell.Rename}"
+                                            Height="34"
+                                            MinWidth="68"
+                                            Margin="0,0,6,0"/>
+                                    <Button Style="{StaticResource DangerButton}"
+                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListViewItem}}"
+                                            Content="{loc:Loc Key=Shell.Delete}"
+                                            Height="34"
+                                            MinWidth="64"/>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
