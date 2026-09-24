@@ -67,7 +67,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Click="Close_Click"
-                        ToolTip="Close"/>
+                        ToolTip="{loc:Loc Key=Window.Close}"/>
             </Grid>
 
             <!-- Link input -->
@@ -90,7 +90,7 @@
                              MinHeight="44"
                              FontSize="13"
                              VerticalContentAlignment="Center"
-                             ToolTip="YouTube video or playlist URL"/>
+                             ToolTip="{loc:Loc Key=AddMedia.UrlHint}"/>
 
                     <Button Grid.Column="1"
                             Margin="9,0,0,0"
