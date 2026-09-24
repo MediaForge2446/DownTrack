@@ -83,8 +83,8 @@ public partial class SettingsWindow : Window
 
     private void PopulateThemeOptions()
     {
-        ThemeBox.ItemsSource =
-        [
+        ThemeBox.ItemsSource = new[]
+        {
             new ThemeOption(
                 "System",
                 LocalizationService.Instance.T("Settings.ThemeSystem")),
@@ -94,7 +94,7 @@ public partial class SettingsWindow : Window
             new ThemeOption(
                 "Dark",
                 LocalizationService.Instance.T("Settings.ThemeDark"))
-        ];
+        };
     }
 
     private void PopulateLanguageOptions()
