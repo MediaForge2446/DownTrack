@@ -163,7 +163,7 @@
 
                     <StackPanel Grid.Column="9"
                                 Orientation="Horizontal"
-                                HorizontalAlignment="Right"
+                                HorizontalAlignment="Right">
                         <Button Content="—"
                                 Style="{StaticResource IconButton}"
                                 ToolTip="{loc:Loc Key=Window.Minimize}"
