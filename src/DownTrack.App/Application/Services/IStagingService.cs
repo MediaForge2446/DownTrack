@@ -18,5 +18,5 @@ public interface IStagingService
     Task StageDownloadAsync(RootFolder root, string targetFolder, MediaDownloadSpec spec);
 
     Task CancelChangeAsync(Guid rootId, Guid changeId);
-    Task SaveChangesAsync(RootFolder root, IProgress<string>? progress = null, CancellationToken cancellationToken = default);
+    Task SaveChangesAsync(RootFolder root, IProgress<StagedChangeProgress>? progress = null, CancellationToken cancellationToken = default);
 }
