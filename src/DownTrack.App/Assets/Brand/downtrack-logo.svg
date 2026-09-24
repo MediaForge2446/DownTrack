@@ -1,0 +1,16 @@
+<svg width="720" height="220" viewBox="0 0 720 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="accent" x1="38" y1="24" x2="180" y2="194" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9A7BFF"/><stop offset="1" stop-color="#6847E8"/>
+    </linearGradient>
+    <linearGradient id="track" x1="71" y1="71" x2="147" y2="150" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4DE4C4"/><stop offset="1" stop-color="#2AB79D"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="188" height="188" rx="48" fill="#11141C" stroke="#2A303C" stroke-width="2"/>
+  <path d="M68 151C53 132 48 104 58 80C68 55 91 37 118 34C145 31 171 44 187 65" stroke="url(#accent)" stroke-width="14" stroke-linecap="round"/>
+  <path d="M94 65V132C94 143 86 152 75 152C64 152 57 145 57 136C57 125 66 119 77 120C83 121 89 123 94 127" stroke="url(#track)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="152" cy="61" r="11" fill="#9A7BFF"/>
+  <text x="238" y="118" fill="#F4F7FB" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="700" letter-spacing="-2">DownTrack</text>
+  <text x="244" y="158" fill="#929BAB" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="500" letter-spacing="3">PREMIUM MEDIA WORKSPACE</text>
+</svg>

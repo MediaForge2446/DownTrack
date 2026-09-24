@@ -1,0 +1,89 @@
+using System.Text.Json;
+using DownTrack.Application.Services;
+using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Tools;
+
+namespace DownTrack.Infrastructure.Downloads;
+
+public sealed class YouTubeMetadataResolver(
+    ToolLocator locator,
+    IProcessRunner processRunner) : IMediaResolver
+{
+    public async Task<IReadOnlyList<MediaDownloadSpec>> ResolveAsync(
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        if (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri) ||
+            !uri.Host.Contains("youtube", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException("Please paste a valid YouTube video or playlist URL.");
+        }
+
+        var executable = locator.GetYtDlpPath();
+        var args = $"--flat-playlist --dump-single-json --skip-download --no-warnings {Quote(url.Trim())}";
+
+        var result = await processRunner.RunAsync(executable, args, cancellationToken: cancellationToken);
+
+        if (result.ExitCode != 0)
+        {
+            var detail = string.IsNullOrWhiteSpace(result.StandardError)
+                ? result.StandardOutput
+                : result.StandardError;
+
+            throw new InvalidOperationException(
+                string.IsNullOrWhiteSpace(detail)
+                    ? $"Could not analyze the media (exit code {result.ExitCode})."
+                    : detail.Trim());
+        }
+
+        var json = ExtractJson(result.StandardOutput);
+        using var document = JsonDocument.Parse(json);
+        var root = document.RootElement;
+
+        if (root.TryGetProperty("entries", out var entries) && entries.ValueKind == JsonValueKind.Array)
+        {
+            return entries
+                .EnumerateArray()
+                .Where(x => x.ValueKind == JsonValueKind.Object)
+                .Select(ToSpec)
+                .Where(x => !string.IsNullOrWhiteSpace(x.SourceUrl))
+                .ToList();
+        }
+
+        return [ToSpec(root)];
+    }
+
+    private static MediaDownloadSpec ToSpec(JsonElement item)
+    {
+        var id = GetString(item, "id");
+        var sourceUrl = GetString(item, "webpage_url");
+
+        if (string.IsNullOrWhiteSpace(sourceUrl) && !string.IsNullOrWhiteSpace(id))
+            sourceUrl = $"https://www.youtube.com/watch?v={id}";
+
+        return new MediaDownloadSpec
+        {
+            SourceUrl = sourceUrl ?? string.Empty,
+            Title = GetString(item, "title") ?? id ?? "YouTube media"
+        };
+    }
+
+    private static string ExtractJson(string stdout)
+    {
+        var trimmed = stdout.Trim();
+        var first = trimmed.IndexOf('{');
+        var last = trimmed.LastIndexOf('}');
+
+        if (first >= 0 && last > first)
+            return trimmed[first..(last + 1)];
+
+        throw new InvalidOperationException("The media resolver did not return metadata.");
+    }
+
+    private static string? GetString(JsonElement item, string property) =>
+        item.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString()
+            : null;
+
+    private static string Quote(string value) => $""{value.Replace(""", "\"")}"";
+}
