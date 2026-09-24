@@ -13,54 +13,108 @@
 
         <Grid Grid.Row="0">
             <StackPanel>
-                <TextBlock Text="Your Library" FontSize="31" FontWeight="SemiBold"/>
-                <TextBlock Text="Choose a root folder to open the DownTrack Explorer."
-                           Margin="0,8,0,0" Foreground="{StaticResource MutedTextBrush}" FontSize="14"/>
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="7" Height="36" CornerRadius="4"
+                            Background="{StaticResource AccentGradientBrush}"/>
+                    <StackPanel Margin="13,0,0,0">
+                        <TextBlock Text="Your Library" FontSize="31" FontWeight="SemiBold"/>
+                        <TextBlock Text="Choose a root folder to open the DownTrack Explorer."
+                                   Margin="0,7,0,0"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   FontSize="14"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
 
             <Button HorizontalAlignment="Right"
                     Style="{StaticResource PrimaryButton}"
-                    Command="{Binding AddRootFolderCommand}"
-                    Content="+  Add root folder"/>
+                    Command="{Binding AddRootFolderCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="" FontFamily="Segoe Fluent Icons"/>
+                    <TextBlock Text="  Add root folder"/>
+                </StackPanel>
+            </Button>
         </Grid>
 
-        <Border Grid.Row="1" Margin="0,25,0,14" Padding="16"
-                Background="{StaticResource AccentSoftBrush}"
-                BorderBrush="#3D2F76" BorderThickness="1" CornerRadius="12">
-            <StackPanel>
-                <TextBlock Text="STAGED WORKSPACE" Foreground="{StaticResource TealBrush}"
-                           FontSize="11" FontWeight="Bold"/>
-                <TextBlock Text="Everything you change is prepared here first. Nothing is written to disk until Save Changes."
-                           Margin="0,5,0,0" Foreground="{StaticResource TextBrush}" FontSize="13"/>
-            </StackPanel>
+        <Border Grid.Row="1" Margin="0,25,0,14" Padding="18"
+                Background="{StaticResource AccentSoftGradientBrush}"
+                BorderBrush="#433776"
+                BorderThickness="1"
+                CornerRadius="14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Width="42" Height="42" CornerRadius="12"
+                        Background="#27305B">
+                    <TextBlock Text=""
+                               FontFamily="Segoe Fluent Icons"
+                               Foreground="{StaticResource TealBrush}"
+                               FontSize="19"
+                               HorizontalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Grid.Column="1" Margin="13,0,18,0">
+                    <TextBlock Text="STAGED WORKSPACE"
+                               Foreground="{StaticResource TealBrush}"
+                               FontSize="11"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="Everything you change is prepared here first. Nothing is written to disk until Save Changes."
+                               Margin="0,5,0,0"
+                               Foreground="{StaticResource TextBrush}"
+                               FontSize="13"
+                               TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="2"
+                           Text="Safe by design"
+                           Foreground="{StaticResource CyanBrush}"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+            </Grid>
         </Border>
 
         <Border Grid.Row="2" Padding="14" Margin="0,0,0,18"
-                Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="1" CornerRadius="12">
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
-                    <TextBlock Text="MEDIA ENGINE" FontSize="11" FontWeight="Bold"
+                    <TextBlock Text="MEDIA ENGINE"
+                               FontSize="11"
+                               FontWeight="Bold"
                                Foreground="{StaticResource MutedTextBrush}"/>
-                    <TextBlock Text="{Binding ToolStatus}" Margin="0,5,0,0" FontSize="13"/>
+                    <TextBlock Text="{Binding ToolStatus}"
+                               Margin="0,5,0,0"
+                               FontSize="13"/>
                 </StackPanel>
-                <Button Grid.Column="1" Content="{Binding ToolButtonText}"
+
+                <Button Grid.Column="1"
+                        Content="{Binding ToolButtonText}"
                         Style="{StaticResource GhostButton}"
                         Command="{Binding SetupMediaEngineCommand}"/>
             </Grid>
         </Border>
 
-        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="3"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
             <ItemsControl ItemsSource="{Binding Roots}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Click="Root_Click"
@@ -75,36 +129,59 @@
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="1" CornerRadius="14"
-                                            Padding="18" Width="285" Height="138">
+                                            BorderThickness="1"
+                                            CornerRadius="15"
+                                            Padding="18"
+                                            Width="300"
+                                            Height="146">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
-                                            <Border Width="42" Height="42" CornerRadius="11"
-                                                    Background="{StaticResource AccentSoftBrush}">
-                                                <TextBlock Text="" FontFamily="Segoe Fluent Icons"
-                                                           Foreground="{StaticResource AccentBrush}" FontSize="21"
+
+                                            <Border Width="44" Height="44" CornerRadius="12"
+                                                    Background="{StaticResource AccentSoftGradientBrush}">
+                                                <TextBlock Text=""
+                                                           FontFamily="Segoe Fluent Icons"
+                                                           Foreground="{StaticResource AccentBrush}"
+                                                           FontSize="21"
                                                            HorizontalAlignment="Center"/>
                                             </Border>
+
                                             <StackPanel Grid.Row="1" Margin="0,12,0,4">
-                                                <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold"
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontSize="17"
+                                                           FontWeight="SemiBold"
                                                            TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding Path}" Margin="0,4,0,0"
-                                                           FontSize="11" Foreground="{StaticResource MutedTextBrush}"
+                                                <TextBlock Text="{Binding Path}"
+                                                           Margin="0,4,0,0"
+                                                           FontSize="11"
+                                                           Foreground="{StaticResource MutedTextBrush}"
                                                            TextTrimming="CharacterEllipsis"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Row="2" Text="Open Explorer  ›"
-                                                       Foreground="{StaticResource TealBrush}" FontSize="12"
-                                                       HorizontalAlignment="Right"/>
+
+                                            <StackPanel Grid.Row="2"
+                                                        Orientation="Horizontal"
+                                                        HorizontalAlignment="Right">
+                                                <TextBlock Text="Open Explorer"
+                                                           Foreground="{StaticResource TealBrush}"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="  ›"
+                                                           Foreground="{StaticResource CyanBrush}"
+                                                           FontSize="15"/>
+                                            </StackPanel>
                                         </Grid>
                                     </Border>
+
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}"/>
-                                            <Setter Property="BorderBrush" Value="#443B67"/>
+                                            <Setter Property="BorderBrush" Value="#5C4AA0"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="#252C40"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -117,7 +194,8 @@
 
         <Border Grid.Row="4" Margin="0,18,0,0">
             <TextBlock Text="DownTrack  •  premium media workspace"
-                       Foreground="{StaticResource MutedTextBrush}" FontSize="12"/>
+                       Foreground="{StaticResource MutedTextBrush}"
+                       FontSize="12"/>
         </Border>
     </Grid>
 </UserControl>
