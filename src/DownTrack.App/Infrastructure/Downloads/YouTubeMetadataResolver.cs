@@ -13,16 +13,21 @@ public sealed class YouTubeMetadataResolver(
         string url,
         CancellationToken cancellationToken = default)
     {
-        if (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri) ||
-            !uri.Host.Contains("youtube", StringComparison.OrdinalIgnoreCase))
+        var trimmedUrl = url.Trim();
+
+        if (!Uri.TryCreate(trimmedUrl, UriKind.Absolute, out var uri) ||
+            !IsSupportedYouTubeHost(uri.Host))
         {
             throw new ArgumentException("Please paste a valid YouTube video or playlist URL.");
         }
 
         var executable = locator.GetYtDlpPath();
-        var args = $"--flat-playlist --dump-single-json --skip-download --no-warnings {Quote(url.Trim())}";
+        var args = $"--flat-playlist --dump-single-json --skip-download --no-warnings {Quote(trimmedUrl)}";
 
-        var result = await processRunner.RunAsync(executable, args, cancellationToken: cancellationToken);
+        var result = await processRunner.RunAsync(
+            executable,
+            args,
+            cancellationToken: cancellationToken);
 
         if (result.ExitCode != 0)
         {
@@ -53,6 +58,11 @@ public sealed class YouTubeMetadataResolver(
         return [ToSpec(root)];
     }
 
+    private static bool IsSupportedYouTubeHost(string host) =>
+        host.Equals("youtube.com", StringComparison.OrdinalIgnoreCase) ||
+        host.EndsWith(".youtube.com", StringComparison.OrdinalIgnoreCase) ||
+        host.Equals("youtu.be", StringComparison.OrdinalIgnoreCase);
+
     private static MediaDownloadSpec ToSpec(JsonElement item)
     {
         var id = GetString(item, "id");
@@ -64,7 +74,8 @@ public sealed class YouTubeMetadataResolver(
         return new MediaDownloadSpec
         {
             SourceUrl = sourceUrl ?? string.Empty,
-            Title = GetString(item, "title") ?? id ?? "YouTube media"
+            Title = GetString(item, "title") ?? id ?? "YouTube media",
+            ThumbnailUrl = GetString(item, "thumbnail")
         };
     }
 
@@ -85,5 +96,6 @@ public sealed class YouTubeMetadataResolver(
             ? value.GetString()
             : null;
 
-    private static string Quote(string value) => $""{value.Replace(""", "\"")}"";
+    private static string Quote(string value) =>
+        "\"" + value.Replace("\"", "\\\"") + "\"";
 }

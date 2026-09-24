@@ -9,9 +9,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: downtrack-windows-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-package:
     runs-on: windows-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -23,7 +28,7 @@ jobs:
           dotnet-version: "10.x"
 
       - name: Restore
-        run: dotnet restore DownTrack.sln
+        run: dotnet restore DownTrack.sln -r win-x64 -p:Platform=x64
 
       - name: Build
         run: dotnet build DownTrack.sln -c Release --no-restore -p:Platform=x64
@@ -40,7 +45,23 @@ jobs:
 
       - name: Build installer
         shell: pwsh
-        run: '& "$env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" "installer\DownTrack.iss"'
+        run: |
+          $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+          $issc = if ($programFilesX86) {
+            Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe"
+          } else {
+            $null
+          }
+          if (-not $issc -or -not (Test-Path $issc)) {
+            $issc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe"
+          }
+          if (-not (Test-Path $issc)) {
+            throw "Inno Setup compiler (ISCC.exe) was not found."
+          }
+          & $issc "installer\DownTrack.iss"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Upload Setup.exe
         uses: actions/upload-artifact@v4

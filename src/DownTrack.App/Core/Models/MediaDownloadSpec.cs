@@ -6,6 +6,7 @@ public sealed class MediaDownloadSpec
 {
     public string SourceUrl { get; set; } = string.Empty;
     public string Title { get; set; } = "New media";
+    public string? ThumbnailUrl { get; set; }
     public MediaFormat Format { get; set; } = MediaFormat.Mp3;
     public AudioQuality AudioQuality { get; set; } = AudioQuality.Kbps128;
     public VideoQuality VideoQuality { get; set; } = VideoQuality.P720;

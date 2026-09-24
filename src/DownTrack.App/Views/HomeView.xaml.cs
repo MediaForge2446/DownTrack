@@ -4,7 +4,7 @@ using DownTrack.Core.Models;
 
 namespace DownTrack.Views;
 
-public partial class HomeView : UserControl
+public partial class HomeView : System.Windows.Controls.UserControl
 {
     public HomeView()
     {
