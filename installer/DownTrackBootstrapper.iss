@@ -494,6 +494,7 @@ begin
   VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
   PrimaryButton.Caption := CustomMessage('Open');
   PrimaryButton.Enabled := True;
+  PrimaryButton.OnClick := @OpenDownTrack;
   SecondaryButton.Visible := True;
   SecondaryButton.Caption := CustomMessage('Close');
 end;
