@@ -127,7 +127,8 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Padding="14,13">
+                            <Border Padding="14,13">
+                <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="64"/>
                                     <ColumnDefinition Width="*"/>
@@ -220,7 +221,7 @@
                                         </Button>
                                     </StackPanel>
                                 </StackPanel>
-                            </Grid>
+                            </Grid></Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
