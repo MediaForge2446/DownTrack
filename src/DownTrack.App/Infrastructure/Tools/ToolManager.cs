@@ -27,10 +27,17 @@ public sealed class ToolManager : IAppToolManager
     private readonly SemaphoreSlim _gate = new(1, 1);
 
     public bool IsReady =>
-        File.Exists(AppPaths.YtDlpPath) &&
-        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe")) &&
-        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe")) &&
-        File.Exists(AppPaths.DenoPath);
+        IsBundledReady ||
+        (File.Exists(AppPaths.YtDlpPath) &&
+         File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe")) &&
+         File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe")) &&
+         File.Exists(AppPaths.DenoPath));
+
+    private static bool IsBundledReady =>
+        File.Exists(AppPaths.BundledYtDlpPath) &&
+        File.Exists(AppPaths.BundledFfmpegPath) &&
+        File.Exists(AppPaths.BundledFfprobePath) &&
+        File.Exists(AppPaths.BundledDenoPath);
 
     public string Status =>
         IsReady
