@@ -136,7 +136,7 @@
                                Margin="0,7,0,0"
                                FontSize="13"
                                FontWeight="SemiBold"/>
-                    <TextBlock Text="{Binding Roots.Count, StringFormat={}{0} folders connected}"
+                    <TextBlock Text="{Binding RootSummary}"
                                Margin="0,3,0,0"
                                FontSize="11"
                                Foreground="{StaticResource MutedTextBrush}"/>
