@@ -1,6 +1,7 @@
 using DownTrack.Application.Commands;
 using DownTrack.Application.Services;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.ViewModels;
 
@@ -28,6 +29,16 @@ public sealed class MainWindowViewModel : ObservableObject
         MediaDialog = mediaDialog;
         _currentViewModel = Home;
 
+        LocalizationService.Instance.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
+            {
+                if (CurrentViewModel == Home)
+                    CurrentFolderLabel = LocalizationService.Instance.T("App.Library");
+                OnPropertyChanged(nameof(CurrentFolderLabel));
+            }
+        };
+
         GoHomeCommand = new RelayCommand(_ => GoHome());
     }
 
@@ -41,7 +52,8 @@ public sealed class MainWindowViewModel : ObservableObject
         private set => SetProperty(ref _currentViewModel, value);
     }
 
-    public string CurrentFolderLabel { get; private set; } = "Library";
+    public string CurrentFolderLabel { get; private set; } =
+        LocalizationService.Instance.T("App.Library");
     public RelayCommand GoHomeCommand { get; }
 
     public async Task InitializeAsync()
@@ -52,7 +64,7 @@ public sealed class MainWindowViewModel : ObservableObject
 
     private void GoHome()
     {
-        CurrentFolderLabel = "Library";
+        CurrentFolderLabel = LocalizationService.Instance.T("App.Library");
         OnPropertyChanged(nameof(CurrentFolderLabel));
         Home.Refresh();
         CurrentViewModel = Home;

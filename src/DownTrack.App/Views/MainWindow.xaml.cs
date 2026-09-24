@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.Views;
 
@@ -52,6 +53,15 @@ public partial class MainWindow : Window
         {
             DragMove();
         }
+    }
+
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SettingsWindow
+        {
+            Owner = this
+        };
+        dialog.ShowDialog();
     }
 
     private void Minimize_Click(object sender, RoutedEventArgs e) =>

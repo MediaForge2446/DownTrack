@@ -3,6 +3,7 @@ using DownTrack.Application.Commands;
 using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.ViewModels;
 
@@ -10,7 +11,7 @@ public sealed class AddMediaViewModel : ObservableObject
 {
     private readonly IMediaResolver _resolver;
     private string _url = string.Empty;
-    private string _status = "Paste a YouTube video or playlist URL.";
+    private string _status = LocalizationService.Instance.T("AddMedia.PastePrompt");
     private bool _isResolving;
     private CancellationTokenSource? _analysisCts;
 
@@ -34,6 +35,15 @@ public sealed class AddMediaViewModel : ObservableObject
             foreach (var row in Items)
                 row.Format = MediaFormat.Mp3;
         });
+
+        LocalizationService.Instance.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
+            {
+                if (!IsResolving && Items.Count == 0)
+                    Status = LocalizationService.Instance.T("AddMedia.PastePrompt");
+            }
+        };
     }
 
     public string CurrentFolder { get; }
@@ -73,7 +83,7 @@ public sealed class AddMediaViewModel : ObservableObject
     private async Task AnalyzeAsync()
     {
         IsResolving = true;
-        Status = "Preparing media engine…";
+        Status = LocalizationService.Instance.T("AddMedia.Preparing");
         AnalyzeCommand.RaiseCanExecuteChanged();
 
         _analysisCts?.Cancel();
@@ -100,14 +110,14 @@ public sealed class AddMediaViewModel : ObservableObject
 
             Status = Items.Count switch
             {
-                0 => "Nothing was found. Check the link and try again.",
-                1 => "1 media item ready. Edit the options before adding.",
-                _ => $"{Items.Count} media items ready. Each row is independent."
+                0 => LocalizationService.Instance.T("AddMedia.NothingFound"),
+                1 => LocalizationService.Instance.T("AddMedia.OneReady"),
+                _ => LocalizationService.Instance.T("AddMedia.ManyReady", Items.Count)
             };
         }
         catch (OperationCanceledException)
         {
-            Status = "Analysis cancelled.";
+            Status = LocalizationService.Instance.T("AddMedia.AnalysisCancelled");
         }
         catch (Exception ex)
         {

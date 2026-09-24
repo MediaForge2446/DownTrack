@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:DownTrack.ViewModels"
              xmlns:views="clr-namespace:DownTrack.Views"
-             xmlns:local="clr-namespace:DownTrack.Infrastructure.Windows">
+             xmlns:local="clr-namespace:DownTrack.Infrastructure.Windows"
+             xmlns:loc="clr-namespace:DownTrack.Infrastructure.Localization">
     <Application.Resources>
         <local:EntryIconConverter x:Key="EntryIconConverter"/>
         <local:MediaOptionLabelConverter x:Key="MediaOptionLabelConverter"/>
