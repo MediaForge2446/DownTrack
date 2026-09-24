@@ -74,7 +74,7 @@
                                Foreground="{StaticResource MutedTextBrush}"/>
 
                     <ComboBox x:Name="LanguageBox"
-                              DisplayMemberPath="NativeName"
+                              DisplayMemberPath="DisplayName"
                               SelectedValuePath="Code"
                               MinHeight="42"/>
                     
