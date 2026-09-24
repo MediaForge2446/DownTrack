@@ -1,5 +1,5 @@
 #define MyAppName "DownTrack"
-#define MyAppVersion "0.0.1"
+#define MyAppVersion "0.1.0"
 #define MyAppPublisher "MediaForge2446"
 #define MyAppExeName "DownTrack.exe"
 #define ManifestUrl "https://github.com/MediaForge2446/DownTrack/releases/download/nightly/latest.ini"
@@ -34,7 +34,7 @@ AppPublisher={#MyAppPublisher}
 DefaultDirName={localappdata}\Programs\DownTrack
 DefaultGroupName={#MyAppName}
 OutputDir=..\artifacts\installer
-OutputBaseFilename=DownTrack-Setup
+OutputBaseFilename=DownTrack-Installer
 SetupIconFile=..\src\DownTrack.App\Assets\Brand\downtrack.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 ArchitecturesAllowed=x64compatible
@@ -53,6 +53,7 @@ DisableDirPage=yes
 DisableReadyPage=yes
 Compression=lzma2
 SolidCompression=yes
+ArchiveExtraction=full
 CloseApplications=yes
 RestartApplications=no
 AllowNoIcons=yes
@@ -217,7 +218,6 @@ sk.DownloadInstall=Stiahnuť a nainštalovať
 sk.InstallReady=DownTrack %1 je pripravený na inštaláciu.
 sk.InstallVerificationFailed=DownTrack bol stiahnutý, ale nainštalované súbory sa nepodarilo overiť.
 sk.NetworkError=DownTrack nemohol získať informácie o najnovšom vydaní.%n%nSkontrolujte internetové pripojenie a skúste to znova.
-sk.VerificationRetry=Spustite inštalátor znova.
 
 
 es.BootstrapIntro=Este instalador ligero comprueba siempre la versión verificada más reciente de DownTrack y el motor multimedia actual.
@@ -243,9 +243,6 @@ uk.DownloadInstall=Завантажити й встановити
 uk.InstallReady=DownTrack %1 готовий до встановлення.
 uk.InstallVerificationFailed=DownTrack завантажено, але перевірити встановлені файли не вдалося.
 uk.NetworkError=DownTrack не вдалося отримати інформацію про останню версію.%n%nПеревірте підключення до Інтернету та повторіть спробу.
-
-[Files]
-Source: "{code:GetPayloadUrl}"; DestDir: "{app}"; DestName: "DownTrack-Payload.zip"; ExternalSize: {code:GetPayloadSize}; Hash: "{code:GetPayloadHash}"; Flags: external download extractarchive ignoreversion recursesubdirs createallsubdirs nocompression
 
 [Icons]
 Name: "{autodesktop}\DownTrack"; Filename: "{app}\{#MyAppExeName}"
@@ -276,6 +273,9 @@ var
   LatestFfmpegVersion: String;
   ManifestLoaded: Boolean;
   InstallIsValid: Boolean;
+  PayloadInstalled: Boolean;
+  DownloadProgressPage: TOutputProgressWizardPage;
+  ExtractProgressPage: TOutputProgressWizardPage;
 
 function IsValidSha256(const Value: String): Boolean;
 var
@@ -306,10 +306,44 @@ begin
   begin
     if ProgressMax > 0 then
       WizardForm.StatusLabel.Caption :=
-        Format('Checking latest release… %d%%', [(Progress * 100) div ProgressMax])
+        FmtMessage(CustomMessage('CheckingLatest'), [])
     else
-      WizardForm.StatusLabel.Caption := 'Checking latest release…';
+      WizardForm.StatusLabel.Caption := CustomMessage('CheckingLatest');
     WizardForm.Update;
+  end;
+end;
+
+function OnDownloadProgress(const Url, FileName: String; const Progress, ProgressMax: Int64): Boolean;
+begin
+  Result := True;
+
+  if DownloadProgressPage <> nil then
+  begin
+    DownloadProgressPage.SetText(
+      CustomMessage('DownloadInstall'),
+      FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]));
+
+    if ProgressMax > 0 then
+      DownloadProgressPage.SetProgress(Progress, ProgressMax)
+    else
+      DownloadProgressPage.SetProgress(0, 0);
+  end;
+end;
+
+function OnExtractionProgress(const ArchiveName, FileName: String; const Progress, ProgressMax: Int64): Boolean;
+begin
+  Result := True;
+
+  if ExtractProgressPage <> nil then
+  begin
+    ExtractProgressPage.SetText(
+      CustomMessage('InstallReady'),
+      FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]));
+
+    if ProgressMax > 0 then
+      ExtractProgressPage.SetProgress(Progress, ProgressMax)
+    else
+      ExtractProgressPage.SetProgress(0, 0);
   end;
 end;
 
@@ -348,28 +382,112 @@ begin
     LatestFfmpegVersion := Trim(GetIniString('release', 'FfmpegVersion', 'current', ManifestPath));
 
     if LatestVersion = '' then
-      RaiseException('The latest release manifest has no version.');
+      RaiseException(CustomMessage('NetworkError'));
 
     if LatestPayloadUrl = '' then
-      RaiseException('The latest release manifest has no payload URL.');
+      RaiseException(CustomMessage('NetworkError'));
 
     if Pos(
          'https://github.com/mediaforge2446/downtrack/releases/download/',
          LowerCase(LatestPayloadUrl)) <> 1 then
-      RaiseException('The latest payload URL is not a trusted DownTrack release URL.');
+      RaiseException(CustomMessage('NetworkError'));
 
     if not IsValidSha256(LatestPayloadHash) then
-      RaiseException('The latest payload manifest contains an invalid SHA-256 value.');
+      RaiseException(CustomMessage('NetworkError'));
 
     LatestPayloadSize := StrToInt64Def(SizeText, 0);
     if LatestPayloadSize <= 0 then
-      RaiseException('The latest payload manifest contains an invalid size.');
+      RaiseException(CustomMessage('NetworkError'));
 
     ManifestLoaded := True;
     Result := True;
   except
     Log(GetExceptionMessage);
     ManifestLoaded := False;
+    Result := False;
+  end;
+end;
+
+function InstallLatestPayload: Boolean;
+var
+  PayloadPath: String;
+  AppDir: String;
+begin
+  Result := False;
+
+  if PayloadInstalled then
+  begin
+    Result := VerifyInstalledFiles;
+    Exit;
+  end;
+
+  if not ManifestLoaded then
+  begin
+    if not LoadLatestManifest then
+    begin
+      MsgBox(CustomMessage('NetworkError'), mbCriticalError, MB_OK);
+      Exit;
+    end;
+  end;
+
+  PayloadPath := ExpandConstant('{tmp}\DownTrack-Payload.zip');
+  AppDir := ExpandConstant('{app}');
+
+  try
+    if not DirExists(AppDir) then
+    begin
+      if not ForceDirectories(AppDir) then
+        RaiseException(CustomMessage('InstallVerificationFailed'));
+    end;
+
+    DeleteFile(PayloadPath);
+
+    DownloadProgressPage.SetText(
+      CustomMessage('DownloadInstall'),
+      FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]));
+    DownloadProgressPage.SetProgress(0, 0);
+    DownloadProgressPage.Show;
+    try
+      DownloadTemporaryFile(
+        LatestPayloadUrl,
+        'DownTrack-Payload.zip',
+        LatestPayloadHash,
+        @OnDownloadProgress);
+    finally
+      DownloadProgressPage.Hide;
+    end;
+
+    if not FileExists(PayloadPath) then
+      RaiseException(CustomMessage('InstallVerificationFailed'));
+
+    ExtractProgressPage.SetText(
+      CustomMessage('InstallReady'),
+      FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]));
+    ExtractProgressPage.SetProgress(0, 0);
+    ExtractProgressPage.Show;
+    try
+      ExtractArchive(
+        PayloadPath,
+        AppDir,
+        '',
+        True,
+        @OnExtractionProgress);
+    finally
+      ExtractProgressPage.Hide;
+    end;
+
+    InstallIsValid := VerifyInstalledFiles;
+    PayloadInstalled := InstallIsValid;
+    Result := InstallIsValid;
+  except
+    Log(GetExceptionMessage);
+    InstallIsValid := False;
+    PayloadInstalled := False;
+    MsgBox(
+      CustomMessage('InstallVerificationFailed') + #13#10 + #13#10 +
+      CustomMessage('VerificationRetry'),
+      mbCriticalError,
+      MB_OK);
     Result := False;
   end;
 end;
@@ -441,6 +559,15 @@ var
   InstalledVersion: String;
 begin
   InstallIsValid := False;
+  PayloadInstalled := False;
+
+  DownloadProgressPage := CreateOutputProgressPage(
+    CustomMessage('DownloadInstall'),
+    CustomMessage('BootstrapIntro'));
+
+  ExtractProgressPage := CreateOutputProgressPage(
+    CustomMessage('InstallReady'),
+    CustomMessage('BootstrapIntro'));
 
   WizardForm.WelcomeLabel1.Caption := 'DownTrack';
   WizardForm.WelcomeLabel1.Font.Size := 24;
@@ -448,7 +575,7 @@ begin
   WizardForm.WelcomeLabel2.Caption := CustomMessage('BootstrapIntro');
   WizardForm.WelcomeLabel2.Font.Size := 10;
 
-  WizardForm.NextButton.Caption := SetupMessage(msgButtonNext);
+  WizardForm.NextButton.Caption := CustomMessage('DownloadInstall');
   WizardForm.CancelButton.Caption := SetupMessage(msgButtonCancel);
   WizardForm.BackButton.Visible := False;
 
@@ -464,7 +591,8 @@ begin
       WizardForm.StatusLabel.Caption :=
         FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]);
 
-    WizardForm.WelcomeLabel2.Caption := FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]);
+    WizardForm.WelcomeLabel2.Caption :=
+      FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]);
   end
   else
   begin
@@ -481,8 +609,7 @@ begin
     if not LoadLatestManifest then
     begin
       MsgBox(
-        'DownTrack could not retrieve the latest release information.' + #13#10 + #13#10 +
-        'Please check your internet connection and try again.',
+        CustomMessage('NetworkError'),
         mbCriticalError,
         MB_OK);
       Result := False;
@@ -491,19 +618,28 @@ begin
 
     WizardForm.NextButton.Caption := CustomMessage('DownloadInstall');
     WizardForm.StatusLabel.Caption :=
-      Format(CustomMessage('LatestDetected'), [LatestVersion]);
+      FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]);
   end;
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
-  if CurStep = ssPostInstall then
+  if CurStep = ssInstall then
+  begin
+    if not InstallLatestPayload then
+    begin
+      InstallIsValid := False;
+      Abort;
+    end;
+  end
+  else if CurStep = ssPostInstall then
   begin
     InstallIsValid := VerifyInstalledFiles;
 
     if InstallIsValid then
     begin
-      WizardForm.StatusLabel.Caption := FmtMessage(CustomMessage('InstallReady'), [LatestVersion]);
+      WizardForm.StatusLabel.Caption :=
+        FmtMessage(CustomMessage('InstallReady'), [LatestVersion]);
     end
     else
     begin
