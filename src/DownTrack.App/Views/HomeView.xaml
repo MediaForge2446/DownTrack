@@ -90,6 +90,7 @@
             <Grid>
                 <ListView x:Name="RootList"
                           ItemsSource="{Binding Roots}"
+                          AlternationCount="1000"
                           SelectedItem="{Binding SelectedRoot, Mode=TwoWay}"
                           BorderThickness="0"
                           Background="Transparent"
@@ -269,7 +270,7 @@
                                 Command="{Binding AddRootFolderCommand}"
                                 Margin="0,16,0,0"
                                 MinWidth="140">
-                            <TextBlock Text="{loc:Loc Key=Home.AddRootFolder}"/>
+                            <TextBlock Text="{loc:Loc Key=Shell.AddFolder}"/>
                         </Button>
                     </StackPanel>
                 </Border>
