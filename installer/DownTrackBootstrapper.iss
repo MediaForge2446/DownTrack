@@ -1,8 +1,31 @@
 #define MyAppName "DownTrack"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.0.1"
 #define MyAppPublisher "MediaForge2446"
 #define MyAppExeName "DownTrack.exe"
 #define ManifestUrl "https://github.com/MediaForge2446/DownTrack/releases/download/nightly/latest.ini"
+
+[Languages]
+[Languages]
+Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "ar"; MessagesFile: "compiler:Languages\Arabic.isl"
+Name: "zh-CN"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+Name: "cs"; MessagesFile: "compiler:Languages\Czech.isl"
+Name: "da"; MessagesFile: "compiler:Languages\Danish.isl"
+Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "fi"; MessagesFile: "compiler:Languages\Finnish.isl"
+Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
+Name: "de"; MessagesFile: "compiler:Languages\German.isl"
+Name: "he"; MessagesFile: "compiler:Languages\Hebrew.isl"
+Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "ko"; MessagesFile: "compiler:Languages\Korean.isl"
+Name: "no"; MessagesFile: "compiler:Languages\Norwegian.isl"
+Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "pt"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "tr"; MessagesFile: "compiler:Languages\Turkish.isl"
+Name: "uk"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Setup]
 AppId={{B57A9A4C-0A15-47C6-9F18-2C0EDB2E6E2D}
@@ -20,6 +43,10 @@ ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
 WizardStyle=modern windows11 includetitlebar hidebevels
 WizardSizePercent=120,115
+LanguageDetectionMethod=uilanguage
+ShowLanguageDialog=auto
+UsePreviousLanguage=no
+WizardBackColor=#F8F7FC
 WizardImageFile=
 WizardSmallImageFile=
 WizardBackColor=$F8F7FC
@@ -57,13 +84,6 @@ Filename: "{app}\{#MyAppExeName}"; Description: "Open DownTrack"; Flags: nowait 
 [UninstallDelete]
 Type: files; Name: "{app}\DownTrack-Payload.zip"
 Type: files; Name: "{app}\DownTrack.Install.ini"
-
-[Messages]
-WelcomeLabel1=DownTrack
-WelcomeLabel2=This tiny installer always checks for the latest verified build, then installs DownTrack and its current media engine.
-SelectDirBrowseLabel=Installation folder:
-FinishedHeadingLabel=DownTrack is ready
-FinishedLabel=The latest verified DownTrack build is installed and ready to open.
 
 [Code]
 var
