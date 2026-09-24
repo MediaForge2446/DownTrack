@@ -2,6 +2,7 @@ using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Core.Models;
 using DownTrack.Infrastructure.Localization;
+using DownTrack.Infrastructure.Settings;
 
 namespace DownTrack.ViewModels;
 
@@ -18,9 +19,16 @@ public sealed class MediaRowViewModel : ObservableObject
         SourceUrl = source.SourceUrl;
         ThumbnailUrl = source.ThumbnailUrl;
         _title = source.Title;
-        _format = source.Format;
-        _audioQuality = source.AudioQuality;
-        _videoQuality = source.VideoQuality;
+        var settings = AppSettingsService.Instance.Current;
+        _format = Enum.TryParse<MediaFormat>(settings.DefaultFormat, true, out var defaultFormat)
+            ? defaultFormat
+            : MediaFormat.Mp3;
+        _audioQuality = Enum.IsDefined(typeof(AudioQuality), settings.DefaultAudioQuality)
+            ? (AudioQuality)settings.DefaultAudioQuality
+            : AudioQuality.Kbps128;
+        _videoQuality = Enum.IsDefined(typeof(VideoQuality), settings.DefaultVideoQuality)
+            ? (VideoQuality)settings.DefaultVideoQuality
+            : VideoQuality.P720;
     }
 
     public string SourceUrl { get; }
