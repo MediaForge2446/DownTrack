@@ -5,13 +5,23 @@ namespace DownTrack.Infrastructure.Windows;
 
 public sealed class WindowsFolderPicker : IFolderPicker
 {
+    private static readonly Guid FileOpenDialogClsid =
+        new("DC1C5A9C-E88A-4DDE-A5A1-60F82A20AEF7");
+
     public string? PickFolder(string? initialPath = null)
     {
-        var dialog = (IFileOpenDialog)new FileOpenDialog();
+        var dialogObject = Activator.CreateInstance(
+            Type.GetTypeFromCLSID(FileOpenDialogClsid)
+            ?? throw new InvalidOperationException("Windows file dialog is unavailable."));
+
+        var dialog = dialogObject as IFileOpenDialog
+            ?? throw new InvalidOperationException("Windows file dialog could not be initialized.");
 
         try
         {
             dialog.SetOptions(FOS.PICKFOLDERS | FOS.FORCEFILESYSTEM | FOS.PATHMUSTEXIST);
+            dialog.SetTitle("Choose a DownTrack library root folder");
+            dialog.SetOkButtonLabel("Choose folder");
 
             if (!string.IsNullOrWhiteSpace(initialPath) && Directory.Exists(initialPath))
             {
@@ -38,11 +48,14 @@ public sealed class WindowsFolderPicker : IFolderPicker
                 result.GetDisplayName(SIGDN.FILESYSPATH, out var pathPtr);
                 try
                 {
-                    return Marshal.PtrToStringUni(pathPtr);
+                    return pathPtr == IntPtr.Zero
+                        ? null
+                        : Marshal.PtrToStringUni(pathPtr);
                 }
                 finally
                 {
-                    Marshal.FreeCoTaskMem(pathPtr);
+                    if (pathPtr != IntPtr.Zero)
+                        Marshal.FreeCoTaskMem(pathPtr);
                 }
             }
             finally
@@ -82,12 +95,6 @@ public sealed class WindowsFolderPicker : IFolderPicker
         [MarshalAs(UnmanagedType.Interface)] out IShellItem ppv);
 
     [ComImport]
-    [Guid("DC1C5A9C-E88A-4DDE-A5A1-60F82A20AEF7")]
-    private sealed class FileOpenDialog
-    {
-    }
-
-    [ComImport]
     [Guid("D57C7288-D4AD-4768-BE02-9D969532D960")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IFileOpenDialog
@@ -125,7 +132,8 @@ public sealed class WindowsFolderPicker : IFolderPicker
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IShellItem
     {
-        void BindToHandler(IntPtr pbc, in Guid bhid, in Guid riid, [MarshalAs(UnmanagedType.Interface)] out object ppv);
+        void BindToHandler(IntPtr pbc, in Guid bhid, in Guid riid,
+            [MarshalAs(UnmanagedType.Interface)] out object ppv);
         void GetParent([MarshalAs(UnmanagedType.Interface)] out IShellItem ppsi);
         void GetDisplayName(SIGDN sigdnName, out IntPtr ppszName);
         void GetAttributes(uint sfgaoMask, out uint psfgaoAttribs);
