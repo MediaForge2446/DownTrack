@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DownTrack.Core.Models;
+using DownTrack.ViewModels;
 
 namespace DownTrack.Views;
 
