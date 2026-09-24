@@ -34,7 +34,7 @@ public sealed class HomeViewModel : ObservableObject
             {
                 ToolStatus = _toolManager.IsReady
                     ? LocalizationService.Instance.T("Home.EngineReady")
-                    : _toolManager.Status;
+                    : LocalizationService.Instance.T("Home.EngineNeedsSetup");
                 OnPropertyChanged(nameof(ToolButtonText));
                 OnPropertyChanged(nameof(RootSummary));
             }
@@ -68,7 +68,7 @@ public sealed class HomeViewModel : ObservableObject
 
         ToolStatus = _toolManager.IsReady
             ? LocalizationService.Instance.T("Home.EngineReady")
-            : _toolManager.Status;
+            : LocalizationService.Instance.T("Home.EngineNeedsSetup");
         OnPropertyChanged(nameof(ToolReady));
         OnPropertyChanged(nameof(ToolButtonText));
         OnPropertyChanged(nameof(RootSummary));
