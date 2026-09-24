@@ -210,7 +210,7 @@ public sealed class ExplorerViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = ex.Message;
+            StatusMessage = LocalizationService.Instance.T("Errors.ActionFailed", ex.Message);
         }
     }
 
@@ -331,7 +331,16 @@ public sealed class ExplorerViewModel : ObservableObject
     private async Task CancelPendingAsync(PendingChange change)
     {
         await _staging.CancelChangeAsync(_root.Id, change.Id);
-        StatusMessage = LocalizationService.Instance.T("Explorer.Cancelled", change.Description);
+        StatusMessage = LocalizationService.Instance.T(
+            "Explorer.Cancelled",
+            change.ChangeType switch
+            {
+                PendingChangeType.CreateFolder => LocalizationService.Instance.T("Pending.CreateFolder", Path.GetFileName(change.TargetPath) ?? string.Empty),
+                PendingChangeType.Rename => LocalizationService.Instance.T("Pending.Rename", Path.GetFileName(change.SourcePath) ?? string.Empty, Path.GetFileName(change.TargetPath) ?? string.Empty),
+                PendingChangeType.Delete => LocalizationService.Instance.T("Pending.Delete", Path.GetFileName(change.SourcePath) ?? string.Empty),
+                PendingChangeType.Download => LocalizationService.Instance.T("Pending.Download", change.Media?.Title ?? Path.GetFileName(change.TargetPath) ?? string.Empty),
+                _ => LocalizationService.Instance.T("Pending.Generic")
+            });
         Refresh();
     }
 
