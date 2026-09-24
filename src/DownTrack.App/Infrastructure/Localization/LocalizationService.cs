@@ -289,6 +289,7 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
             ["Home.ChooseFolder"] = "Choose folder",
             ["Home.MediaFooter"] = "Media engine ready",
             ["Home.Setup"] = "Setup",
+            ["Home.EngineNeedsSetup"] = "Media engine setup required",
             ["Home.SettingUpEngine"] = "Setting up the media engine…",
 
             ["Explorer.SaveChangesArrow"] = "Save changes  →",
