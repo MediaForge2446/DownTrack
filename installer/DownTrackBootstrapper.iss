@@ -408,6 +408,19 @@ begin
   end;
 end;
 
+function VerifyInstalledFiles: Boolean;
+var
+  AppDir: String;
+begin
+  AppDir := ExpandConstant('{app}');
+  Result :=
+    FileExists(AppDir + '\DownTrack.exe') and
+    FileExists(AppDir + '\Tools\yt-dlp.exe') and
+    FileExists(AppDir + '\Tools\ffmpeg.exe') and
+    FileExists(AppDir + '\Tools\ffprobe.exe') and
+    FileExists(AppDir + '\Tools\deno.exe');
+end;
+
 function InstallLatestPayload: Boolean;
 var
   PayloadPath: String;
@@ -538,19 +551,6 @@ end;
 function IsInstallValid: Boolean;
 begin
   Result := InstallIsValid;
-end;
-
-function VerifyInstalledFiles: Boolean;
-var
-  AppDir: String;
-begin
-  AppDir := ExpandConstant('{app}');
-  Result :=
-    FileExists(AppDir + '\DownTrack.exe') and
-    FileExists(AppDir + '\Tools\yt-dlp.exe') and
-    FileExists(AppDir + '\Tools\ffmpeg.exe') and
-    FileExists(AppDir + '\Tools\ffprobe.exe') and
-    FileExists(AppDir + '\Tools\deno.exe');
 end;
 
 procedure InitializeWizard;
