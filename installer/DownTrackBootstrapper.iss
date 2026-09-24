@@ -4,33 +4,68 @@
 #define ManifestUrl "https://github.com/MediaForge2446/DownTrack/releases/download/nightly/latest.ini"
 
 [Languages]
-Name: "en"; MessagesFile: "compiler:Default.isl"
-Name: "he"; MessagesFile: "compiler:Languages\Hebrew.isl"
-Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
-Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
-Name: "de"; MessagesFile: "compiler:Languages\German.isl"
-Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
-Name: "pt"; MessagesFile: "compiler:Languages\Portuguese.isl"
-Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
-Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
-Name: "cs"; MessagesFile: "compiler:Languages\Czech.isl"
-Name: "tr"; MessagesFile: "compiler:Languages\Turkish.isl"
-Name: "uk"; MessagesFile: "compiler:Languages\Ukrainian.isl"
-Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
-Name: "ar"; MessagesFile: "compiler:Languages\Arabic.isl"
-Name: "el"; MessagesFile: "compiler:Default.isl"
-Name: "ro"; MessagesFile: "compiler:Languages\Romanian.isl"
-Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
-Name: "ko"; MessagesFile: "compiler:Languages\Korean.isl"
-Name: "zhcn"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
-Name: "zhtw"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl"; LanguageName: "English"; LanguageID: $0409
+Name: "he"; MessagesFile: "compiler:Default.isl"; LanguageName: "עברית"; LanguageID: $040D
+Name: "es"; MessagesFile: "compiler:Default.isl"; LanguageName: "Español"; LanguageID: $0C0A
+Name: "fr"; MessagesFile: "compiler:Default.isl"; LanguageName: "Français"; LanguageID: $040C
+Name: "de"; MessagesFile: "compiler:Default.isl"; LanguageName: "Deutsch"; LanguageID: $0407
+Name: "it"; MessagesFile: "compiler:Default.isl"; LanguageName: "Italiano"; LanguageID: $0410
+Name: "pt"; MessagesFile: "compiler:Default.isl"; LanguageName: "Português"; LanguageID: $0416
+Name: "nl"; MessagesFile: "compiler:Default.isl"; LanguageName: "Nederlands"; LanguageID: $0413
+Name: "pl"; MessagesFile: "compiler:Default.isl"; LanguageName: "Polski"; LanguageID: $0415
+Name: "cs"; MessagesFile: "compiler:Default.isl"; LanguageName: "Čeština"; LanguageID: $0405
+Name: "tr"; MessagesFile: "compiler:Default.isl"; LanguageName: "Türkçe"; LanguageID: $041F
+Name: "uk"; MessagesFile: "compiler:Default.isl"; LanguageName: "Українська"; LanguageID: $0422
+Name: "ru"; MessagesFile: "compiler:Default.isl"; LanguageName: "Русский"; LanguageID: $0419
+Name: "ar"; MessagesFile: "compiler:Default.isl"; LanguageName: "العربية"; LanguageID: $0401
+Name: "el"; MessagesFile: "compiler:Default.isl"; LanguageName: "Ελληνικά"; LanguageID: $0408
+Name: "ro"; MessagesFile: "compiler:Default.isl"; LanguageName: "Română"; LanguageID: $0418
+Name: "ja"; MessagesFile: "compiler:Default.isl"; LanguageName: "日本語"; LanguageID: $0411
+Name: "ko"; MessagesFile: "compiler:Default.isl"; LanguageName: "한국어"; LanguageID: $0412
+Name: "zhcn"; MessagesFile: "compiler:Default.isl"; LanguageName: "简体中文"; LanguageID: $0804
+Name: "zhtw"; MessagesFile: "compiler:Default.isl"; LanguageName: "繁體中文"; LanguageID: $0404
+
 [LangOptions]
+he.LanguageName=עברית
+he.LanguageID=$040D
+he.RightToLeft=yes
+ar.LanguageName=العربية
+ar.LanguageID=$0401
+ar.RightToLeft=yes
+es.LanguageName=Español
+es.LanguageID=$0C0A
+fr.LanguageName=Français
+fr.LanguageID=$040C
+de.LanguageName=Deutsch
+de.LanguageID=$0407
+it.LanguageName=Italiano
+it.LanguageID=$0410
+pt.LanguageName=Português
+pt.LanguageID=$0416
+nl.LanguageName=Nederlands
+nl.LanguageID=$0413
+pl.LanguageName=Polski
+pl.LanguageID=$0415
+cs.LanguageName=Čeština
+cs.LanguageID=$0405
+tr.LanguageName=Türkçe
+tr.LanguageID=$041F
+uk.LanguageName=Українська
+uk.LanguageID=$0422
+ru.LanguageName=Русский
+ru.LanguageID=$0419
 el.LanguageName=Ελληνικά
 el.LanguageID=$0408
-el.LanguageCodePage=0
-el.DialogFontName=Segoe UI
-el.DialogFontSize=9
-el.RightToLeft=no
+ro.LanguageName=Română
+ro.LanguageID=$0418
+ja.LanguageName=日本語
+ja.LanguageID=$0411
+ko.LanguageName=한국어
+ko.LanguageID=$0412
+zhcn.LanguageName=简体中文
+zhcn.LanguageID=$0804
+zhtw.LanguageName=繁體中文
+zhtw.LanguageID=$0404
 
 [Setup]
 AppId={{6A9A7C5F-47D7-4F6B-93E6-7BC1A0C6CF16}
