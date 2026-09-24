@@ -66,5 +66,6 @@ public sealed class YtDlpDownloader(ToolLocator locator, IProcessRunner processR
             _ => "bv*[height<=720]+ba/b[height<=720]/b"
         };
 
-    private static string Quote(string value) => $""{value.Replace(""", "\"")}"";
+    private static string Quote(string value) =>
+        "\"" + value.Replace("\"", "\\\"") + "\"";
 }
