@@ -11,6 +11,7 @@
         <local:BooleanModeConverter x:Key="BooleanModeConverter"/>
         <local:EntryStateBrushConverter x:Key="EntryStateBrushConverter"/>
         <local:PendingStatusBrushConverter x:Key="PendingStatusBrushConverter"/>
+        <local:PendingDescriptionConverter x:Key="PendingDescriptionConverter"/>
 
         <!-- DownTrack design system: playful tech, premium depth, restrained color. -->
         <SolidColorBrush x:Key="WindowBrush" Color="#F6F7FB"/>
