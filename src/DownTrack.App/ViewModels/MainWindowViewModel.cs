@@ -27,6 +27,7 @@ public sealed class MainWindowViewModel : ObservableObject
         _commitService = commitService;
         _textPrompt = textPrompt;
         _mediaDialog = mediaDialog;
+        ToolManager = toolManager;
 
         Home = new HomeViewModel(staging, folderPicker, toolManager, textPrompt);
         Home.OpenRootRequested += OpenRoot;
@@ -75,6 +76,7 @@ public sealed class MainWindowViewModel : ObservableObject
     }
 
     public HomeViewModel Home { get; }
+    public IAppToolManager ToolManager { get; }
 
     public object CurrentViewModel
     {
