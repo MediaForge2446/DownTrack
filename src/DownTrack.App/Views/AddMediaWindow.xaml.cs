@@ -25,16 +25,21 @@ public partial class AddMediaWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        Owner ??= System.Windows.Application.Current.MainWindow;
+        if (Owner is null)
+            Owner = System.Windows.Application.Current.MainWindow;
 
         if (Owner is null)
             return;
 
-        var availableWidth = Math.Max(MinWidth, Owner.ActualWidth - 72);
-        var availableHeight = Math.Max(MinHeight, Owner.ActualHeight - 96);
+        var availableWidth = Math.Max(MinWidth, Owner.ActualWidth - 80);
+        var availableHeight = Math.Max(MinHeight, Owner.ActualHeight - 120);
 
-        Width = Math.Min(1250, availableWidth);
-        Height = Math.Min(820, availableHeight);
+        Width = Math.Min(1120, availableWidth);
+        Height = Math.Min(780, availableHeight);
+        WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+        UrlBox.Focus();
+        UrlBox.SelectAll();
     }
 
     private void OnAccepted(IReadOnlyList<MediaDownloadSpec> specs)

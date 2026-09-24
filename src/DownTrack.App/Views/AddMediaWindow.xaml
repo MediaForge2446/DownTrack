@@ -3,8 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         WindowStartupLocation="CenterOwner"
-        Width="1120" Height="730"
-        MinWidth="640" MinHeight="480"
+        ShowInTaskbar="False"
+        Width="1040"
+        Height="720"
+        MinWidth="620"
+        MinHeight="500"
         ResizeMode="CanResize"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -12,8 +15,10 @@
         UseLayoutRounding="True"
         SnapsToDevicePixels="True">
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="0" ResizeBorderThickness="6"
-                            CornerRadius="18" GlassFrameThickness="0"
+        <shell:WindowChrome CaptionHeight="0"
+                            ResizeBorderThickness="6"
+                            CornerRadius="18"
+                            GlassFrameThickness="0"
                             UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
@@ -21,230 +26,301 @@
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
             CornerRadius="18">
-        <Viewbox Stretch="Uniform"
-                 StretchDirection="Both"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center">
-            <Grid Width="1068" Height="678" Margin="26">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <Grid Margin="26">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                <Grid MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Border Width="8" Height="34" CornerRadius="4"
-                                    Background="{StaticResource TealBrush}"/>
-                            <StackPanel Margin="12,0,0,0">
-                                <TextBlock Text="Add Media" FontSize="29" FontWeight="SemiBold"/>
-                                <TextBlock Text="Bring one video or an entire playlist into the current folder."
-                                           Margin="0,5,0,0"
-                                           Foreground="{StaticResource MutedTextBrush}"
-                                           FontSize="13"/>
-                            </StackPanel>
+            <Grid Grid.Row="0"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="7"
+                                Height="42"
+                                CornerRadius="4"
+                                Background="{StaticResource AccentGradientBrush}"/>
+                        <StackPanel Margin="13,0,0,0">
+                            <TextBlock Text="Add Media"
+                                       FontSize="30"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="Analyze links, choose per-item options, then stage everything for this folder."
+                                       Margin="0,5,0,0"
+                                       FontSize="12"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       TextWrapping="Wrap"/>
                         </StackPanel>
                     </StackPanel>
+                </StackPanel>
 
-                    <Button Content="&#xE8BB;"
-                            FontFamily="Segoe Fluent Icons"
-                            Style="{StaticResource IconButton}"
-                            HorizontalAlignment="Right"
-                            ToolTip="Close"
-                            Click="Close_Click"/>
-                </Grid>
-
-                <Border Grid.Row="1" Margin="0,22,0,14" Padding="13"
-                        Background="{StaticResource SurfaceBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="13">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
-                                 MinHeight="44"
-                                 VerticalContentAlignment="Center"
-                                 ToolTip="YouTube video or playlist URL"/>
-                        <Button Grid.Column="1"
-                                Content="Analyze"
-                                Style="{StaticResource PrimaryButton}"
-                                Command="{Binding AnalyzeCommand}"
-                                Margin="10,0,0,0"
-                                MinWidth="112"/>
-                    </Grid>
-                </Border>
-
-                <Border Grid.Row="2" Margin="0,0,0,8"
-                        Background="{StaticResource AccentSoftGradientBrush}"
-                        BorderBrush="#3A3266"
-                        BorderThickness="1"
-                        CornerRadius="11"
-                        Padding="10,8">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="34"/>
-                            <ColumnDefinition Width="62"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="124"/>
-                            <ColumnDefinition Width="112"/>
-                            <ColumnDefinition Width="118"/>
-                            <ColumnDefinition Width="82"/>
-                        </Grid.ColumnDefinitions>
-                        <CheckBox Grid.Column="0"
-                                  VerticalAlignment="Center"
-                                  IsEnabled="False"/>
-                        <TextBlock Grid.Column="2" Text="Title / filename"
-                                   Foreground="{StaticResource MutedTextBrush}" FontSize="11"/>
-                        <TextBlock Grid.Column="3" Text="Format"
-                                   Foreground="{StaticResource MutedTextBrush}" FontSize="11"/>
-                        <TextBlock Grid.Column="4" Text="Audio"
-                                   Foreground="{StaticResource MutedTextBrush}" FontSize="11"/>
-                        <TextBlock Grid.Column="5" Text="Video"
-                                   Foreground="{StaticResource MutedTextBrush}" FontSize="11"/>
-                        <TextBlock Grid.Column="6" Text="Mode"
-                                   Foreground="{StaticResource MutedTextBrush}" FontSize="11"/>
-                    </Grid>
-                </Border>
-
-                <ScrollViewer Grid.Row="3"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
-                    <ItemsControl ItemsSource="{Binding Items}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="{StaticResource SurfaceBrush}"
-                                        BorderBrush="{StaticResource BorderBrush}"
-                                        BorderThickness="1"
-                                        CornerRadius="13"
-                                        Padding="10"
-                                        Margin="0,0,0,8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="34"/>
-                                            <ColumnDefinition Width="62"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="124"/>
-                                            <ColumnDefinition Width="112"/>
-                                            <ColumnDefinition Width="118"/>
-                                            <ColumnDefinition Width="82"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <CheckBox IsChecked="{Binding Selected}"
-                                                  VerticalAlignment="Center"/>
-
-                                        <Border Grid.Column="1"
-                                                Width="50" Height="50"
-                                                CornerRadius="9"
-                                                Background="{StaticResource SurfaceElevatedBrush}"
-                                                ClipToBounds="True"
-                                                VerticalAlignment="Center">
-                                            <Image Source="{Binding ThumbnailUrl}"
-                                                   Stretch="UniformToFill"/>
-                                        </Border>
-
-                                        <StackPanel Grid.Column="2"
-                                                    Margin="11,0,14,0">
-                                            <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                                                     BorderThickness="0"
-                                                     Background="Transparent"
-                                                     Padding="0"
-                                                     FontSize="14"/>
-                                            <TextBlock Text="{Binding SourceUrl}"
-                                                       Margin="0,4,0,0"
-                                                       Foreground="{StaticResource MutedTextBrush}"
-                                                       FontSize="10"
-                                                       TextTrimming="CharacterEllipsis"/>
-                                        </StackPanel>
-
-                                        <ComboBox Grid.Column="3"
-                                                  ItemsSource="{Binding Formats}"
-                                                  SelectedItem="{Binding Format}"
-                                                  Margin="0,0,8,0">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-
-                                        <ComboBox Grid.Column="4"
-                                                  ItemsSource="{Binding AudioQualities}"
-                                                  SelectedItem="{Binding AudioQuality}"
-                                                  Margin="0,0,8,0">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-
-                                        <ComboBox Grid.Column="5"
-                                                  ItemsSource="{Binding VideoQualities}"
-                                                  SelectedItem="{Binding VideoQuality}"
-                                                  Margin="0,0,8,0">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-
-                                        <TextBlock Grid.Column="6"
-                                                   Text="{Binding IsVideo, Converter={StaticResource BooleanModeConverter}}"
-                                                   Foreground="{StaticResource MutedTextBrush}"
-                                                   HorizontalAlignment="Right"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-
-                <Border Grid.Row="4"
-                        Margin="0,16,0,0"
-                        Padding="14,11"
-                        Background="{StaticResource SurfaceBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="13">
-                    <Grid>
-                        <StackPanel>
-                            <TextBlock Text="DESTINATION"
-                                       FontSize="10"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource TealBrush}"/>
-                            <TextBlock Text="{Binding CurrentFolder}"
-                                       Margin="0,3,0,0"
-                                       FontSize="12"
-                                       TextTrimming="CharacterEllipsis"/>
-                            <TextBlock Text="{Binding Status}"
-                                       Margin="0,4,0,0"
-                                       Foreground="{StaticResource MutedTextBrush}"
-                                       FontSize="11"
-                                       TextTrimming="CharacterEllipsis"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center">
-                            <Button Content="Cancel"
-                                    Style="{StaticResource GhostButton}"
-                                    Click="Close_Click"/>
-                            <Button Content="Add to pending changes  →"
-                                    Style="{StaticResource PrimaryButton}"
-                                    Margin="9,0,0,0"
-                                    MinWidth="205"
-                                    Click="Add_Click"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
+                <Button Content="&#xE8BB;"
+                        FontFamily="Segoe Fluent Icons"
+                        Style="{StaticResource IconButton}"
+                        HorizontalAlignment="Right"
+                        Click="Close_Click"
+                        ToolTip="Close"/>
             </Grid>
-        </Viewbox>
+
+            <Border Grid.Row="1"
+                    Margin="0,22,0,12"
+                    Padding="14"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="UrlBox"
+                             Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
+                             MinHeight="44"
+                             VerticalContentAlignment="Center"
+                             FontSize="14"/>
+
+                    <Button Grid.Column="1"
+                            Margin="10,0,0,0"
+                            Style="{StaticResource PrimaryButton}"
+                            Command="{Binding AnalyzeCommand}"
+                            MinWidth="118"
+                            Content="Analyze"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="2"
+                  Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource GhostButton}"
+                            Command="{Binding SelectAllCommand}"
+                            Content="Select all"/>
+                    <Button Style="{StaticResource GhostButton}"
+                            Command="{Binding ApplyMp3Command}"
+                            Content="MP3 to all"
+                            Margin="8,0,0,0"/>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Status}"
+                               Foreground="{StaticResource MutedTextBrush}"
+                               FontSize="11"
+                               TextTrimming="CharacterEllipsis"
+                               MaxWidth="500"
+                               TextAlignment="Right"/>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="3"
+                    Padding="12"
+                    Background="#0C0F17"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="15">
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding Items}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,10"
+                                            Padding="12"
+                                            Background="{StaticResource SurfaceBrush}"
+                                            BorderBrush="{StaticResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="13">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <CheckBox IsChecked="{Binding Selected}"
+                                                          VerticalAlignment="Center"
+                                                          Margin="2,0,12,0"/>
+
+                                                <Border Grid.Column="1"
+                                                        Width="72"
+                                                        Height="72"
+                                                        CornerRadius="11"
+                                                        Background="{StaticResource SurfaceElevatedBrush}"
+                                                        ClipToBounds="True">
+                                                    <Image Source="{Binding ThumbnailUrl}"
+                                                           Stretch="UniformToFill"/>
+                                                </Border>
+
+                                                <Grid Grid.Column="1"
+                                                      Margin="86,0,0,0">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                                             BorderThickness="0"
+                                                             Background="Transparent"
+                                                             Padding="0"
+                                                             FontSize="15"
+                                                             FontWeight="SemiBold"/>
+                                                    <TextBlock Grid.Row="1"
+                                                               Text="{Binding SourceUrl}"
+                                                               Margin="0,5,0,0"
+                                                               FontSize="10"
+                                                               Foreground="{StaticResource MutedTextBrush}"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </Grid>
+                                            </Grid>
+
+                                            <Grid Grid.Row="1"
+                                                  Margin="86,12,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1.2*"/>
+                                                    <ColumnDefinition Width="1*"/>
+                                                    <ColumnDefinition Width="1*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel>
+                                                    <TextBlock Text="FORMAT"
+                                                               FontSize="9"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                    <ComboBox ItemsSource="{Binding Formats}"
+                                                              SelectedItem="{Binding Format}"
+                                                              Margin="0,4,8,0">
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                    </ComboBox>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="AUDIO"
+                                                               FontSize="9"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                    <ComboBox ItemsSource="{Binding AudioQualities}"
+                                                              SelectedItem="{Binding AudioQuality}"
+                                                              Margin="0,4,8,0">
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                    </ComboBox>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="2">
+                                                    <TextBlock Text="VIDEO"
+                                                               FontSize="9"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                    <ComboBox ItemsSource="{Binding VideoQualities}"
+                                                              SelectedItem="{Binding VideoQuality}"
+                                                              Margin="0,4,8,0">
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                    </ComboBox>
+                                                </StackPanel>
+
+                                                <Border Grid.Column="3"
+                                                        Margin="8,15,0,0"
+                                                        Padding="10,7"
+                                                        CornerRadius="8"
+                                                        Background="{StaticResource AccentSoftBrush}">
+                                                    <TextBlock Text="{Binding IsVideo, Converter={StaticResource BooleanModeConverter}}"
+                                                               Foreground="{StaticResource CyanBrush}"
+                                                               FontSize="10"
+                                                               FontWeight="SemiBold"/>
+                                                </Border>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                IsHitTestVisible="False">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Items.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text=""
+                                   FontFamily="Segoe Fluent Icons"
+                                   FontSize="38"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Nothing analyzed yet"
+                                   Margin="0,12,0,0"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextBrush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Paste a YouTube link above and press Analyze."
+                                   Margin="0,5,0,0"
+                                   FontSize="11"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="4"
+                    Margin="0,14,0,0"
+                    Padding="14"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14">
+                <Grid>
+                    <StackPanel MaxWidth="560">
+                        <TextBlock Text="DESTINATION"
+                                   FontSize="9"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TealBrush}"/>
+                        <TextBlock Text="{Binding CurrentFolder}"
+                                   Margin="0,3,0,0"
+                                   FontSize="12"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+                        <Button Content="Cancel"
+                                Style="{StaticResource GhostButton}"
+                                Click="Close_Click"/>
+                        <Button Content="Stage selected"
+                                Style="{StaticResource PrimaryButton}"
+                                Margin="8,0,0,0"
+                                MinWidth="138"
+                                Click="Add_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
     </Border>
 </Window>
