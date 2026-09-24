@@ -6,6 +6,7 @@ using DownTrack.Infrastructure.Downloads;
 using DownTrack.Infrastructure.Storage;
 using DownTrack.Infrastructure.Tools;
 using DownTrack.Infrastructure.Windows;
+using DownTrack.Infrastructure.Localization;
 using DownTrack.Views;
 
 namespace DownTrack;
@@ -18,6 +19,7 @@ public partial class App : System.Windows.Application
 
         ShutdownMode = ShutdownMode.OnMainWindowClose;
         DispatcherUnhandledException += OnDispatcherUnhandledException;
+        LocalizationService.Instance.Initialize();
 
         try
         {
