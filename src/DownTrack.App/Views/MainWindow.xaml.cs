@@ -109,9 +109,11 @@ public partial class MainWindow : Window
         if (_workAreaMaximized)
             return;
 
-        _restoreBounds = new Rect(Left, Top, Width, Height);
+        var left = double.IsNaN(Left) ? 90 : Left;
+        var top = double.IsNaN(Top) ? 70 : Top;
+        var width = Width > 0 ? Width : 1200;
+        var height = Height > 0 ? Height : 760;
 
-        if (_restoreBounds.Width <= 0 || _restoreBounds.Height <= 0)
-            _restoreBounds = new Rect(90, 70, 1200, 760);
+        _restoreBounds = new Rect(left, top, width, height);
     }
 }
