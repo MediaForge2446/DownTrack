@@ -11,6 +11,7 @@ namespace DownTrack.ViewModels;
 public sealed class SettingsViewModel : ObservableObject
 {
     public sealed record ThemeOption(AppThemeMode Mode, string DisplayName);
+    public sealed record LanguageOption(string Code, string DisplayName);
 
     private readonly SettingsService _settings = SettingsService.Instance;
     private readonly IAppToolManager _toolManager;
@@ -38,8 +39,8 @@ public sealed class SettingsViewModel : ObservableObject
         _defaultAudioQuality = s.DefaultAudioQuality;
         _defaultVideoQuality = s.DefaultVideoQuality;
 
-        Languages = new ObservableCollection<SupportedLanguage>(
-            LocalizationService.SupportedLanguages);
+        Languages = new ObservableCollection<LanguageOption>(
+            LocalizationService.SupportedLanguages.Select(ToLanguageOption));
 
         Formats = new ObservableCollection<MediaFormat>(Enum.GetValues<MediaFormat>());
         AudioQualities = new ObservableCollection<AudioQuality>(Enum.GetValues<AudioQuality>());
@@ -57,7 +58,7 @@ public sealed class SettingsViewModel : ObservableObject
         LocalizationService.Instance.PropertyChanged += Localization_PropertyChanged;
     }
 
-    public ObservableCollection<SupportedLanguage> Languages { get; }
+    public ObservableCollection<LanguageOption> Languages { get; }
     public ObservableCollection<MediaFormat> Formats { get; }
     public ObservableCollection<AudioQuality> AudioQualities { get; }
     public ObservableCollection<VideoQuality> VideoQualities { get; }
@@ -231,8 +232,22 @@ public sealed class SettingsViewModel : ObservableObject
         if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
         {
             RebuildThemeOptions();
+
+            Languages.Clear();
+            foreach (var language in LocalizationService.SupportedLanguages)
+                Languages.Add(ToLanguageOption(language));
+
             OnPropertyChanged(nameof(UpdateStatus));
         }
+    }
+
+    private LanguageOption ToLanguageOption(SupportedLanguage language)
+    {
+        return new LanguageOption(
+            language.Code,
+            language.Code == "auto"
+                ? LocalizationService.Instance.T("Settings.Automatic")
+                : language.NativeName);
     }
 
     private void RebuildThemeOptions()
