@@ -23,6 +23,14 @@ public partial class App : System.Windows.Application
 
         try
         {
+            await DownTrack.Infrastructure.Settings.SettingsService.Instance.InitializeAsync();
+            LocalizationService.Instance.SetLanguage(
+                DownTrack.Infrastructure.Settings.SettingsService.Instance.Current.LanguageCode);
+            DownTrack.Infrastructure.Settings.ThemeService.Instance.Apply(
+                DownTrack.Infrastructure.Settings.SettingsService.Instance.Current.Theme);
+
+            try
+        {
             var stateStore = new JsonAppStateStore(AppPaths.StateFile);
             var processRunner = new ProcessRunner();
             var locator = new ToolLocator();
@@ -52,6 +60,7 @@ public partial class App : System.Windows.Application
 
             MainWindow = window;
             window.Show();
+            }
         }
         catch (Exception ex)
         {
