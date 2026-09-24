@@ -118,5 +118,8 @@ public sealed class YtDlpDownloader(
             _ => "bv*[height<=720]+ba/b[height<=720]/b"
         };
 
-    private static string Quote(string value) =>\n        char.ToString(char.Parse("\"")) + value.Replace(char.Parse("\""), "\"\\\"") + char.ToString(char.Parse("\""));
+    private static string Quote(string value)
+    {
+        return "\"" + value.Replace("\"", "\\\"") + "\"";
+    }
 }
