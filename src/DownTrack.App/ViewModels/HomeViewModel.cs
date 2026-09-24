@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using DownTrack.Application.Commands;
 using DownTrack.Application.Services;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.ViewModels;
 
@@ -41,7 +42,11 @@ public sealed class HomeViewModel : ObservableObject
     }
 
     public bool ToolReady => _toolManager.IsReady;
-    public string ToolButtonText => ToolReady ? "Media engine ready" : "Install media engine";
+    public string ToolButtonText => ToolReady
+        ? LocalizationService.Instance.T("Home.EngineReady")
+        : LocalizationService.Instance.T("Home.Setup");
+    public string RootSummary =>
+        LocalizationService.Instance.T("Home.LibrarySubtitle", Roots.Count);
 
     public void Refresh()
     {
@@ -52,6 +57,7 @@ public sealed class HomeViewModel : ObservableObject
         ToolStatus = _toolManager.Status;
         OnPropertyChanged(nameof(ToolReady));
         OnPropertyChanged(nameof(ToolButtonText));
+        OnPropertyChanged(nameof(RootSummary));
         SetupMediaEngineCommand.RaiseCanExecuteChanged();
     }
 
@@ -77,7 +83,7 @@ public sealed class HomeViewModel : ObservableObject
     private async Task SetupMediaEngineAsync()
     {
         _toolBusy = true;
-        ToolStatus = "Setting up the media engine…";
+        ToolStatus = LocalizationService.Instance.T("Home.SettingUpEngine");
         SetupMediaEngineCommand.RaiseCanExecuteChanged();
 
         try
