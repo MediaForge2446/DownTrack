@@ -10,17 +10,18 @@ public sealed class WpfMediaDialogService(IMediaResolver resolver) : IMediaDialo
     public IReadOnlyList<MediaDownloadSpec> Show(string currentFolder)
     {
         var owner = System.Windows.Application.Current.MainWindow;
-        var dialog = new AddMediaWindow(resolver, currentFolder)
-        {
-            Owner = owner,
-            WindowStartupLocation = owner is null
-                ? WindowStartupLocation.CenterScreen
-                : WindowStartupLocation.CenterOwner,
-            ShowInTaskbar = false
-        };
 
         try
         {
+            var dialog = new AddMediaWindow(resolver, currentFolder)
+            {
+                Owner = owner,
+                WindowStartupLocation = owner is null
+                    ? WindowStartupLocation.CenterScreen
+                    : WindowStartupLocation.CenterOwner,
+                ShowInTaskbar = false
+            };
+
             return dialog.ShowDialog() == true
                 ? dialog.SelectedSpecs
                 : [];
