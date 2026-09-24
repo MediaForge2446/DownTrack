@@ -163,7 +163,7 @@
                                         </StackPanel>
 
                                         <ComboBox Grid.Column="3"
-                                                  ItemsSource="{Binding Source={x:Static local:MediaOptions.Formats}}"
+                                                  ItemsSource="{Binding Formats}"
                                                   SelectedItem="{Binding Format}"
                                                   Margin="0,0,8,0">
                                             <ComboBox.ItemTemplate>
@@ -174,7 +174,7 @@
                                         </ComboBox>
 
                                         <ComboBox Grid.Column="4"
-                                                  ItemsSource="{Binding Source={x:Static local:MediaOptions.AudioQualities}}"
+                                                  ItemsSource="{Binding AudioQualities}"
                                                   SelectedItem="{Binding AudioQuality}"
                                                   Margin="0,0,8,0}">
                                             <ComboBox.ItemTemplate>
@@ -185,7 +185,7 @@
                                         </ComboBox>
 
                                         <ComboBox Grid.Column="5"
-                                                  ItemsSource="{Binding Source={x:Static local:MediaOptions.VideoQualities}}"
+                                                  ItemsSource="{Binding VideoQualities}"
                                                   SelectedItem="{Binding VideoQuality}"
                                                   Margin="0,0,8,0}">
                                             <ComboBox.ItemTemplate>
