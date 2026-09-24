@@ -38,6 +38,9 @@ public partial class MainWindow : Window
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        if (e.OriginalSource is System.Windows.Controls.Button)
+            return;
+
         if (e.ClickCount == 2)
         {
             ToggleMaximize();
