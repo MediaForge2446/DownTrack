@@ -13,6 +13,7 @@ public sealed class PendingChange
     public bool IsDirectory { get; set; }
     public MediaDownloadSpec? Media { get; set; }
     public string? ErrorMessage { get; set; }
+    public int ProgressPercent { get; set; }
 
     public string Description =>
         ChangeType switch
