@@ -414,7 +414,7 @@
                             Background="{StaticResource SurfaceSoftBrush}"
                             BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1">
-                        <TextBlock Text="{Binding PendingChanges.Count, StringFormat={}{0} queued}"
+                        <TextBlock Text="{Binding PendingCountText}"
                                    FontSize="10"
                                    Foreground="{StaticResource MutedTextBrush}"/>
                     </Border>
