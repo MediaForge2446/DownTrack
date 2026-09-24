@@ -4,11 +4,11 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
-        Width="900"
-        Height="620"
-        MinWidth="520"
-        MinHeight="460"
-        ResizeMode="NoResize"
+        Width="920"
+        Height="650"
+        MinWidth="600"
+        MinHeight="500"
+        ResizeMode="CanResize"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -16,16 +16,16 @@
         SnapsToDevicePixels="True">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="0"
-                            ResizeBorderThickness="0"
-                            CornerRadius="18"
+                            ResizeBorderThickness="5"
+                            CornerRadius="20"
                             GlassFrameThickness="0"
                             UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
     <Border Background="{StaticResource WindowBrush}"
-            BorderBrush="{StaticResource BorderBrush}"
+            BorderBrush="{StaticResource BorderStrongBrush}"
             BorderThickness="1"
-            CornerRadius="18"
+            CornerRadius="20"
             Padding="24">
         <Grid>
             <Grid.RowDefinitions>
@@ -36,23 +36,23 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <!-- Header -->
             <Grid Grid.Row="0"
                   MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Border Width="6"
-                                Height="38"
+                                Height="42"
                                 CornerRadius="3"
-                                Background="{StaticResource AccentGradientBrush}"/>
-                        <StackPanel Margin="12,0,0,0">
-                            <TextBlock Text="Add Media"
-                                       FontSize="27"
+                                Background="{StaticResource AuroraGradientBrush}"/>
+                        <StackPanel Margin="13,0,0,0">
+                            <TextBlock Text="Add media"
+                                       FontSize="28"
                                        FontWeight="SemiBold"/>
-                            <TextBlock Text="Paste a YouTube link, choose the output for each item, and stage it for this folder."
+                            <TextBlock Text="Analyze first. Review every item. Stage only what you want."
                                        Margin="0,4,0,0"
                                        FontSize="12"
-                                       Foreground="{StaticResource MutedTextBrush}"
-                                       TextWrapping="Wrap"/>
+                                       Foreground="{StaticResource MutedTextBrush}"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -60,20 +60,21 @@
                 <Button Content="×"
                         Style="{StaticResource IconButton}"
                         FontFamily="Segoe UI Symbol"
-                        FontSize="18"
+                        FontSize="19"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Click="Close_Click"
                         ToolTip="Close"/>
             </Grid>
 
+            <!-- Link input -->
             <Border Grid.Row="1"
-                    Margin="0,20,0,12"
-                    Padding="10"
+                    Margin="0,20,0,13"
+                    Padding="9"
                     Background="{StaticResource SurfaceBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="13">
+                    CornerRadius="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -82,24 +83,31 @@
 
                     <TextBox x:Name="UrlBox"
                              Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
-                             MinHeight="42"
-                             Padding="12,9"
+                             MinHeight="44"
+                             FontSize="13"
                              VerticalContentAlignment="Center"
-                             FontSize="13"/>
+                             ToolTip="YouTube video or playlist URL"/>
 
                     <Button Grid.Column="1"
                             Margin="9,0,0,0"
                             Style="{StaticResource PrimaryButton}"
                             Command="{Binding AnalyzeCommand}"
-                            MinWidth="108"
-                            Content="Analyze"/>
+                            MinWidth="112">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Analyze"
+                                       Margin="0,0,6,0"/>
+                            <TextBlock Text="→"
+                                       FontSize="14"/>
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </Border>
 
+            <!-- Quick actions / status -->
             <Grid Grid.Row="2"
-                  Margin="0,0,0,10">
+                  Margin="0,0,0,12">
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource GhostButton}"
+                    <Button Style="{StaticResource SecondaryButton}"
                             Command="{Binding SelectAllCommand}"
                             Content="Select all"
                             MinWidth="92"/>
@@ -107,60 +115,67 @@
                             Command="{Binding ApplyMp3Command}"
                             Content="MP3 to all"
                             Margin="8,0,0,0"
-                            MinWidth="92"/>
+                            MinWidth="96"/>
                 </StackPanel>
 
-                <StackPanel HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                    <Ellipse Width="7"
-                             Height="7"
-                             Fill="{StaticResource TealBrush}"
-                             VerticalAlignment="Center">
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsResolving}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
-                    <TextBlock Text="{Binding Status}"
-                               Margin="7,0,0,0"
-                               Foreground="{StaticResource MutedTextBrush}"
-                               FontSize="11"
-                               TextTrimming="CharacterEllipsis"
-                               MaxWidth="470"/>
-                </StackPanel>
+                <Border HorizontalAlignment="Right"
+                        Padding="10,6"
+                        CornerRadius="10"
+                        Background="{StaticResource SurfaceSoftBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="7"
+                                 Height="7"
+                                 Fill="{StaticResource SuccessBrush}"
+                                 VerticalAlignment="Center">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsResolving}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+                        <TextBlock Text="{Binding Status}"
+                                   Margin="7,0,0,0"
+                                   FontSize="10"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxWidth="470"/>
+                    </StackPanel>
+                </Border>
             </Grid>
 
+            <!-- Results -->
             <Border Grid.Row="3"
                     Padding="10"
-                    Background="#0C0F17"
+                    Background="{StaticResource SurfaceSoftBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="15">
+                    CornerRadius="16">
                 <Grid>
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
                         <ItemsControl ItemsSource="{Binding Items}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,0,0,9"
-                                            Padding="12"
+                                    <Border Margin="0,0,0,10"
+                                            Padding="13"
                                             Background="{StaticResource SurfaceBrush}"
                                             BorderBrush="{StaticResource BorderBrush}"
                                             BorderThickness="1"
-                                            CornerRadius="13">
+                                            CornerRadius="14">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
 
+                                            <!-- Media identity -->
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
@@ -170,21 +185,21 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <CheckBox IsChecked="{Binding Selected}"
-                                                          Margin="0,0,12,0"
-                                                          VerticalAlignment="Center"/>
+                                                          Margin="1,0,12,0"/>
 
                                                 <Border Grid.Column="1"
                                                         Width="66"
                                                         Height="66"
-                                                        CornerRadius="10"
-                                                        Background="{StaticResource SurfaceElevatedBrush}"
+                                                        CornerRadius="11"
+                                                        Background="{StaticResource SurfaceRaisedBrush}"
                                                         ClipToBounds="True">
                                                     <Image Source="{Binding ThumbnailUrl}"
                                                            Stretch="UniformToFill"/>
                                                 </Border>
 
                                                 <StackPanel Grid.Column="2"
-                                                            Margin="12,0,12,0">
+                                                            Margin="13,0,14,0"
+                                                            VerticalAlignment="Center">
                                                     <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                                              BorderThickness="0"
                                                              Background="Transparent"
@@ -192,26 +207,27 @@
                                                              FontSize="14"
                                                              FontWeight="SemiBold"/>
                                                     <TextBlock Text="{Binding SourceUrl}"
-                                                               Margin="0,4,0,0"
-                                                               FontSize="10"
+                                                               Margin="0,5,0,0"
+                                                               FontSize="9"
                                                                Foreground="{StaticResource MutedTextBrush}"
                                                                TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
 
                                                 <Border Grid.Column="3"
-                                                        Margin="4,0,0,0"
-                                                        Padding="9,6"
-                                                        CornerRadius="8"
+                                                        VerticalAlignment="Center"
+                                                        Padding="10,6"
+                                                        CornerRadius="9"
                                                         Background="{StaticResource AccentSoftBrush}">
                                                     <TextBlock Text="{Binding IsVideo, Converter={StaticResource BooleanModeConverter}}"
-                                                               Foreground="{StaticResource CyanBrush}"
                                                                FontSize="10"
-                                                               FontWeight="SemiBold"/>
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{StaticResource AccentBlueBrush}"/>
                                                 </Border>
                                             </Grid>
 
+                                            <!-- Per-item controls -->
                                             <Grid Grid.Row="1"
-                                                  Margin="90,11,0,0">
+                                                  Margin="91,12,0,0">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="1.1*"/>
                                                     <ColumnDefinition Width="1*"/>
@@ -236,7 +252,7 @@
 
                                                 <StackPanel Grid.Column="1"
                                                             Margin="4,0,4,0">
-                                                    <TextBlock Text="AUDIO"
+                                                    <TextBlock Text="AUDIO QUALITY"
                                                                FontSize="9"
                                                                FontWeight="Bold"
                                                                Foreground="{StaticResource MutedTextBrush}"/>
@@ -253,7 +269,7 @@
 
                                                 <StackPanel Grid.Column="2"
                                                             Margin="7,0,0,0">
-                                                    <TextBlock Text="VIDEO"
+                                                    <TextBlock Text="VIDEO QUALITY"
                                                                FontSize="9"
                                                                FontWeight="Bold"
                                                                Foreground="{StaticResource MutedTextBrush}"/>
@@ -276,6 +292,7 @@
                         </ItemsControl>
                     </ScrollViewer>
 
+                    <!-- Empty -->
                     <StackPanel HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 IsHitTestVisible="False">
@@ -289,30 +306,38 @@
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <TextBlock Text=""
-                                   FontFamily="Segoe Fluent Icons"
-                                   FontSize="34"
-                                   Foreground="{StaticResource AccentBrush}"
-                                   HorizontalAlignment="Center"/>
-                        <TextBlock Text="No media loaded"
-                                   Margin="0,10,0,0"
-                                   FontSize="14"
+
+                        <Border Width="62"
+                                Height="62"
+                                CornerRadius="18"
+                                Background="{StaticResource SoftGradientBrush}"
+                                HorizontalAlignment="Center">
+                            <TextBlock Text="＋"
+                                       FontSize="30"
+                                       Foreground="{StaticResource AccentBlueBrush}"
+                                       HorizontalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Paste a YouTube link"
+                                   Margin="0,13,0,0"
+                                   FontSize="15"
                                    FontWeight="SemiBold"
                                    HorizontalAlignment="Center"/>
-                        <TextBlock Text="Paste a YouTube link above and select Analyze."
-                                   Margin="0,4,0,0"
-                                   FontSize="11"
+                        <TextBlock Text="The selected items will become pending changes. Nothing is downloaded here."
+                                   Margin="0,5,0,0"
+                                   FontSize="10"
                                    Foreground="{StaticResource MutedTextBrush}"
-                                   HorizontalAlignment="Center"/>
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
 
+                    <!-- Analyze loading -->
                     <Border HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Padding="18,14"
-                            Background="{StaticResource SurfaceElevatedBrush}"
-                            BorderBrush="{StaticResource BorderBrush}"
+                            Padding="20,15"
+                            Background="{StaticResource SurfaceRaisedBrush}"
+                            BorderBrush="{StaticResource BorderStrongBrush}"
                             BorderThickness="1"
-                            CornerRadius="12">
+                            CornerRadius="13">
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -323,36 +348,42 @@
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
-                        <StackPanel>
-                            <TextBlock Text="Analyzing link…"
+                        <StackPanel Width="190">
+                            <TextBlock Text="Preparing media…"
                                        FontSize="13"
                                        FontWeight="SemiBold"
                                        HorizontalAlignment="Center"/>
-                            <ProgressBar Width="180"
-                                         Height="4"
-                                         Margin="0,9,0,0"
+                            <TextBlock Text="Checking the media engine and analyzing the link."
+                                       Margin="0,5,0,0"
+                                       FontSize="10"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"/>
+                            <ProgressBar Margin="0,11,0,0"
+                                         Height="5"
                                          IsIndeterminate="True"/>
                         </StackPanel>
                     </Border>
                 </Grid>
             </Border>
 
+            <!-- Footer -->
             <Border Grid.Row="4"
                     Margin="0,13,0,0"
                     Padding="13"
                     Background="{StaticResource SurfaceBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="13">
+                    CornerRadius="14">
                 <Grid>
-                    <StackPanel MaxWidth="500">
+                    <StackPanel MaxWidth="510">
                         <TextBlock Text="DESTINATION"
                                    FontSize="9"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource TealBrush}"/>
+                                   Foreground="{StaticResource CyanBrush}"/>
                         <TextBlock Text="{Binding CurrentFolder}"
-                                   Margin="0,3,0,0"
-                                   FontSize="12"
+                                   Margin="0,4,0,0"
+                                   FontSize="11"
                                    TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
 
@@ -366,7 +397,7 @@
                         <Button Content="Stage selected"
                                 Style="{StaticResource PrimaryButton}"
                                 Margin="8,0,0,0"
-                                MinWidth="130"
+                                MinWidth="132"
                                 Click="Add_Click"/>
                     </StackPanel>
                 </Grid>

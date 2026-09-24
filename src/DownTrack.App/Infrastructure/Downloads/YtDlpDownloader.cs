@@ -14,29 +14,63 @@ public sealed class YtDlpDownloader(
         string targetPath,
         CancellationToken cancellationToken = default)
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(targetPath)
+            ?? throw new InvalidOperationException("The destination folder is invalid."));
+
         var executable = locator.GetYtDlpPath();
-        var args = BuildArguments(
-            spec,
-            targetPath,
-            locator.GetToolsDirectory(),
-            locator.GetDenoPath());
+        var toolsDirectory = locator.GetToolsDirectory();
+        var denoPath = locator.GetDenoPath();
+        var args = BuildArguments(spec, targetPath, toolsDirectory, denoPath);
 
-        var result = await processRunner.RunAsync(
-            executable,
-            args,
-            Path.GetDirectoryName(targetPath),
-            cancellationToken);
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCts.CancelAfter(TimeSpan.FromMinutes(30));
 
-        if (result.ExitCode != 0)
+        ProcessResult? result = null;
+        Exception? lastError = null;
+
+        for (var attempt = 1; attempt <= 2; attempt++)
         {
-            var detail = string.IsNullOrWhiteSpace(result.StandardError)
-                ? result.StandardOutput
-                : result.StandardError;
+            try
+            {
+                result = await processRunner.RunAsync(
+                    executable,
+                    args,
+                    Path.GetDirectoryName(targetPath),
+                    timeoutCts.Token);
 
+                if (result.ExitCode == 0)
+                    break;
+
+                var detail = string.IsNullOrWhiteSpace(result.StandardError)
+                    ? result.StandardOutput
+                    : result.StandardError;
+
+                lastError = new InvalidOperationException(
+                    string.IsNullOrWhiteSpace(detail)
+                        ? $"yt-dlp exited with code {result.ExitCode}."
+                        : detail.Trim());
+
+                if (attempt < 2)
+                    await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                throw new TimeoutException("The media download timed out after 30 minutes.");
+            }
+        }
+
+        if (result is null || result.ExitCode != 0)
+            throw lastError ?? new InvalidOperationException("The media download failed.");
+
+        if (!File.Exists(targetPath))
             throw new InvalidOperationException(
-                string.IsNullOrWhiteSpace(detail)
-                    ? $"yt-dlp exited with code {result.ExitCode}."
-                    : detail.Trim());
+                $"yt-dlp reported success, but the expected file was not created: {targetPath}");
+
+        var length = new FileInfo(targetPath).Length;
+        if (length <= 0)
+        {
+            File.Delete(targetPath);
+            throw new InvalidOperationException("The downloaded file is empty.");
         }
     }
 
@@ -50,8 +84,11 @@ public sealed class YtDlpDownloader(
         var output = Quote(targetPath);
         var ffmpegLocation = Quote(toolsDirectory);
         var jsRuntime = Quote("deno:" + denoPath);
+
         var common =
-            $"--no-playlist --newline --no-overwrites --ffmpeg-location {ffmpegLocation} --js-runtimes {jsRuntime}";
+            $"--no-playlist --newline --no-overwrites --retries 3 --fragment-retries 3 " +
+            $"--socket-timeout 20 --ffmpeg-location {ffmpegLocation} " +
+            $"--js-runtimes {jsRuntime} --remote-components ejs:npm";
 
         return spec.Format switch
         {
@@ -81,6 +118,8 @@ public sealed class YtDlpDownloader(
             _ => "bv*[height<=720]+ba/b[height<=720]/b"
         };
 
-    private static string Quote(string value) =>
-        "\"" + value.Replace("\"", "\\\"") + "\"";
+    private static string Quote(string value)
+    {
+        return "\"" + value.Replace("\"", "\\\"") + "\"";
+    }
 }

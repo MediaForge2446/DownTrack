@@ -27,12 +27,26 @@ public sealed class YouTubeMetadataResolver(
 
         var executable = locator.GetYtDlpPath();
         var deno = locator.GetDenoPath();
-        var args = $"--flat-playlist --dump-single-json --skip-download --no-warnings --js-runtimes {Quote("deno:" + deno)} {Quote(trimmedUrl)}";
+        var args =
+            $"--flat-playlist --dump-single-json --skip-download --no-warnings " +
+            $"--retries 3 --socket-timeout 20 " +
+            $"--js-runtimes {Quote("deno:" + deno)} --remote-components ejs:npm {Quote(trimmedUrl)}";
 
-        var result = await processRunner.RunAsync(
-            executable,
-            args,
-            cancellationToken: cancellationToken);
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCts.CancelAfter(TimeSpan.FromMinutes(3));
+
+        ProcessResult result;
+        try
+        {
+            result = await processRunner.RunAsync(
+                executable,
+                args,
+                cancellationToken: timeoutCts.Token);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            throw new TimeoutException("Media analysis timed out after 3 minutes.");
+        }
 
         if (result.ExitCode != 0)
         {
