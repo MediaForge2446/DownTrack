@@ -22,48 +22,6 @@ public partial class MainWindow : Window
         RefreshLanguageSelector();
     }
 
-    private sealed record LanguageOption(string Code, string DisplayName);
-
-    private void RefreshLanguageSelector()
-    {
-        _updatingLanguageSelector = true;
-        try
-        {
-            LanguageBox.ItemsSource = LocalizationService.SupportedLanguages
-                .Select(x => new LanguageOption(
-                    x.Code,
-                    x.Code == "auto"
-                        ? LocalizationService.Instance.T("Settings.Automatic")
-                        : x.NativeName))
-                .ToList();
-
-            LanguageBox.SelectedValue = LocalizationService.Instance.SelectedCode;
-        }
-        finally
-        {
-            _updatingLanguageSelector = false;
-        }
-    }
-
-    private void Localization_PropertyChanged(
-        object? sender,
-        System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
-            RefreshLanguageSelector();
-    }
-
-    private void LanguageBox_SelectionChanged(
-        object sender,
-        System.Windows.Controls.SelectionChangedEventArgs e)
-    {
-        if (_updatingLanguageSelector)
-            return;
-
-        if (LanguageBox.SelectedValue is string code)
-            LocalizationService.Instance.SetLanguage(code);
-    }
-
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         MaximizeToWorkArea();
@@ -108,6 +66,15 @@ public partial class MainWindow : Window
             Owner = this
         };
         dialog.ShowDialog();
+    }
+
+    private void RootList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (DataContext is ViewModels.MainWindowViewModel viewModel &&
+            RootList.SelectedItem is DownTrack.Core.Models.RootFolder root)
+        {
+            viewModel.SelectRoot(root);
+        }
     }
 
     private void Minimize_Click(object sender, RoutedEventArgs e) =>
