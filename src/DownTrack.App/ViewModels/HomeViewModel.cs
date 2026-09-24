@@ -27,6 +27,18 @@ public sealed class HomeViewModel : ObservableObject
         SetupMediaEngineCommand = new AsyncRelayCommand(
             SetupMediaEngineAsync,
             () => !_toolBusy && !_toolManager.IsReady);
+
+        LocalizationService.Instance.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
+            {
+                ToolStatus = _toolManager.IsReady
+                    ? LocalizationService.Instance.T("Home.EngineReady")
+                    : _toolManager.Status;
+                OnPropertyChanged(nameof(ToolButtonText));
+                OnPropertyChanged(nameof(RootSummary));
+            }
+        };
     }
 
     public ObservableCollection<RootFolder> Roots { get; } = [];
@@ -54,7 +66,9 @@ public sealed class HomeViewModel : ObservableObject
         foreach (var root in _staging.Roots)
             Roots.Add(root);
 
-        ToolStatus = _toolManager.Status;
+        ToolStatus = _toolManager.IsReady
+            ? LocalizationService.Instance.T("Home.EngineReady")
+            : _toolManager.Status;
         OnPropertyChanged(nameof(ToolReady));
         OnPropertyChanged(nameof(ToolButtonText));
         OnPropertyChanged(nameof(RootSummary));
