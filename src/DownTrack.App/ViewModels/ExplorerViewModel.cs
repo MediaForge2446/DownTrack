@@ -64,6 +64,9 @@ public sealed class ExplorerViewModel : ObservableObject
 
     public string RootName => _root.Name;
 
+    public bool CanGoBack => _backHistory.Count > 0;
+    public bool CanGoForward => _forwardHistory.Count > 0;
+
     public string CurrentPath
     {
         get => _currentPath;
@@ -149,6 +152,8 @@ public sealed class ExplorerViewModel : ObservableObject
 
         BackCommand.RaiseCanExecuteChanged();
         ForwardCommand.RaiseCanExecuteChanged();
+        OnPropertyChanged(nameof(CanGoBack));
+        OnPropertyChanged(nameof(CanGoForward));
         RenameCommand.RaiseCanExecuteChanged();
         DeleteCommand.RaiseCanExecuteChanged();
         AddMediaCommand.RaiseCanExecuteChanged();
@@ -165,7 +170,16 @@ public sealed class ExplorerViewModel : ObservableObject
         CurrentPath = entry.FullPath;
         SelectedEntry = null;
         Refresh();
+        NavigationChanged?.Invoke();
     }
+
+    public void NavigateBackFromShell() => NavigateBack();
+
+    public void NavigateForwardFromShell() => NavigateForward();
+
+    public void CreateFolder() => _ = CreateFolderAsync();
+
+    public void AddMedia() => _ = AddMediaAsync();
 
     private void NavigateBack()
     {
@@ -176,6 +190,7 @@ public sealed class ExplorerViewModel : ObservableObject
         CurrentPath = _backHistory.Pop();
         SelectedEntry = null;
         Refresh();
+        NavigationChanged?.Invoke();
     }
 
     private void NavigateForward()
@@ -187,6 +202,7 @@ public sealed class ExplorerViewModel : ObservableObject
         CurrentPath = _forwardHistory.Pop();
         SelectedEntry = null;
         Refresh();
+        NavigationChanged?.Invoke();
     }
 
     private void GoToRoot()
@@ -199,6 +215,7 @@ public sealed class ExplorerViewModel : ObservableObject
         CurrentPath = _root.Path;
         SelectedEntry = null;
         Refresh();
+        NavigationChanged?.Invoke();
     }
 
     private async Task CreateFolderAsync()
