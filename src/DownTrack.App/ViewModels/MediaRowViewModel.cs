@@ -2,6 +2,7 @@ using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Core.Models;
 using DownTrack.Infrastructure.Localization;
+using DownTrack.Infrastructure.Settings;
 
 namespace DownTrack.ViewModels;
 
@@ -18,9 +19,10 @@ public sealed class MediaRowViewModel : ObservableObject
         SourceUrl = source.SourceUrl;
         ThumbnailUrl = source.ThumbnailUrl;
         _title = source.Title;
-        _format = source.Format;
-        _audioQuality = source.AudioQuality;
-        _videoQuality = source.VideoQuality;
+        var defaults = SettingsService.Instance.Current;
+        _format = defaults.DefaultFormat;
+        _audioQuality = defaults.DefaultAudioQuality;
+        _videoQuality = defaults.DefaultVideoQuality;
     }
 
     public string SourceUrl { get; }
