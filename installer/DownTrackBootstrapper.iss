@@ -419,8 +419,8 @@ zhtw.Progress=正在準備安裝…
 [Code]
 var
   SetupForm: TSetupForm;
-  HeaderPanel: TNewPanel;
-  AccentBar: TNewPanel;
+  HeaderPanel: TPanel;
+  AccentBar: TPanel;
   LogoText: TNewStaticText;
   TaglineText: TNewStaticText;
   StatusText: TNewStaticText;
@@ -663,7 +663,7 @@ begin
   SetupForm.Color := $00F7F8FC;
   SetupForm.OnClose := @SetupFormClose;
 
-  HeaderPanel := TNewPanel.Create(SetupForm);
+  HeaderPanel := TPanel.Create(SetupForm);
   HeaderPanel.Parent := SetupForm;
   HeaderPanel.Left := 0;
   HeaderPanel.Top := 0;
@@ -672,7 +672,7 @@ begin
   HeaderPanel.BevelOuter := bvNone;
   HeaderPanel.Color := $00FFFFFF;
 
-  AccentBar := TNewPanel.Create(SetupForm);
+  AccentBar := TPanel.Create(SetupForm);
   AccentBar.Parent := SetupForm;
   AccentBar.Left := ScaleX(28);
   AccentBar.Top := ScaleY(22);
