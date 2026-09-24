@@ -285,11 +285,13 @@
                             BorderBrush="{DynamicResource BorderBrush}"
                             BorderThickness="1"
                             CornerRadius="13">
-                        <CheckBox Content="{loc:Loc Key=Settings.AutoUpdate}"
-                                  IsChecked="{Binding AutoUpdateApp, Mode=TwoWay}"
-                                  Margin="0,0,0,10"/>
-                        <CheckBox Content="{loc:Loc Key=Settings.AutoToolUpdate}"
-                                  IsChecked="{Binding AutoUpdateTools, Mode=TwoWay}"/>
+                        <StackPanel>
+                            <CheckBox Content="{loc:Loc Key=Settings.AutoUpdate}"
+                                      IsChecked="{Binding AutoUpdateApp, Mode=TwoWay}"
+                                      Margin="0,0,0,10"/>
+                            <CheckBox Content="{loc:Loc Key=Settings.AutoToolUpdate}"
+                                      IsChecked="{Binding AutoUpdateTools, Mode=TwoWay}"/>
+                        </StackPanel>
                     </Border>
                 </StackPanel>
             </ScrollViewer>
@@ -305,8 +307,7 @@
                         Style="{StaticResource PrimaryButton}"
                         Margin="8,0,0,0"
                         MinWidth="125"
-                        Command="{Binding ApplyCommand}"
-                        Click="Save_Click"/>
+                        Command="{Binding ApplyCommand}"/>
             </StackPanel>
         </Grid>
     </Border>
