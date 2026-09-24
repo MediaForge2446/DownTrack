@@ -6,4 +6,5 @@ public interface IAppToolManager
     string Status { get; }
 
     Task EnsureReadyAsync(IProgress<string>? progress = null, CancellationToken cancellationToken = default);
+    Task UpdateAsync(IProgress<string>? progress = null, CancellationToken cancellationToken = default);
 }
