@@ -362,7 +362,33 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
             ["Settings.Apply"] = "Apply",
             ["Settings.Done"] = "Done",
             ["Settings.Current"] = "Current language",
-            ["Settings.RestartNotNeeded"] = "Changes apply immediately."
+            ["Settings.RestartNotNeeded"] = "Changes apply immediately.",
+
+            ["Home.SettingUpEngine"] = "Setting up the media engine…",
+            ["Explorer.SaveChangesArrow"] = "Save changes  →",
+            ["Explorer.SaveChangesCount"] = "Save changes ({0})  →",
+            ["Explorer.QueuedOne"] = "1 queued",
+            ["Explorer.Queued"] = "{0} queued",
+            ["Explorer.NewFolderPrompt"] = "Choose a name for the new folder.",
+            ["Explorer.NewFolderDefault"] = "New Folder",
+            ["Explorer.RenamePrompt"] = "Enter the new name.",
+            ["Explorer.PendingCreate"] = "Pending: create “{0}”.",
+            ["Explorer.PendingRename"] = "Pending: rename “{0}”.",
+            ["Explorer.DeleteFolderPrompt"] = "Delete folder “{0}” from the staged plan?",
+            ["Explorer.DeleteFilePrompt"] = "Delete “{0}” from the staged plan?",
+            ["Explorer.ConfirmDelete"] = "Confirm delete",
+            ["Explorer.PendingDelete"] = "Pending: delete “{0}”.",
+            ["Explorer.MediaAddedOne"] = "Media added to the pending queue.",
+            ["Explorer.MediaAddedMany"] = "{0} media items added to the pending queue.",
+            ["Explorer.ApplyingChanges"] = "Applying staged changes…",
+            ["Explorer.SomeNeedAttention"] = "Some changes need attention.",
+            ["Explorer.Cancelled"] = "Cancelled: {0}",
+            ["AddMedia.PastePrompt"] = "Paste a YouTube video or playlist URL.",
+            ["AddMedia.NothingFound"] = "Nothing was found. Check the link and try again.",
+            ["AddMedia.OneReady"] = "1 media item ready. Edit the options before adding.",
+            ["AddMedia.ManyReady"] = "{0} media items ready. Each row is independent.",
+            ["AddMedia.AnalysisCancelled"] = "Analysis cancelled.",
+            ["AddMedia.ErrorFallback"] = "We couldn't analyze this link. Please try again."
         };
 
         var dictionaries = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase)
