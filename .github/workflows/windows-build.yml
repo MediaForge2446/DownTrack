@@ -166,6 +166,18 @@ jobs:
           Write-Host "Web installer bytes: $webSize"
           Write-Host "Web installer hash: $((Get-FileHash -Algorithm SHA256 $webSetup).Hash)"
 
+      - name: Validate Bootstrapper compilation
+        if: github.event_name == 'pull_request'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+          $issc = if ($programFilesX86) { Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe" } else { $null }
+          if (-not $issc -or -not (Test-Path $issc)) { $issc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe" }
+          if (-not (Test-Path $issc)) { throw "Inno Setup compiler was not found." }
+          & $issc "installer\DownTrackBootstrapper.iss"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Build always-latest Bootstrapper
         if: github.event_name == 'push'
         shell: pwsh
