@@ -69,6 +69,9 @@ public sealed class ExplorerViewModel : ObservableObject
         private set => SetProperty(ref _currentPath, value);
     }
 
+    public bool CanGoBack => _backHistory.Count > 0;
+    public bool CanGoForward => _forwardHistory.Count > 0;
+
     public ObservableCollection<VirtualEntry> Entries { get; } = [];
     public ObservableCollection<VirtualEntry> Folders { get; } = [];
     public ObservableCollection<PendingChange> PendingChanges { get; } = [];
@@ -132,6 +135,8 @@ public sealed class ExplorerViewModel : ObservableObject
 
         BackCommand.RaiseCanExecuteChanged();
         ForwardCommand.RaiseCanExecuteChanged();
+        OnPropertyChanged(nameof(CanGoBack));
+        OnPropertyChanged(nameof(CanGoForward));
         RenameCommand.RaiseCanExecuteChanged();
         DeleteCommand.RaiseCanExecuteChanged();
         AddMediaCommand.RaiseCanExecuteChanged();
@@ -246,6 +251,21 @@ public sealed class ExplorerViewModel : ObservableObject
         {
             StatusMessage = ex.Message;
         }
+    }
+
+    public void GoBack()
+    {
+        NavigateBack();
+    }
+
+    public void GoForward()
+    {
+        NavigateForward();
+    }
+
+    public Task AddMediaFromShellAsync()
+    {
+        return AddMediaAsync();
     }
 
     private async Task AddMediaAsync()
