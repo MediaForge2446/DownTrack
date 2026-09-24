@@ -188,13 +188,13 @@
                                             VerticalAlignment="Center"
                                             Visibility="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <Button Style="{StaticResource GhostButton}"
-                                            Command="{Binding DataContext.RenameCommand, RelativeSource={RelativeSource AncestorType=ListViewItem}}"
+                                            Command="{Binding DataContext.RenameCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                             Content="{loc:Loc Key=Shell.Rename}"
                                             Height="34"
                                             MinWidth="68"
                                             Margin="0,0,6,0"/>
                                     <Button Style="{StaticResource DangerButton}"
-                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListViewItem}}"
+                                            Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                             Content="{loc:Loc Key=Shell.Delete}"
                                             Height="34"
                                             MinWidth="64"/>
