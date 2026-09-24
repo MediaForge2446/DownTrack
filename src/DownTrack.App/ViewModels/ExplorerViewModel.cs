@@ -47,6 +47,18 @@ public sealed class ExplorerViewModel : ObservableObject
         SaveChangesCommand = new AsyncRelayCommand(SaveChangesAsync, () => PendingChanges.Count > 0 && !_isSaving);
 
         Refresh();
+
+        LocalizationService.Instance.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
+            {
+                OnPropertyChanged(nameof(SaveButtonText));
+                OnPropertyChanged(nameof(PendingCountText));
+
+                if (PendingChanges.Count == 0)
+                    StatusMessage = LocalizationService.Instance.T("Explorer.AllSaved");
+            }
+        };
     }
 
     public string RootName => _root.Name;
