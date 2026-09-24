@@ -12,11 +12,11 @@ public sealed class ToolLocator
 
     public string GetYtDlpPath()
     {
-        if (HasBundledMediaEngine)
-            return AppPaths.BundledYtDlpPath;
-
         if (File.Exists(AppPaths.YtDlpPath))
             return AppPaths.YtDlpPath;
+
+        if (File.Exists(AppPaths.BundledYtDlpPath))
+            return AppPaths.BundledYtDlpPath;
 
         throw new FileNotFoundException(
             "yt-dlp is not installed. Run Media Engine setup from Home.",
@@ -25,14 +25,14 @@ public sealed class ToolLocator
 
     public string GetToolsDirectory()
     {
+        var localFfmpeg = Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe");
+        var localFfprobe = Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe");
+
+        if (File.Exists(localFfmpeg) && File.Exists(localFfprobe) && File.Exists(AppPaths.DenoPath))
+            return AppPaths.ToolsDirectory;
+
         if (HasBundledMediaEngine)
             return AppPaths.BundledToolsDirectory;
-
-        var ffmpeg = Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe");
-        var ffprobe = Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe");
-
-        if (File.Exists(ffmpeg) && File.Exists(ffprobe))
-            return AppPaths.ToolsDirectory;
 
         throw new FileNotFoundException(
             "FFmpeg is not installed correctly. Run Media Engine setup from Home.",
@@ -41,11 +41,11 @@ public sealed class ToolLocator
 
     public string GetDenoPath()
     {
-        if (HasBundledMediaEngine)
-            return AppPaths.BundledDenoPath;
-
         if (File.Exists(AppPaths.DenoPath))
             return AppPaths.DenoPath;
+
+        if (File.Exists(AppPaths.BundledDenoPath))
+            return AppPaths.BundledDenoPath;
 
         throw new FileNotFoundException(
             "Deno is not installed correctly. Run Media Engine setup from Home.",
