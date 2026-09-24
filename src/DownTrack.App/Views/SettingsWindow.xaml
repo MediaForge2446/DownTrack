@@ -113,7 +113,7 @@
                             </StackPanel>
                             <ComboBox Grid.Column="1"
                                       ItemsSource="{Binding Languages}"
-                                      DisplayMemberPath="NativeName"
+                                      DisplayMemberPath="DisplayName"
                                       SelectedValuePath="Code"
                                       SelectedValue="{Binding LanguageCode, Mode=TwoWay}"
                                       MinHeight="40"/>
@@ -161,7 +161,7 @@
                                         Content="{loc:Loc Key=Settings.Update}"
                                         Style="{StaticResource PrimaryButton}"
                                         Width="82"
-                                        Command="{Binding CheckForUpdatesCommand}"/>
+                                        Command="{Binding UpdateAppCommand}"/>
                             </Grid>
 
                             <Grid>
@@ -183,7 +183,7 @@
                                         Content="{loc:Loc Key=Settings.Update}"
                                         Style="{StaticResource SecondaryButton}"
                                         Width="82"
-                                        Command="{Binding CheckForToolUpdatesCommand}"/>
+                                        Command="{Binding UpdateToolsCommand}"/>
                             </Grid>
 
                             <TextBlock Text="{Binding UpdateStatus}"
