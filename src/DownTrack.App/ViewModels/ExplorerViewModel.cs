@@ -20,6 +20,7 @@ public sealed class ExplorerViewModel : ObservableObject
     private VirtualEntry? _selectedEntry;
     private string _statusMessage = LocalizationService.Instance.T("Explorer.AllSaved");
     private bool _isSaving;
+    private double _totalProgress;
 
     public ExplorerViewModel(
         RootFolder root,
@@ -72,6 +73,13 @@ public sealed class ExplorerViewModel : ObservableObject
     public ObservableCollection<VirtualEntry> Entries { get; } = [];
     public ObservableCollection<VirtualEntry> Folders { get; } = [];
     public ObservableCollection<PendingChange> PendingChanges { get; } = [];
+    public ObservableCollection<PendingChangeItemViewModel> PendingItems { get; } = [];
+
+    public double TotalProgress
+    {
+        get => _totalProgress;
+        private set => SetProperty(ref _totalProgress, value);
+    }
 
     public VirtualEntry? SelectedEntry
     {
@@ -124,8 +132,17 @@ public sealed class ExplorerViewModel : ObservableObject
             Folders.Add(folder);
 
         PendingChanges.Clear();
+        PendingItems.Clear();
+
         foreach (var change in _staging.GetPendingChanges(_root.Id))
+        {
             PendingChanges.Add(change);
+            PendingItems.Add(new PendingChangeItemViewModel(change));
+        }
+
+        TotalProgress = PendingItems.Count == 0
+            ? 100
+            : PendingItems.Average(x => x.Progress);
 
         OnPropertyChanged(nameof(SaveButtonText));
         OnPropertyChanged(nameof(PendingCountText));
@@ -275,8 +292,31 @@ public sealed class ExplorerViewModel : ObservableObject
 
         try
         {
-            var progress = new Progress<string>(message => StatusMessage = message);
+            var progress = new Progress<StagedChangeProgress>(update =>
+            {
+                var item = PendingItems.FirstOrDefault(x => x.Change.Id == update.ChangeId);
+                item?.Apply(update);
+
+                var completed = update.CompletedChanges;
+                var current = update.TotalChanges > 0
+                    ? update.CurrentProgress / 100d
+                    : 0d;
+
+                TotalProgress = update.TotalChanges <= 0
+                    ? 100
+                    : Math.Clamp(
+                        ((completed + current) / update.TotalChanges) * 100d,
+                        0,
+                        100);
+
+                StatusMessage = update.StatusText;
+                OnPropertyChanged(nameof(SaveButtonText));
+                OnPropertyChanged(nameof(PendingCountText));
+            });
+
             await _staging.SaveChangesAsync(_root, progress);
+            TotalProgress = PendingChanges.Count == 0 ? 100 : TotalProgress;
+
             StatusMessage = PendingChanges.Count == 0
                 ? LocalizationService.Instance.T("Explorer.AllSaved")
                 : LocalizationService.Instance.T("Explorer.SomeNeedAttention");
