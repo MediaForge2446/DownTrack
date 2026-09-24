@@ -58,15 +58,11 @@ public sealed class MainWindowViewModel : ObservableObject
                     _currentExplorer.CreateFolder();
                 else
                     _ = Home.AddRootFolderAsync();
-            },
-            _ => _currentExplorer is not null || Home.Roots.Count == 0);
+            });
 
-        AddMediaCommand = new RelayCommand(
-            _ =>
-            {
-                _currentExplorer?.AddMedia();
-            },
-            _ => _currentExplorer is not null);
+        AddMediaCommand = new AsyncRelayCommand(
+            AddMediaAsync,
+            () => _currentExplorer is not null || Home.Roots.Count > 0);
 
         HomeCommand = new RelayCommand(_ => GoHome());
         BackCommand = new RelayCommand(
@@ -111,7 +107,7 @@ public sealed class MainWindowViewModel : ObservableObject
     public RelayCommand OpenRootCommand { get; }
     public RelayCommand AddRootFolderCommand { get; }
     public RelayCommand NewFolderCommand { get; }
-    public RelayCommand AddMediaCommand { get; }
+    public AsyncRelayCommand AddMediaCommand { get; }
     public RelayCommand HomeCommand { get; }
     public RelayCommand BackCommand { get; }
     public RelayCommand ForwardCommand { get; }
@@ -144,6 +140,7 @@ public sealed class MainWindowViewModel : ObservableObject
     {
         _currentRoot = root;
         CurrentRoot = root;
+        Home.SelectedRoot = root;
 
         var explorer = new ExplorerViewModel(
             root,
@@ -167,6 +164,21 @@ public sealed class MainWindowViewModel : ObservableObject
         ForwardCommand.RaiseCanExecuteChanged();
         AddMediaCommand.RaiseCanExecuteChanged();
         NewFolderCommand.RaiseCanExecuteChanged();
+    }
+
+    private async Task AddMediaAsync()
+    {
+        if (_currentExplorer is null)
+        {
+            var root = Home.Roots.FirstOrDefault();
+            if (root is null)
+                return;
+
+            OpenRoot(root);
+        }
+
+        _currentExplorer?.AddMedia();
+        await Task.CompletedTask;
     }
 
     private void Explorer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
