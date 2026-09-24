@@ -269,6 +269,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
     public async Task SaveChangesAsync(
         RootFolder root,
         IProgress<string>? progress = null,
+        IProgress<int>? overallProgress = null,
         CancellationToken cancellationToken = default)
     {
         var ordered = GetPendingChanges(root.Id)
@@ -283,10 +284,21 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
             .ThenBy(x => x.TargetPath ?? x.SourcePath ?? string.Empty, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
-        foreach (var change in ordered)
+        if (ordered.Count == 0)
+        {
+            overallProgress?.Report(100);
+            return;
+        }
+
+        overallProgress?.Report(0);
+
+        for (var index = 0; index < ordered.Count; index++)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            var change = ordered[index];
+
             change.Status = PendingChangeStatus.Processing;
+            change.ProgressPercent = 10;
             change.ErrorMessage = null;
             await PersistAsync();
 
@@ -294,16 +306,36 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
 
             try
             {
+                change.ProgressPercent = 25;
+                await PersistAsync();
+
                 await _commitService.ApplyAsync(change, progress, cancellationToken);
+
+                change.ProgressPercent = 100;
+                change.Status = PendingChangeStatus.Pending;
+                await PersistAsync();
+
                 _state.PendingChanges.RemoveAll(x => x.Id == change.Id);
+                await PersistAsync();
+            }
+            catch (OperationCanceledException)
+            {
+                change.Status = PendingChangeStatus.Pending;
+                change.ProgressPercent = 0;
+                await PersistAsync();
+                throw;
             }
             catch (Exception ex)
             {
                 change.Status = PendingChangeStatus.Error;
+                change.ProgressPercent = 100;
                 change.ErrorMessage = ex.Message;
+                await PersistAsync();
             }
 
-            await PersistAsync();
+            overallProgress?.Report(
+                (int)Math.Round(
+                    (index + 1) * 100d / ordered.Count));
         }
     }
 
