@@ -12,6 +12,7 @@ public sealed class YouTubeMetadataResolver(
 {
     public async Task<IReadOnlyList<MediaDownloadSpec>> ResolveAsync(
         string url,
+        IProgress<string>? progress = null,
         CancellationToken cancellationToken = default)
     {
         var trimmedUrl = url.Trim();
@@ -22,7 +23,6 @@ public sealed class YouTubeMetadataResolver(
             throw new ArgumentException("Please paste a valid YouTube video or playlist URL.");
         }
 
-        var progress = new Progress<string>(message => { });
         await toolManager.EnsureReadyAsync(progress, cancellationToken);
 
         var executable = locator.GetYtDlpPath();
