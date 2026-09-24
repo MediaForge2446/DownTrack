@@ -16,7 +16,7 @@ concurrency:
 jobs:
   build-and-package:
     runs-on: windows-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -38,6 +38,69 @@ jobs:
           dotnet publish src/DownTrack.App/DownTrack.App.csproj
           -c Release -r win-x64 --self-contained true
           --no-restore -o artifacts/publish -p:Platform=x64
+
+      - name: Bundle Media Engine into installer payload
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $tools = Join-Path $env:GITHUB_WORKSPACE "artifacts\publish\Tools"
+          $download = Join-Path $env:RUNNER_TEMP "downtrack-tools"
+          New-Item -ItemType Directory -Force -Path $tools,$download | Out-Null
+
+          function Download-VerifiedAsset {
+            param([string]$Url,[string]$ChecksumUrl,[string]$OutputPath,[string]$ExpectedHash)
+            $assetName = [IO.Path]::GetFileName($OutputPath)
+            $tempPath = Join-Path $download ($assetName + ".download")
+            $checksumPath = Join-Path $download ($assetName + ".sha256")
+            Invoke-WebRequest -Uri $Url -OutFile $tempPath -UseBasicParsing
+            if ($ChecksumUrl) { Invoke-WebRequest -Uri $ChecksumUrl -OutFile $checksumPath -UseBasicParsing }
+            if (-not $ExpectedHash) {
+              $checksumText = Get-Content -Path $checksumPath -Raw
+              $match = [regex]::Match($checksumText,"(?i)\b[a-f0-9]{64}\b")
+              if (-not $match.Success) { throw "No SHA-256 checksum was found for $assetName." }
+              $ExpectedHash = $match.Value
+            }
+            $actual = (Get-FileHash -Algorithm SHA256 $tempPath).Hash
+            if ($actual -ne $ExpectedHash) { throw "SHA-256 verification failed for $assetName. Expected $ExpectedHash but received $actual." }
+            Move-Item -Force $tempPath $OutputPath
+          }
+
+          Download-VerifiedAsset "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe" $null (Join-Path $tools "yt-dlp.exe") "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a"
+
+          Download-VerifiedAsset "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-pc-windows-msvc.zip" $null (Join-Path $download "deno.zip") "a0c3101b4158d1dfb7d6a78a7bf0f3de80c96bb423c152beec8beb22786f2238"
+          $denoExtract = Join-Path $download "deno-extract"
+          Expand-Archive -Path (Join-Path $download "deno.zip") -DestinationPath $denoExtract -Force
+          $deno = Get-ChildItem $denoExtract -Filter "deno.exe" -Recurse | Select-Object -First 1
+          if (-not $deno) { throw "Deno archive did not contain deno.exe." }
+          Copy-Item $deno.FullName (Join-Path $tools "deno.exe") -Force
+
+          Download-VerifiedAsset "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip" "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip.sha256" (Join-Path $download "ffmpeg.zip") $null
+          $ffmpegExtract = Join-Path $download "ffmpeg-extract"
+          Expand-Archive -Path (Join-Path $download "ffmpeg.zip") -DestinationPath $ffmpegExtract -Force
+          $ffmpeg = Get-ChildItem $ffmpegExtract -Filter "ffmpeg.exe" -Recurse | Select-Object -First 1
+          $ffprobe = Get-ChildItem $ffmpegExtract -Filter "ffprobe.exe" -Recurse | Select-Object -First 1
+          if (-not $ffmpeg -or -not $ffprobe) { throw "FFmpeg package did not contain ffmpeg.exe and ffprobe.exe." }
+          Copy-Item $ffmpeg.FullName (Join-Path $tools "ffmpeg.exe") -Force
+          Copy-Item $ffprobe.FullName (Join-Path $tools "ffprobe.exe") -Force
+
+          & (Join-Path $tools "yt-dlp.exe") --version
+          if ($LASTEXITCODE -ne 0) { throw "Bundled yt-dlp self-test failed." }
+          & (Join-Path $tools "deno.exe") --version
+          if ($LASTEXITCODE -ne 0) { throw "Bundled Deno self-test failed." }
+          & (Join-Path $tools "ffmpeg.exe") -version
+          if ($LASTEXITCODE -ne 0) { throw "Bundled FFmpeg self-test failed." }
+          & (Join-Path $tools "ffprobe.exe") -version
+          if ($LASTEXITCODE -ne 0) { throw "Bundled ffprobe self-test failed." }
+
+          Get-ChildItem $tools | Select-Object Name,Length
+      - name: Verify installer payload contains Media Engine
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $tools = Join-Path $env:GITHUB_WORKSPACE "artifacts\publish\Tools"
+          foreach ($file in @("yt-dlp.exe","ffmpeg.exe","ffprobe.exe","deno.exe")) {
+            if (-not (Test-Path (Join-Path $tools $file))) { throw "Installer payload is missing $file." }
+          }
 
       - name: Install Inno Setup
         shell: pwsh
