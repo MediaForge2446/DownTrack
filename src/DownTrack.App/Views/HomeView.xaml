@@ -16,7 +16,7 @@
                 Margin="0,0,0,20"
                 Padding="28"
                 Background="{StaticResource SoftGradientBrush}"
-                BorderBrush="#3A3B76"
+                BorderBrush="#D7CDF4"
                 BorderThickness="1"
                 CornerRadius="22">
             <Grid>
@@ -40,8 +40,8 @@
                         <Border HorizontalAlignment="Left"
                                 Padding="10,6"
                                 CornerRadius="9"
-                                Background="#221D43"
-                                BorderBrush="#4F4086"
+                                Background="#F4EEFF"
+                                BorderBrush="#D8C9F0"
                                 BorderThickness="1">
                             <TextBlock Text="PERSONAL MEDIA WORKSPACE"
                                        FontSize="10"
@@ -76,8 +76,8 @@
                             <Border Margin="10,0,0,0"
                                     Padding="12,8"
                                     CornerRadius="10"
-                                    Background="#13273A"
-                                    BorderBrush="#24556A"
+                                    Background="#E9F8F5"
+                                    BorderBrush="#B7E2DB"
                                     BorderThickness="1">
                                 <TextBlock Text="Nothing changes on disk until you save."
                                            FontSize="11"
@@ -264,8 +264,8 @@
                                                         <Border HorizontalAlignment="Right"
                                                                 Padding="9,5"
                                                                 CornerRadius="9"
-                                                                Background="#132D2A"
-                                                                BorderBrush="#28635B"
+                                                                Background="#E9F8F5"
+                                                                BorderBrush="#B7E2DB"
                                                                 BorderThickness="1">
                                                             <TextBlock Text="CONNECTED"
                                                                        FontSize="9"
