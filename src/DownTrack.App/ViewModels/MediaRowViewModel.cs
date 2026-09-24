@@ -15,10 +15,12 @@ public sealed class MediaRowViewModel : ObservableObject
     public MediaRowViewModel(MediaDownloadSpec source)
     {
         SourceUrl = source.SourceUrl;
+        ThumbnailUrl = source.ThumbnailUrl;
         _title = source.Title;
     }
 
     public string SourceUrl { get; }
+    public string? ThumbnailUrl { get; }
 
     public string Title
     {
@@ -60,6 +62,7 @@ public sealed class MediaRowViewModel : ObservableObject
     {
         SourceUrl = SourceUrl,
         Title = string.IsNullOrWhiteSpace(Title) ? "Untitled" : Title.Trim(),
+        ThumbnailUrl = ThumbnailUrl,
         Format = Format,
         AudioQuality = AudioQuality,
         VideoQuality = VideoQuality
