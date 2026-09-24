@@ -9,7 +9,7 @@ public partial class ConfirmationWindow : Window
         InitializeComponent();
         TitleText.Text = title;
         MessageText.Text = message;
-        Loaded += (_, _) => Owner ??= Application.Current.MainWindow;
+        Loaded += (_, _) => Owner ??= System.Windows.Application.Current.MainWindow;
     }
 
     private void Delete_Click(object sender, RoutedEventArgs e) => DialogResult = true;
