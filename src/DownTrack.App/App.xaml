@@ -11,10 +11,10 @@
         <local:EntryStateBrushConverter x:Key="EntryStateBrushConverter"/>
         <local:PendingStatusBrushConverter x:Key="PendingStatusBrushConverter"/>
 
-        <SolidColorBrush x:Key="WindowBrush" Color="#090B11"/>
-        <SolidColorBrush x:Key="SurfaceBrush" Color="#11151F"/>
-        <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#171C28"/>
-        <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#20283A"/>
+        <SolidColorBrush x:Key="WindowBrush" Color="#0A0C12"/>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#121721"/>
+        <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#181E2B"/>
+        <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#222C40"/>
         <SolidColorBrush x:Key="BorderBrush" Color="#2C3445"/>
         <SolidColorBrush x:Key="TextBrush" Color="#F6F8FC"/>
         <SolidColorBrush x:Key="MutedTextBrush" Color="#98A2B5"/>
@@ -200,6 +200,63 @@
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid Width="20" Height="20">
+                            <Border x:Name="Box"
+                                    Width="18"
+                                    Height="18"
+                                    CornerRadius="5"
+                                    Background="{StaticResource SurfaceElevatedBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"/>
+                            <TextBlock x:Name="Glyph"
+                                       Text="✓"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Visibility="Collapsed"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Box" Property="Background" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Glyph" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource CyanBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Box" Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                    <Setter Property="Foreground" Value="White"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
