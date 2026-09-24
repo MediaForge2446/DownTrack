@@ -28,11 +28,11 @@ public partial class AddMediaWindow : Window
         Owner ??= System.Windows.Application.Current.MainWindow;
 
         var workArea = SystemParameters.WorkArea;
-        var maxWidth = Math.Min(980, workArea.Width * 0.84);
-        var maxHeight = Math.Min(700, workArea.Height * 0.86);
+        var maxWidth = Math.Min(980, Math.Max(MinWidth, workArea.Width * 0.80));
+        var maxHeight = Math.Min(700, Math.Max(MinHeight, workArea.Height * 0.82));
 
-        Width = Math.Max(MinWidth, maxWidth);
-        Height = Math.Max(MinHeight, maxHeight);
+        Width = maxWidth;
+        Height = maxHeight;
         WindowStartupLocation = Owner is null
             ? WindowStartupLocation.CenterScreen
             : WindowStartupLocation.CenterOwner;
