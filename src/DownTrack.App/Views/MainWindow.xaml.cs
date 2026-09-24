@@ -1,10 +1,13 @@
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace DownTrack.Views;
 
 public partial class MainWindow : Window
 {
+    private const uint MonitorDefaultToNearest = 2;
     private Rect _restoreBounds;
     private bool _workAreaMaximized;
 
@@ -28,12 +31,9 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (WindowState == WindowState.Normal)
-        {
-            RootBorder.CornerRadius = _workAreaMaximized
-                ? new CornerRadius(0)
-                : new CornerRadius(18);
-        }
+        RootBorder.CornerRadius = _workAreaMaximized
+            ? new CornerRadius(0)
+            : new CornerRadius(20);
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -45,7 +45,6 @@ public partial class MainWindow : Window
         }
 
         if (e.LeftButton == MouseButtonState.Pressed &&
-            WindowState == WindowState.Normal &&
             !_workAreaMaximized)
         {
             DragMove();
@@ -74,10 +73,10 @@ public partial class MainWindow : Window
 
     private void MaximizeToWorkArea()
     {
-        var workArea = SystemParameters.WorkArea;
-
         if (!_workAreaMaximized)
             SaveRestoreBounds();
+
+        var workArea = GetCurrentMonitorWorkArea();
 
         _workAreaMaximized = true;
         WindowState = WindowState.Normal;
@@ -101,7 +100,7 @@ public partial class MainWindow : Window
             Height = _restoreBounds.Height;
         }
 
-        RootBorder.CornerRadius = new CornerRadius(18);
+        RootBorder.CornerRadius = new CornerRadius(20);
     }
 
     private void SaveRestoreBounds()
@@ -109,11 +108,77 @@ public partial class MainWindow : Window
         if (_workAreaMaximized)
             return;
 
+        var width = Width > 0 ? Width : 1320;
+        var height = Height > 0 ? Height : 820;
         var left = double.IsNaN(Left) ? 90 : Left;
         var top = double.IsNaN(Top) ? 70 : Top;
-        var width = Width > 0 ? Width : 1200;
-        var height = Height > 0 ? Height : 760;
 
         _restoreBounds = new Rect(left, top, width, height);
+    }
+
+    private Rect GetCurrentMonitorWorkArea()
+    {
+        var fallback = SystemParameters.WorkArea;
+
+        try
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            if (hwnd == IntPtr.Zero)
+                return fallback;
+
+            var monitor = MonitorFromWindow(hwnd, MonitorDefaultToNearest);
+            if (monitor == IntPtr.Zero)
+                return fallback;
+
+            var info = new MONITORINFO
+            {
+                cbSize = (uint)Marshal.SizeOf<MONITORINFO>()
+            };
+
+            if (!GetMonitorInfo(monitor, ref info))
+                return fallback;
+
+            var source = PresentationSource.FromVisual(this);
+            var transform = source?.CompositionTarget?.TransformFromDevice
+                ?? new System.Windows.Media.Matrix();
+
+            var left = info.rcWork.Left * transform.M11;
+            var top = info.rcWork.Top * transform.M22;
+            var width = (info.rcWork.Right - info.rcWork.Left) * transform.M11;
+            var height = (info.rcWork.Bottom - info.rcWork.Top) * transform.M22;
+
+            return new Rect(left, top, width, height);
+        }
+        catch
+        {
+            return fallback;
+        }
+    }
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr MonitorFromWindow(IntPtr hWnd, uint dwFlags);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetMonitorInfo(
+        IntPtr hMonitor,
+        ref MONITORINFO lpmi);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MONITORINFO
+    {
+        public uint cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public uint dwFlags;
     }
 }
