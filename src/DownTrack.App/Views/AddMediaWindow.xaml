@@ -24,9 +24,9 @@
                             UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
-    <Border Background="{StaticResource WindowBrush}"
-            Effect="{StaticResource DialogShadowEffect}"
-            BorderBrush="{StaticResource BorderStrongBrush}"
+    <Border Background="{DynamicResource WindowBrush}"
+            Effect="{DynamicResource DialogShadowEffect}"
+            BorderBrush="{DynamicResource BorderStrongBrush}"
             BorderThickness="1"
             CornerRadius="20"
             Padding="24">
@@ -47,7 +47,7 @@
                         <Border Width="6"
                                 Height="42"
                                 CornerRadius="3"
-                                Background="{StaticResource AuroraGradientBrush}"/>
+                                Background="{DynamicResource AuroraGradientBrush}"/>
                         <StackPanel Margin="13,0,0,0">
                             <TextBlock Text="{loc:Loc Key=AddMedia.Title}"
                                        FontSize="28"
@@ -55,7 +55,7 @@
                             <TextBlock Text="{loc:Loc Key=AddMedia.Subtitle}"
                                        Margin="0,4,0,0"
                                        FontSize="12"
-                                       Foreground="{StaticResource MutedTextBrush}"/>
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
@@ -72,11 +72,11 @@
 
             <!-- Link input -->
             <Border Grid.Row="1"
-                    Effect="{StaticResource SoftShadowEffect}"
+                    Effect="{DynamicResource SoftShadowEffect}"
                     Margin="0,20,0,13"
                     Padding="9"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="14">
                 <Grid>
@@ -125,13 +125,13 @@
                 <Border HorizontalAlignment="Right"
                         Padding="10,6"
                         CornerRadius="10"
-                        Background="{StaticResource SurfaceSoftBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
+                        Background="{DynamicResource SurfaceSoftBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1">
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Width="7"
                                  Height="7"
-                                 Fill="{StaticResource SuccessBrush}"
+                                 Fill="{DynamicResource SuccessBrush}"
                                  VerticalAlignment="Center">
                             <Ellipse.Style>
                                 <Style TargetType="Ellipse">
@@ -147,7 +147,7 @@
                         <TextBlock Text="{Binding Status}"
                                    Margin="7,0,0,0"
                                    FontSize="10"
-                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Foreground="{DynamicResource MutedTextBrush}"
                                    TextTrimming="CharacterEllipsis"
                                    MaxWidth="470"/>
                     </StackPanel>
@@ -156,10 +156,10 @@
 
             <!-- Results -->
             <Border Grid.Row="3"
-                    Effect="{StaticResource SoftShadowEffect}"
+                    Effect="{DynamicResource SoftShadowEffect}"
                     Padding="10"
-                    Background="{StaticResource SurfaceSoftBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SurfaceSoftBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="16">
                 <Grid>
@@ -170,8 +170,8 @@
                                 <DataTemplate>
                                     <Border Margin="0,0,0,10"
                                             Padding="13"
-                                            Background="{StaticResource SurfaceBrush}"
-                                            BorderBrush="{StaticResource BorderBrush}"
+                                            Background="{DynamicResource SurfaceBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
                                             BorderThickness="1"
                                             CornerRadius="14">
                                         <Grid>
@@ -196,7 +196,7 @@
                                                         Width="66"
                                                         Height="66"
                                                         CornerRadius="11"
-                                                        Background="{StaticResource SurfaceRaisedBrush}"
+                                                        Background="{DynamicResource SurfaceRaisedBrush}"
                                                         ClipToBounds="True">
                                                     <Image Source="{Binding ThumbnailUrl}"
                                                            Stretch="UniformToFill"/>
@@ -214,7 +214,7 @@
                                                     <TextBlock Text="{Binding SourceUrl}"
                                                                Margin="0,5,0,0"
                                                                FontSize="9"
-                                                               Foreground="{StaticResource MutedTextBrush}"
+                                                               Foreground="{DynamicResource MutedTextBrush}"
                                                                TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
 
@@ -222,11 +222,11 @@
                                                         VerticalAlignment="Center"
                                                         Padding="10,6"
                                                         CornerRadius="9"
-                                                        Background="{StaticResource AccentSoftBrush}">
+                                                        Background="{DynamicResource AccentSoftBrush}">
                                                     <TextBlock Text="{Binding IsVideo, Converter={StaticResource BooleanModeConverter}}"
                                                                FontSize="10"
                                                                FontWeight="SemiBold"
-                                                               Foreground="{StaticResource AccentBlueBrush}"/>
+                                                               Foreground="{DynamicResource AccentBlueBrush}"/>
                                                 </Border>
                                             </Grid>
 
@@ -243,7 +243,7 @@
                                                     <TextBlock Text="{loc:Loc Key=AddMedia.Format}"
                                                                FontSize="9"
                                                                FontWeight="Bold"
-                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                               Foreground="{DynamicResource MutedTextBrush}"/>
                                                     <ComboBox ItemsSource="{Binding Formats}"
                                                               SelectedItem="{Binding Format}"
                                                               Margin="0,4,0,0">
@@ -260,7 +260,7 @@
                                                     <TextBlock Text="{loc:Loc Key=AddMedia.AudioQuality}"
                                                                FontSize="9"
                                                                FontWeight="Bold"
-                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                               Foreground="{DynamicResource MutedTextBrush}"/>
                                                     <ComboBox ItemsSource="{Binding AudioQualities}"
                                                               SelectedItem="{Binding AudioQuality}"
                                                               Margin="0,4,0,0">
@@ -277,7 +277,7 @@
                                                     <TextBlock Text="{loc:Loc Key=AddMedia.VideoQuality}"
                                                                FontSize="9"
                                                                FontWeight="Bold"
-                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                               Foreground="{DynamicResource MutedTextBrush}"/>
                                                     <ComboBox ItemsSource="{Binding VideoQualities}"
                                                               SelectedItem="{Binding VideoQuality}"
                                                               IsEnabled="{Binding IsVideo}"
@@ -315,11 +315,11 @@
                         <Border Width="62"
                                 Height="62"
                                 CornerRadius="18"
-                                Background="{StaticResource SoftGradientBrush}"
+                                Background="{DynamicResource SoftGradientBrush}"
                                 HorizontalAlignment="Center">
                             <TextBlock Text="＋"
                                        FontSize="30"
-                                       Foreground="{StaticResource AccentBlueBrush}"
+                                       Foreground="{DynamicResource AccentBlueBrush}"
                                        HorizontalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="{loc:Loc Key=AddMedia.NoMedia}"
@@ -330,7 +330,7 @@
                         <TextBlock Text="{loc:Loc Key=AddMedia.NoMediaSubtitle}"
                                    Margin="0,5,0,0"
                                    FontSize="10"
-                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Foreground="{DynamicResource MutedTextBrush}"
                                    TextAlignment="Center"
                                    TextWrapping="Wrap"/>
                     </StackPanel>
@@ -339,8 +339,8 @@
                     <Border HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Padding="20,15"
-                            Background="{StaticResource SurfaceRaisedBrush}"
-                            BorderBrush="{StaticResource BorderStrongBrush}"
+                            Background="{DynamicResource SurfaceRaisedBrush}"
+                            BorderBrush="{DynamicResource BorderStrongBrush}"
                             BorderThickness="1"
                             CornerRadius="13">
                         <Border.Style>
@@ -361,7 +361,7 @@
                             <TextBlock Text="{loc:Loc Key=AddMedia.PreparingSubtitle}"
                                        Margin="0,5,0,0"
                                        FontSize="10"
-                                       Foreground="{StaticResource MutedTextBrush}"
+                                       Foreground="{DynamicResource MutedTextBrush}"
                                        TextAlignment="Center"
                                        TextWrapping="Wrap"/>
                             <ProgressBar Margin="0,11,0,0"
@@ -374,11 +374,11 @@
 
             <!-- Footer -->
             <Border Grid.Row="4"
-                    Effect="{StaticResource SoftShadowEffect}"
+                    Effect="{DynamicResource SoftShadowEffect}"
                     Margin="0,13,0,0"
                     Padding="13"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="14">
                 <Grid>
@@ -386,7 +386,7 @@
                         <TextBlock Text="{loc:Loc Key=AddMedia.Destination}"
                                    FontSize="9"
                                    FontWeight="Bold"
-                                   Foreground="{StaticResource CyanBrush}"/>
+                                   Foreground="{DynamicResource CyanBrush}"/>
                         <TextBlock Text="{Binding CurrentFolder}"
                                    Margin="0,4,0,0"
                                    FontSize="11"
