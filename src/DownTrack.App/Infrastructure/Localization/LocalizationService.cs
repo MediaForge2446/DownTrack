@@ -181,13 +181,24 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
 
     private static CultureInfo CreateCultureSafely(string code)
     {
-        return code switch
+        try
         {
-            "zh-Hans" => CultureInfo.GetCultureInfo("zh-CN"),
-            "zh-Hant" => CultureInfo.GetCultureInfo("zh-TW"),
-            "he" => CultureInfo.GetCultureInfo("he-IL"),
-            _ => CultureInfo.GetCultureInfo(code)
-        };
+            return code switch
+            {
+                "zh-Hans" => CultureInfo.GetCultureInfo("zh-CN"),
+                "zh-Hant" => CultureInfo.GetCultureInfo("zh-TW"),
+                "he" => CultureInfo.GetCultureInfo("he-IL"),
+                "ar" => CultureInfo.GetCultureInfo("ar-SA"),
+                "uk" => CultureInfo.GetCultureInfo("uk-UA"),
+                "el" => CultureInfo.GetCultureInfo("el-GR"),
+                "ro" => CultureInfo.GetCultureInfo("ro-RO"),
+                _ => CultureInfo.GetCultureInfo(code)
+            };
+        }
+        catch (CultureNotFoundException)
+        {
+            return CultureInfo.GetCultureInfo("en-US");
+        }
     }
 
     private static void ApplyCulture(string code)
