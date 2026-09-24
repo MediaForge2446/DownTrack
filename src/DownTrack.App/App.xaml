@@ -58,6 +58,18 @@
         <SolidColorBrush x:Key="BlueSoftBrush" Color="#EAF2FF"/>
         <SolidColorBrush x:Key="CyanSoftBrush" Color="#E8F8F5"/>
         <SolidColorBrush x:Key="DangerSoftBrush" Color="#FFF0F3"/>
+        <DropShadowEffect x:Key="SoftShadowEffect"
+                           BlurRadius="22"
+                           ShadowDepth="5"
+                           Direction="270"
+                           Opacity="0.10"
+                           Color="#6D7890"/>
+        <DropShadowEffect x:Key="DialogShadowEffect"
+                           BlurRadius="28"
+                           ShadowDepth="8"
+                           Direction="270"
+                           Opacity="0.15"
+                           Color="#667085"/>
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
