@@ -31,4 +31,16 @@ public sealed class ToolLocator
 
         return AppPaths.ToolsDirectory;
     }
+
+    public string GetDenoPath()
+    {
+        if (!File.Exists(AppPaths.DenoPath))
+        {
+            throw new FileNotFoundException(
+                "Deno is not installed correctly. Run Media Engine setup from Home.",
+                AppPaths.DenoPath);
+        }
+
+        return AppPaths.DenoPath;
+    }
 }
