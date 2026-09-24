@@ -93,7 +93,7 @@
                                 Orientation="Horizontal">
                         <Button Style="{StaticResource GhostButton}"
                                 Command="{Binding RenameCommand}"
-                                Visibility="{Binding SelectedEntry, Converter={StaticResource BooleanModeConverter}, ConverterParameter=Visibility}"
+                                Visibility="{Binding SelectedEntry, Converter={StaticResource NullToVisibilityConverter}}"
                                 Content="{loc:Loc Key=Shell.Rename}"
                                 Height="34"
                                 MinWidth="78"
