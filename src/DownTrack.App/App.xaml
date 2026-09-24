@@ -11,18 +11,28 @@
         <local:EntryStateBrushConverter x:Key="EntryStateBrushConverter"/>
         <local:PendingStatusBrushConverter x:Key="PendingStatusBrushConverter"/>
 
-        <SolidColorBrush x:Key="WindowBrush" Color="#0B0D12"/>
-        <SolidColorBrush x:Key="SurfaceBrush" Color="#12151C"/>
-        <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#171B24"/>
-        <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#1E2330"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="#292F3B"/>
-        <SolidColorBrush x:Key="TextBrush" Color="#F4F7FB"/>
-        <SolidColorBrush x:Key="MutedTextBrush" Color="#929BAB"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="#7D5CFF"/>
-        <SolidColorBrush x:Key="AccentSoftBrush" Color="#2B2258"/>
-        <SolidColorBrush x:Key="TealBrush" Color="#35D6B6"/>
-        <SolidColorBrush x:Key="PendingBrush" Color="#E7B75E"/>
-        <SolidColorBrush x:Key="ErrorBrush" Color="#FF6D7A"/>
+        <SolidColorBrush x:Key="WindowBrush" Color="#090B11"/>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#11151F"/>
+        <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#171C28"/>
+        <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#20283A"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#2C3445"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#F6F8FC"/>
+        <SolidColorBrush x:Key="MutedTextBrush" Color="#98A2B5"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#8B6CFF"/>
+        <LinearGradientBrush x:Key="AccentGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#7D5CFF" Offset="0"/>
+            <GradientStop Color="#A66CFF" Offset="0.55"/>
+            <GradientStop Color="#5F7CFF" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="AccentSoftGradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#2D235A" Offset="0"/>
+            <GradientStop Color="#1B2948" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="AccentSoftBrush" Color="#2C2557"/>
+        <SolidColorBrush x:Key="TealBrush" Color="#38E0C0"/>
+        <SolidColorBrush x:Key="CyanBrush" Color="#54C8FF"/>
+        <SolidColorBrush x:Key="PendingBrush" Color="#F1BF62"/>
+        <SolidColorBrush x:Key="ErrorBrush" Color="#FF7180"/>
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
@@ -32,7 +42,7 @@
 
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Background" Value="{StaticResource AccentGradientBrush}"/>
             <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="18,10"/>
@@ -49,9 +59,16 @@
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="#9277FF"/></Trigger>
-                <Trigger Property="IsPressed" Value="True"><Setter Property="Background" Value="#6C4EE7"/></Trigger>
-                <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.45"/></Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#A282FF"/>
+                    <Setter Property="BorderBrush" Value="#B199FF"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#6F52EA"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.45"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
 
@@ -73,9 +90,16 @@
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}"/></Trigger>
-                <Trigger Property="IsPressed" Value="True"><Setter Property="Background" Value="#262C38"/></Trigger>
-                <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4"/></Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}"/>
+                    <Setter Property="BorderBrush" Value="#44506A"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#273148"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.4"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
 
@@ -89,13 +113,16 @@
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}"/></Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}"/>
+                    <Setter Property="Foreground" Value="{StaticResource CyanBrush}"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
 
         <Style x:Key="DangerButton" BasedOn="{StaticResource GhostButton}" TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
-            <Setter Property="BorderBrush" Value="#59323A"/>
+            <Setter Property="BorderBrush" Value="#633641"/>
         </Style>
 
         <Style TargetType="TextBox">
@@ -114,6 +141,7 @@
             <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="9,7"/>
+            <Setter Property="MinHeight" Value="38"/>
         </Style>
 
         <Style TargetType="ListView">
@@ -122,10 +150,58 @@
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
         </Style>
 
+        <Style TargetType="ListViewItem">
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#172235"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style TargetType="ListBox">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        </Style>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="3"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#172235"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TreeView">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <Style TargetType="TreeViewItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+            <Setter Property="Padding" Value="3,1"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#172235"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
