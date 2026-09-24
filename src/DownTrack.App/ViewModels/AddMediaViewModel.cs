@@ -52,6 +52,12 @@ public sealed class AddMediaViewModel : ObservableObject
         private set => SetProperty(ref _status, value);
     }
 
+    public bool IsResolving
+    {
+        get => _isResolving;
+        private set => SetProperty(ref _isResolving, value);
+    }
+
     public AsyncRelayCommand AnalyzeCommand { get; }
     public RelayCommand SelectAllCommand { get; }
     public RelayCommand ApplyMp3Command { get; }
@@ -60,8 +66,8 @@ public sealed class AddMediaViewModel : ObservableObject
 
     private async Task AnalyzeAsync()
     {
-        _isResolving = true;
-        Status = "Analyzing media in the background…";
+        IsResolving = true;
+        Status = "Analyzing link…";
         AnalyzeCommand.RaiseCanExecuteChanged();
 
         try
@@ -90,7 +96,7 @@ public sealed class AddMediaViewModel : ObservableObject
         }
         finally
         {
-            _isResolving = false;
+            IsResolving = false;
             AnalyzeCommand.RaiseCanExecuteChanged();
         }
     }
