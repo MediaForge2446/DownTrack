@@ -121,7 +121,7 @@ public sealed class SettingsViewModel : ObservableObject
     public AsyncRelayCommand CheckForUpdatesCommand { get; }
     public AsyncRelayCommand CheckForToolUpdatesCommand { get; }
 
-    private async Task SaveAsync()
+    public async Task SaveAsync()
     {
         await _settings.UpdateAsync(s =>
         {
