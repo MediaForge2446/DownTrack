@@ -23,6 +23,7 @@
     </shell:WindowChrome.WindowChrome>
 
     <Border Background="{StaticResource WindowBrush}"
+            Effect="{StaticResource DialogShadowEffect}"
             BorderBrush="{StaticResource BorderStrongBrush}"
             BorderThickness="1"
             CornerRadius="20"
@@ -69,6 +70,7 @@
 
             <!-- Link input -->
             <Border Grid.Row="1"
+                    Effect="{StaticResource SoftShadowEffect}"
                     Margin="0,20,0,13"
                     Padding="9"
                     Background="{StaticResource SurfaceBrush}"
@@ -152,6 +154,7 @@
 
             <!-- Results -->
             <Border Grid.Row="3"
+                    Effect="{StaticResource SoftShadowEffect}"
                     Padding="10"
                     Background="{StaticResource SurfaceSoftBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
@@ -369,6 +372,7 @@
 
             <!-- Footer -->
             <Border Grid.Row="4"
+                    Effect="{StaticResource SoftShadowEffect}"
                     Margin="0,13,0,0"
                     Padding="13"
                     Background="{StaticResource SurfaceBrush}"
