@@ -45,6 +45,36 @@ public sealed class ToolManager : IAppToolManager
             ? LocalizationService.Instance.T("Home.EngineReady")
             : LocalizationService.Instance.T("Home.EngineNeedsSetup");
 
+    public async Task UpdateAsync(
+        IProgress<string>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            Directory.CreateDirectory(AppPaths.ToolsDirectory);
+
+            progress?.Report(LocalizationService.Instance.T("Engine.UpdatingYtDlp"));
+            await DownloadAndVerifyAsync(
+                YtDlpUrl,
+                YtDlpChecksumsUrl,
+                "yt-dlp.exe",
+                cancellationToken);
+
+            progress?.Report(LocalizationService.Instance.T("Engine.UpdatingFfmpeg"));
+            await DownloadAndExtractFfmpegAsync(progress, cancellationToken);
+
+            progress?.Report(LocalizationService.Instance.T("Engine.UpdatingDeno"));
+            await DownloadAndExtractDenoAsync(cancellationToken);
+
+            progress?.Report(LocalizationService.Instance.T("Engine.Updated"));
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     public async Task EnsureReadyAsync(
         IProgress<string>? progress = null,
         CancellationToken cancellationToken = default)
