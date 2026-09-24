@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="Transparent">
-    <Grid Margin="30,28,30,24">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="30,28,30,24">
+        <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -219,9 +222,7 @@
             </Grid>
 
             <Grid Grid.Row="1">
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
-                    <ItemsControl ItemsSource="{Binding Roots}">
+                <ItemsControl ItemsSource="{Binding Roots}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel/>
@@ -318,7 +319,6 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </ScrollViewer>
 
                 <Border HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -399,5 +399,6 @@
                         Content="{Binding ToolButtonText}"/>
             </Grid>
         </Border>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
