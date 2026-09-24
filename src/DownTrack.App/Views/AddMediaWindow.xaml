@@ -176,7 +176,7 @@
                                         <ComboBox Grid.Column="4"
                                                   ItemsSource="{Binding AudioQualities}"
                                                   SelectedItem="{Binding AudioQuality}"
-                                                  Margin="0,0,8,0}">
+                                                  Margin="0,0,8,0">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
@@ -187,7 +187,7 @@
                                         <ComboBox Grid.Column="5"
                                                   ItemsSource="{Binding VideoQualities}"
                                                   SelectedItem="{Binding VideoQuality}"
-                                                  Margin="0,0,8,0}">
+                                                  Margin="0,0,8,0">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
