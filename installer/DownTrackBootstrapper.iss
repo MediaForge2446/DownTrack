@@ -7,7 +7,7 @@
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
 Name: "ar"; MessagesFile: "compiler:Languages\Arabic.isl"
-Name: "zh-CN"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+Name: "zhcn"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 Name: "cs"; MessagesFile: "compiler:Languages\Czech.isl"
 Name: "da"; MessagesFile: "compiler:Languages\Danish.isl"
 Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
@@ -70,6 +70,26 @@ en.DownloadInstall=Download & install
 en.InstallReady=DownTrack %1 is ready to install.
 en.InstallVerificationFailed=DownTrack was downloaded, but the installed files could not be verified.
 en.NetworkError=DownTrack could not retrieve the latest release information.%n%nPlease check your internet connection and try again.
+en.VerificationRetry=Please run the installer again.
+ar.VerificationRetry=يرجى تشغيل المثبّت مرة أخرى.
+zhcn.VerificationRetry=请重新运行安装程序。
+cs.VerificationRetry=Spusťte instalátor znovu.
+da.VerificationRetry=Kør installationsprogrammet igen.
+nl.VerificationRetry=Voer het installatieprogramma opnieuw uit.
+fi.VerificationRetry=Suorita asennusohjelma uudelleen.
+fr.VerificationRetry=Relancez le programme d’installation.
+de.VerificationRetry=Führen Sie das Installationsprogramm erneut aus.
+he.VerificationRetry=הפעל את המתקין שוב.
+it.VerificationRetry=Esegui nuovamente il programma di installazione.
+ja.VerificationRetry=インストーラーをもう一度実行してください。
+ko.VerificationRetry=설치 프로그램을 다시 실행하세요.
+no.VerificationRetry=Kjør installasjonsprogrammet på nytt.
+pl.VerificationRetry=Uruchom instalator ponownie.
+pt.VerificationRetry=Execute o instalador novamente.
+ru.VerificationRetry=Запустите установщик ещё раз.
+es.VerificationRetry=Vuelve a ejecutar el instalador.
+tr.VerificationRetry=Yükleyiciyi tekrar çalıştırın.
+uk.VerificationRetry=Запустіть інсталятор ще раз.
 
 ar.BootstrapIntro=يتحقق هذا المثبّت الخفيف دائمًا من أحدث إصدار موثوق من DownTrack ومحرك الوسائط الحالي.
 ar.LatestDetected=أحدث إصدار موثوق: %1
@@ -79,13 +99,13 @@ ar.InstallReady=الإصدار %1 من DownTrack جاهز للتثبيت.
 ar.InstallVerificationFailed=تم تنزيل DownTrack، ولكن تعذّر التحقق من الملفات المثبّتة.
 ar.NetworkError=تعذّر على DownTrack الحصول على معلومات أحدث إصدار.%n%nتحقق من اتصال الإنترنت وحاول مرة أخرى.
 
-zh-CN.BootstrapIntro=此轻量安装程序每次都会检查最新的已验证 DownTrack 版本和当前媒体引擎。
-zh-CN.LatestDetected=最新已验证版本：%1
-zh-CN.CheckingLatest=正在检查最新的已验证版本...
-zh-CN.DownloadInstall=下载并安装
-zh-CN.InstallReady=DownTrack %1 已准备好安装。
-zh-CN.InstallVerificationFailed=DownTrack 已下载，但无法验证已安装的文件。
-zh-CN.NetworkError=DownTrack 无法获取最新版本信息。%n%n请检查网络连接后重试。
+zhcn.BootstrapIntro=此轻量安装程序每次都会检查最新的已验证 DownTrack 版本和当前媒体引擎。
+zhcn.LatestDetected=最新已验证版本：%1
+zhcn.CheckingLatest=正在检查最新的已验证版本...
+zhcn.DownloadInstall=下载并安装
+zhcn.InstallReady=DownTrack %1 已准备好安装。
+zhcn.InstallVerificationFailed=DownTrack 已下载，但无法验证已安装的文件。
+zhcn.NetworkError=DownTrack 无法获取最新版本信息。%n%n请检查网络连接后重试。
 
 cs.BootstrapIntro=Tento odlehčený instalátor vždy ověří nejnovější ověřenou verzi DownTrack a aktuální mediální engine.
 cs.LatestDetected=Nejnovější ověřená verze: %1
@@ -441,7 +461,7 @@ begin
         FmtMessage('%1  •  %2', [InstalledVersion, LatestVersion])
     else
       WizardForm.StatusLabel.Caption :=
-        Format(CustomMessage('LatestDetected'), [LatestVersion]);
+        FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]);
 
     WizardForm.WelcomeLabel2.Caption := FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]);
   end
@@ -486,10 +506,10 @@ begin
     end
     else
     begin
-      WizardForm.StatusLabel.Caption := 'Installation verification failed.';
+      WizardForm.StatusLabel.Caption := CustomMessage('InstallVerificationFailed');
       MsgBox(
         CustomMessage('InstallVerificationFailed') + #13#10 + #13#10 +
-        SetupMessage(msgPleaseWait) + ' ' + SetupMessage(msgTryAgain),
+        CustomMessage('VerificationRetry'),
         mbCriticalError,
         MB_OK);
     end;
