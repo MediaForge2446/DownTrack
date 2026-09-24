@@ -9,6 +9,7 @@ namespace DownTrack.Views;
 public partial class AddMediaWindow : Window
 {
     private readonly AddMediaViewModel _viewModel;
+    private bool _isClosing;
 
     public AddMediaWindow(IMediaResolver resolver, string currentFolder)
     {
@@ -19,6 +20,7 @@ public partial class AddMediaWindow : Window
         DataContext = _viewModel;
 
         Loaded += OnLoaded;
+        Closing += OnClosing;
     }
 
     public IReadOnlyList<MediaDownloadSpec> SelectedSpecs { get; private set; } = [];
@@ -41,11 +43,20 @@ public partial class AddMediaWindow : Window
         UrlBox.CaretIndex = UrlBox.Text.Length;
     }
 
+    private void OnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        _isClosing = true;
+        _viewModel.CancelAnalysis();
+    }
+
     private void OnAccepted(IReadOnlyList<MediaDownloadSpec> specs) =>
         SelectedSpecs = specs;
 
     private void Add_Click(object sender, RoutedEventArgs e)
     {
+        if (_isClosing || _viewModel.IsResolving)
+            return;
+
         _viewModel.Accept();
 
         if (SelectedSpecs.Count > 0)
@@ -57,6 +68,9 @@ public partial class AddMediaWindow : Window
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
+        if (e.OriginalSource is System.Windows.Controls.Button)
+            return;
+
         if (e.LeftButton == MouseButtonState.Pressed)
             DragMove();
     }
