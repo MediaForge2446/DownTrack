@@ -57,8 +57,10 @@
                     </StackPanel>
                 </StackPanel>
 
-                <Button Content="&#xE8BB;"
+                <Button Content="×"
                         Style="{StaticResource IconButton}"
+                        FontFamily="Segoe UI Symbol"
+                        FontSize="18"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Click="Close_Click"
