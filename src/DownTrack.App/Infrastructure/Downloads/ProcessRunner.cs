@@ -34,17 +34,8 @@ public sealed class ProcessRunner : IProcessRunner
         var stdout = new StringBuilder();
         var stderr = new StringBuilder();
 
-        var outputTask = Task.Run(async () =>
-        {
-            while (await process.StandardOutput.ReadLineAsync() is { } line)
-                stdout.AppendLine(line);
-        }, cancellationToken);
-
-        var errorTask = Task.Run(async () =>
-        {
-            while (await process.StandardError.ReadLineAsync() is { } line)
-                stderr.AppendLine(line);
-        }, cancellationToken);
+        var outputTask = ReadOutputAsync(process.StandardOutput, stdout);
+        var errorTask = ReadOutputAsync(process.StandardError, stderr);
 
         try
         {
@@ -63,9 +54,29 @@ public sealed class ProcessRunner : IProcessRunner
                 // Best effort process cleanup.
             }
 
+            try
+            {
+                await Task.WhenAll(outputTask, errorTask);
+            }
+            catch
+            {
+                // The process may have been terminated while output was draining.
+            }
+
             throw;
         }
 
-        return new ProcessResult(process.ExitCode, stdout.ToString(), stderr.ToString());
+        return new ProcessResult(
+            process.ExitCode,
+            stdout.ToString(),
+            stderr.ToString());
+    }
+
+    private static async Task ReadOutputAsync(
+        StreamReader reader,
+        StringBuilder destination)
+    {
+        while (await reader.ReadLineAsync() is { } line)
+            destination.AppendLine(line);
     }
 }
