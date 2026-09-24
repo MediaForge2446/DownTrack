@@ -1,6 +1,7 @@
 using DownTrack.Application.Commands;
 using DownTrack.Application.Services;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.ViewModels;
 
@@ -29,6 +30,13 @@ public sealed class MainWindowViewModel : ObservableObject
         _currentViewModel = Home;
 
         GoHomeCommand = new RelayCommand(_ => GoHome());
+        LocalizationManager.Instance.LanguageChanged += (_, _) =>
+        {
+            if (CurrentViewModel == Home)
+                CurrentFolderLabel = LocalizationManager.Instance["App.Library"];
+
+            OnPropertyChanged(nameof(CurrentFolderLabel));
+        };
     }
 
     public HomeViewModel Home { get; }
@@ -41,7 +49,7 @@ public sealed class MainWindowViewModel : ObservableObject
         private set => SetProperty(ref _currentViewModel, value);
     }
 
-    public string CurrentFolderLabel { get; private set; } = "Library";
+    public string CurrentFolderLabel { get; private set; } = LocalizationManager.Instance["App.Library"];
     public RelayCommand GoHomeCommand { get; }
 
     public async Task InitializeAsync()
@@ -52,7 +60,7 @@ public sealed class MainWindowViewModel : ObservableObject
 
     private void GoHome()
     {
-        CurrentFolderLabel = "Library";
+        CurrentFolderLabel = LocalizationManager.Instance["App.Library"];
         OnPropertyChanged(nameof(CurrentFolderLabel));
         Home.Refresh();
         CurrentViewModel = Home;
