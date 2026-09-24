@@ -579,6 +579,9 @@ begin
     ShowCompleted;
   except
     SetInstallState(CustomMessage('Title'), CustomMessage('Error'));
+    PrimaryButton.Caption := CustomMessage('Retry');
+    PrimaryButton.Enabled := True;
+    PrimaryButton.OnClick := @InstallLatest;
     SecondaryButton.Caption := CustomMessage('Close');
     SecondaryButton.Visible := True;
     Log(GetExceptionMessage);
