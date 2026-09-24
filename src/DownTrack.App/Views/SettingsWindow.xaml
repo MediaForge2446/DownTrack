@@ -1,32 +1,31 @@
 <Window x:Class="DownTrack.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:loc="clr-namespace:DownTrack.Infrastructure.Localization"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         FlowDirection="{Binding FlowDirection, Source={x:Static loc:LocalizationService.Instance}}"
-        Width="520"
-        Height="430"
-        MinWidth="520"
-        MinHeight="430"
+        Width="720"
+        Height="720"
+        MinWidth="640"
+        MinHeight="600"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
-        ResizeMode="NoResize"
-        ShowInTaskbar="False"
+        ResizeMode="CanResize"
         AllowsTransparency="True"
         Background="Transparent"
         UseLayoutRounding="True">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="0"
-                            ResizeBorderThickness="4"
-                            CornerRadius="18"
+                            ResizeBorderThickness="5"
+                            CornerRadius="20"
                             GlassFrameThickness="0"
                             UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
     <Border Background="{StaticResource WindowBrush}"
-            BorderBrush="{StaticResource BorderStrongBrush}"
+            BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
-            CornerRadius="18"
+            CornerRadius="20"
             Padding="26"
             Effect="{StaticResource DialogShadowEffect}">
         <Grid>
@@ -39,70 +38,254 @@
             <Grid MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <StackPanel>
                     <TextBlock Text="{loc:Loc Key=Settings.Title}"
-                               FontSize="25"
+                               FontSize="27"
                                FontWeight="SemiBold"/>
-                    <TextBlock Text="{loc:Loc Key=Settings.LanguageDescription}"
-                               Margin="0,6,50,0"
-                               FontSize="12"
-                               Foreground="{StaticResource MutedTextBrush}"
-                               TextWrapping="Wrap"/>
+                    <TextBlock Text="{loc:Loc Key=Settings.Subtitle}"
+                               Margin="0,5,0,0"
+                               FontSize="11"
+                               Foreground="{StaticResource MutedTextBrush}"/>
                 </StackPanel>
-
                 <Button Content="×"
                         Style="{StaticResource IconButton}"
-                        FontFamily="Segoe UI Symbol"
-                        FontSize="18"
                         HorizontalAlignment="Right"
                         Click="Close_Click"
                         ToolTip="{loc:Loc Key=Window.Close}"/>
             </Grid>
 
-            <Border Grid.Row="1"
-                    Margin="0,22,0,20"
-                    Padding="18"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="15">
+            <ScrollViewer Grid.Row="1"
+                          Margin="0,20,0,20"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
-                    <TextBlock Text="{loc:Loc Key=Settings.Language}"
-                               FontSize="11"
-                               FontWeight="SemiBold"/>
-                    <TextBlock Text="{loc:Loc Key=Settings.Current}"
-                               Margin="0,4,0,12"
-                               FontSize="10"
-                               Foreground="{StaticResource MutedTextBrush}"/>
-
-                    <ComboBox x:Name="LanguageBox"
-                              DisplayMemberPath="DisplayName"
-                              SelectedValuePath="Code"
-                              MinHeight="42"/>
-                    
-                    <Border Margin="0,14,0,0"
-                            Padding="12,9"
-                            Background="{StaticResource CyanSoftBrush}"
-                            BorderBrush="#B9E4DE"
+                    <!-- Appearance -->
+                    <Border Padding="18"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
                             BorderThickness="1"
-                            CornerRadius="10">
-                        <TextBlock Text="{loc:Loc Key=Settings.RestartNotNeeded}"
-                                   FontSize="10"
-                                   Foreground="{StaticResource CyanBrush}"/>
+                            CornerRadius="15"
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="220"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <TextBlock Text="{loc:Loc Key=Settings.Appearance}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="{loc:Loc Key=Settings.AppearanceSubtitle}"
+                                           Margin="0,4,0,0"
+                                           FontSize="10"
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <ComboBox x:Name="ThemeBox"
+                                      Grid.Column="1"
+                                      MinHeight="42"
+                                      Margin="18,0,0,0"
+                                      DisplayMemberPath="Label"
+                                      SelectedValuePath="Code"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Language -->
+                    <Border Padding="18"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="15"
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="260"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="{loc:Loc Key=Settings.Language}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="{loc:Loc Key=Settings.LanguageDescription}"
+                                           Margin="0,4,0,0"
+                                           FontSize="10"
+                                           Foreground="{StaticResource MutedTextBrush}"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <ComboBox x:Name="LanguageBox"
+                                      Grid.Column="1"
+                                      MinHeight="42"
+                                      Margin="18,0,0,0"
+                                      DisplayMemberPath="DisplayName"
+                                      SelectedValuePath="Code"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Updates -->
+                    <Border Padding="18"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="15"
+                            Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="{loc:Loc Key=Settings.Updates}"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{loc:Loc Key=Settings.UpdatesSubtitle}"
+                                       Margin="0,4,0,14"
+                                       FontSize="10"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       TextWrapping="Wrap"/>
+
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Loc Key=Settings.AppUpdates}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="AppUpdateStatus"
+                                               Margin="0,3,0,0"
+                                               FontSize="9"
+                                               Foreground="{StaticResource MutedTextBrush}"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        x:Name="CheckAppButton"
+                                        Style="{StaticResource GhostButton}"
+                                        Content="{loc:Loc Key=Settings.Check}"
+                                        MinWidth="92"
+                                        Margin="8,0"
+                                        Click="CheckApp_Click"/>
+                                <Button Grid.Column="2"
+                                        x:Name="UpdateAppButton"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Content="{loc:Loc Key=Settings.Update}"
+                                        MinWidth="86"
+                                        IsEnabled="False"
+                                        Click="UpdateApp_Click"/>
+                            </Grid>
+
+                            <Border Height="1"
+                                    Background="{StaticResource BorderBrush}"
+                                    Margin="0,2,0,10"/>
+
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Loc Key=Settings.ToolUpdates}"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="ToolUpdateStatus"
+                                               Margin="0,3,0,0"
+                                               FontSize="9"
+                                               Foreground="{StaticResource MutedTextBrush}"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Style="{StaticResource GhostButton}"
+                                        Content="{loc:Loc Key=Settings.Check}"
+                                        MinWidth="92"
+                                        Margin="8,0"
+                                        Click="CheckTools_Click"/>
+                                <Button Grid.Column="2"
+                                        x:Name="UpdateToolsButton"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Content="{loc:Loc Key=Settings.Update}"
+                                        MinWidth="86"
+                                        Click="UpdateTools_Click"/>
+                            </Grid>
+
+                            <CheckBox x:Name="AutoUpdateBox"
+                                      Content="{loc:Loc Key=Settings.AutoUpdate}"
+                                      Margin="0,4,0,6"
+                                      FontSize="11"/>
+                            <CheckBox x:Name="AutoToolUpdateBox"
+                                      Content="{loc:Loc Key=Settings.AutoToolUpdate}"
+                                      FontSize="11"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Defaults -->
+                    <Border Padding="18"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="15">
+                        <StackPanel>
+                            <TextBlock Text="{loc:Loc Key=Settings.Defaults}"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{loc:Loc Key=Settings.DefaultsSubtitle}"
+                                       Margin="0,4,0,14"
+                                       FontSize="10"
+                                       Foreground="{StaticResource MutedTextBrush}"
+                                       TextWrapping="Wrap"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="14"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Loc Key=Settings.DefaultFormat}"
+                                               FontSize="9"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                    <ComboBox x:Name="FormatBox"
+                                              Margin="0,7,0,0"
+                                              MinHeight="42"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{loc:Loc Key=Settings.DefaultAudioQuality}"
+                                               FontSize="9"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                    <ComboBox x:Name="AudioQualityBox"
+                                              Margin="0,7,0,0"
+                                              MinHeight="42"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Text="{loc:Loc Key=Settings.DefaultVideoQuality}"
+                                               FontSize="9"
+                                               FontWeight="Bold"
+                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                    <ComboBox x:Name="VideoQualityBox"
+                                              Margin="0,7,0,0"
+                                              MinHeight="42"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
                     </Border>
                 </StackPanel>
-            </Border>
+            </ScrollViewer>
 
             <StackPanel Grid.Row="2"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
-                <Button Content="{loc:Loc Key=Settings.Done}"
-                        Style="{StaticResource GhostButton}"
-                        MinWidth="90"
+                <Button Style="{StaticResource GhostButton}"
+                        Content="{loc:Loc Key=Settings.Cancel}"
+                        MinWidth="92"
                         Click="Close_Click"/>
-                <Button Content="{loc:Loc Key=Settings.Apply}"
-                        Style="{StaticResource PrimaryButton}"
+                <Button Style="{StaticResource PrimaryButton}"
+                        Content="{loc:Loc Key=Settings.Save}"
+                        MinWidth="110"
                         Margin="8,0,0,0"
-                        MinWidth="90"
-                        Click="Apply_Click"/>
+                        Click="Save_Click"/>
             </StackPanel>
         </Grid>
     </Border>
