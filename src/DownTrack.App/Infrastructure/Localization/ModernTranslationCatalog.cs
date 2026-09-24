@@ -13,7 +13,219 @@ internal static class ModernTranslationCatalog
     public static void Apply(IDictionary<string, Dictionary<string, string>> dictionaries)
     {
         foreach (var language in Languages)
+        {
             EnsurePack(dictionaries, language);
+
+            if (dictionaries.TryGetValue(language, out var dictionary))
+            {
+                var extras = language switch
+                {
+                    "he" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "ההגדרות נשמרו.",
+                        ["Settings.Original"] = "מקור",
+                        ["Pending.Change"] = "שינוי ממתין",
+                        ["Pending.Waiting"] = "ממתין",
+                        ["Pending.Processing"] = "בעיבוד",
+                        ["Pending.Completed"] = "הושלם",
+                        ["Pending.Error"] = "שגיאה"
+                    },
+                    "es" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Configuración guardada.",
+                        ["Settings.Original"] = "Original",
+                        ["Pending.Change"] = "Cambio pendiente",
+                        ["Pending.Waiting"] = "En espera",
+                        ["Pending.Processing"] = "Procesando",
+                        ["Pending.Completed"] = "Completado",
+                        ["Pending.Error"] = "Error"
+                    },
+                    "fr" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Paramètres enregistrés.",
+                        ["Settings.Original"] = "Source",
+                        ["Pending.Change"] = "Modification en attente",
+                        ["Pending.Waiting"] = "En attente",
+                        ["Pending.Processing"] = "Traitement",
+                        ["Pending.Completed"] = "Terminé",
+                        ["Pending.Error"] = "Erreur"
+                    },
+                    "de" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Einstellungen gespeichert.",
+                        ["Settings.Original"] = "Original",
+                        ["Pending.Change"] = "Ausstehende Änderung",
+                        ["Pending.Waiting"] = "Wartend",
+                        ["Pending.Processing"] = "Wird verarbeitet",
+                        ["Pending.Completed"] = "Abgeschlossen",
+                        ["Pending.Error"] = "Fehler"
+                    },
+                    "it" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Impostazioni salvate.",
+                        ["Settings.Original"] = "Originale",
+                        ["Pending.Change"] = "Modifica in sospeso",
+                        ["Pending.Waiting"] = "In attesa",
+                        ["Pending.Processing"] = "In elaborazione",
+                        ["Pending.Completed"] = "Completato",
+                        ["Pending.Error"] = "Errore"
+                    },
+                    "pt" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Configurações salvas.",
+                        ["Settings.Original"] = "Original",
+                        ["Pending.Change"] = "Alteração pendente",
+                        ["Pending.Waiting"] = "Aguardando",
+                        ["Pending.Processing"] = "Processando",
+                        ["Pending.Completed"] = "Concluído",
+                        ["Pending.Error"] = "Erro"
+                    },
+                    "nl" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Instellingen opgeslagen.",
+                        ["Settings.Original"] = "Origineel",
+                        ["Pending.Change"] = "Wijziging in afwachting",
+                        ["Pending.Waiting"] = "Wachtend",
+                        ["Pending.Processing"] = "Bezig met verwerken",
+                        ["Pending.Completed"] = "Voltooid",
+                        ["Pending.Error"] = "Fout"
+                    },
+                    "pl" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Ustawienia zapisane.",
+                        ["Settings.Original"] = "Oryginał",
+                        ["Pending.Change"] = "Oczekująca zmiana",
+                        ["Pending.Waiting"] = "Oczekuje",
+                        ["Pending.Processing"] = "Przetwarzanie",
+                        ["Pending.Completed"] = "Ukończono",
+                        ["Pending.Error"] = "Błąd"
+                    },
+                    "cs" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Nastavení uloženo.",
+                        ["Settings.Original"] = "Původní",
+                        ["Pending.Change"] = "Čekající změna",
+                        ["Pending.Waiting"] = "Čeká",
+                        ["Pending.Processing"] = "Zpracovává se",
+                        ["Pending.Completed"] = "Dokončeno",
+                        ["Pending.Error"] = "Chyba"
+                    },
+                    "tr" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Ayarlar kaydedildi.",
+                        ["Settings.Original"] = "Orijinal",
+                        ["Pending.Change"] = "Bekleyen değişiklik",
+                        ["Pending.Waiting"] = "Bekliyor",
+                        ["Pending.Processing"] = "İşleniyor",
+                        ["Pending.Completed"] = "Tamamlandı",
+                        ["Pending.Error"] = "Hata"
+                    },
+                    "uk" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Налаштування збережено.",
+                        ["Settings.Original"] = "Оригінал",
+                        ["Pending.Change"] = "Очікувана зміна",
+                        ["Pending.Waiting"] = "Очікування",
+                        ["Pending.Processing"] = "Обробка",
+                        ["Pending.Completed"] = "Завершено",
+                        ["Pending.Error"] = "Помилка"
+                    },
+                    "ru" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Настройки сохранены.",
+                        ["Settings.Original"] = "Оригинал",
+                        ["Pending.Change"] = "Ожидающее изменение",
+                        ["Pending.Waiting"] = "Ожидание",
+                        ["Pending.Processing"] = "В обработке",
+                        ["Pending.Completed"] = "Завершено",
+                        ["Pending.Error"] = "Ошибка"
+                    },
+                    "ar" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "تم حفظ الإعدادات.",
+                        ["Settings.Original"] = "الأصلي",
+                        ["Pending.Change"] = "تغيير قيد الانتظار",
+                        ["Pending.Waiting"] = "قيد الانتظار",
+                        ["Pending.Processing"] = "جارٍ المعالجة",
+                        ["Pending.Completed"] = "مكتمل",
+                        ["Pending.Error"] = "خطأ"
+                    },
+                    "el" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Οι ρυθμίσεις αποθηκεύτηκαν.",
+                        ["Settings.Original"] = "Αρχικό",
+                        ["Pending.Change"] = "Εκκρεμής αλλαγή",
+                        ["Pending.Waiting"] = "Σε αναμονή",
+                        ["Pending.Processing"] = "Σε επεξεργασία",
+                        ["Pending.Completed"] = "Ολοκληρώθηκε",
+                        ["Pending.Error"] = "Σφάλμα"
+                    },
+                    "ro" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Setările au fost salvate.",
+                        ["Settings.Original"] = "Original",
+                        ["Pending.Change"] = "Modificare în așteptare",
+                        ["Pending.Waiting"] = "În așteptare",
+                        ["Pending.Processing"] = "Se procesează",
+                        ["Pending.Completed"] = "Finalizat",
+                        ["Pending.Error"] = "Eroare"
+                    },
+                    "ja" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "設定を保存しました。",
+                        ["Settings.Original"] = "元の品質",
+                        ["Pending.Change"] = "保留中の変更",
+                        ["Pending.Waiting"] = "待機中",
+                        ["Pending.Processing"] = "処理中",
+                        ["Pending.Completed"] = "完了",
+                        ["Pending.Error"] = "エラー"
+                    },
+                    "ko" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "설정이 저장되었습니다.",
+                        ["Settings.Original"] = "원본",
+                        ["Pending.Change"] = "대기 중인 변경",
+                        ["Pending.Waiting"] = "대기 중",
+                        ["Pending.Processing"] = "처리 중",
+                        ["Pending.Completed"] = "완료",
+                        ["Pending.Error"] = "오류"
+                    },
+                    "zh-Hans" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "设置已保存。",
+                        ["Settings.Original"] = "原始",
+                        ["Pending.Change"] = "待处理更改",
+                        ["Pending.Waiting"] = "等待中",
+                        ["Pending.Processing"] = "处理中",
+                        ["Pending.Completed"] = "已完成",
+                        ["Pending.Error"] = "错误"
+                    },
+                    "zh-Hant" => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "設定已儲存。",
+                        ["Settings.Original"] = "原始",
+                        ["Pending.Change"] = "待處理變更",
+                        ["Pending.Waiting"] = "等待中",
+                        ["Pending.Processing"] = "處理中",
+                        ["Pending.Completed"] = "已完成",
+                        ["Pending.Error"] = "錯誤"
+                    },
+                    _ => new Dictionary<string, string>
+                    {
+                        ["Settings.Saved"] = "Settings saved.",
+                        ["Settings.Original"] = "Original",
+                        ["Pending.Change"] = "Pending change",
+                        ["Pending.Waiting"] = "Waiting",
+                        ["Pending.Processing"] = "Processing",
+                        ["Pending.Completed"] = "Completed",
+                        ["Pending.Error"] = "Error"
+                    }
+                };
+
+                foreach (var (key, value) in extras)
+                    dictionary[key] = value;
+            }
+        }
     }
 
     private static void EnsurePack(
