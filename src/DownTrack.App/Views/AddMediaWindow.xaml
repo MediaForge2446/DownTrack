@@ -4,11 +4,11 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
-        Width="1040"
-        Height="720"
-        MinWidth="620"
-        MinHeight="500"
-        ResizeMode="CanResize"
+        Width="900"
+        Height="620"
+        MinWidth="520"
+        MinHeight="460"
+        ResizeMode="NoResize"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -16,7 +16,7 @@
         SnapsToDevicePixels="True">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="0"
-                            ResizeBorderThickness="6"
+                            ResizeBorderThickness="0"
                             CornerRadius="18"
                             GlassFrameThickness="0"
                             UseAeroCaptionButtons="False"/>
@@ -25,8 +25,9 @@
     <Border Background="{StaticResource WindowBrush}"
             BorderBrush="{StaticResource BorderBrush}"
             BorderThickness="1"
-            CornerRadius="18">
-        <Grid Margin="26">
+            CornerRadius="18"
+            Padding="24">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -39,16 +40,16 @@
                   MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Border Width="7"
-                                Height="42"
-                                CornerRadius="4"
+                        <Border Width="6"
+                                Height="38"
+                                CornerRadius="3"
                                 Background="{StaticResource AccentGradientBrush}"/>
-                        <StackPanel Margin="13,0,0,0">
+                        <StackPanel Margin="12,0,0,0">
                             <TextBlock Text="Add Media"
-                                       FontSize="30"
+                                       FontSize="27"
                                        FontWeight="SemiBold"/>
-                            <TextBlock Text="Analyze links, choose per-item options, then stage everything for this folder."
-                                       Margin="0,5,0,0"
+                            <TextBlock Text="Paste a YouTube link, choose the output for each item, and stage it for this folder."
+                                       Margin="0,4,0,0"
                                        FontSize="12"
                                        Foreground="{StaticResource MutedTextBrush}"
                                        TextWrapping="Wrap"/>
@@ -57,20 +58,20 @@
                 </StackPanel>
 
                 <Button Content="&#xE8BB;"
-                        FontFamily="Segoe Fluent Icons"
                         Style="{StaticResource IconButton}"
                         HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
                         Click="Close_Click"
                         ToolTip="Close"/>
             </Grid>
 
             <Border Grid.Row="1"
-                    Margin="0,22,0,12"
-                    Padding="14"
+                    Margin="0,20,0,12"
+                    Padding="10"
                     Background="{StaticResource SurfaceBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="14">
+                    CornerRadius="13">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -79,15 +80,16 @@
 
                     <TextBox x:Name="UrlBox"
                              Text="{Binding Url, UpdateSourceTrigger=PropertyChanged}"
-                             MinHeight="44"
+                             MinHeight="42"
+                             Padding="12,9"
                              VerticalContentAlignment="Center"
-                             FontSize="14"/>
+                             FontSize="13"/>
 
                     <Button Grid.Column="1"
-                            Margin="10,0,0,0"
+                            Margin="9,0,0,0"
                             Style="{StaticResource PrimaryButton}"
                             Command="{Binding AnalyzeCommand}"
-                            MinWidth="118"
+                            MinWidth="108"
                             Content="Analyze"/>
                 </Grid>
             </Border>
@@ -97,26 +99,42 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource GhostButton}"
                             Command="{Binding SelectAllCommand}"
-                            Content="Select all"/>
+                            Content="Select all"
+                            MinWidth="92"/>
                     <Button Style="{StaticResource GhostButton}"
                             Command="{Binding ApplyMp3Command}"
                             Content="MP3 to all"
-                            Margin="8,0,0,0"/>
+                            Margin="8,0,0,0"
+                            MinWidth="92"/>
                 </StackPanel>
 
                 <StackPanel HorizontalAlignment="Right"
-                            VerticalAlignment="Center">
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                    <Ellipse Width="7"
+                             Height="7"
+                             Fill="{StaticResource TealBrush}"
+                             VerticalAlignment="Center">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <DataTrigger Binding="{Binding IsResolving}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
                     <TextBlock Text="{Binding Status}"
+                               Margin="7,0,0,0"
                                Foreground="{StaticResource MutedTextBrush}"
                                FontSize="11"
                                TextTrimming="CharacterEllipsis"
-                               MaxWidth="500"
-                               TextAlignment="Right"/>
+                               MaxWidth="470"/>
                 </StackPanel>
             </Grid>
 
             <Border Grid.Row="3"
-                    Padding="12"
+                    Padding="10"
                     Background="#0C0F17"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
@@ -127,7 +145,7 @@
                         <ItemsControl ItemsSource="{Binding Items}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,0,0,10"
+                                    <Border Margin="0,0,0,9"
                                             Padding="12"
                                             Background="{StaticResource SurfaceBrush}"
                                             BorderBrush="{StaticResource BorderBrush}"
@@ -142,104 +160,43 @@
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="78"/>
                                                     <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
 
                                                 <CheckBox IsChecked="{Binding Selected}"
-                                                          VerticalAlignment="Center"
-                                                          Margin="2,0,12,0"/>
+                                                          Margin="0,0,12,0"
+                                                          VerticalAlignment="Center"/>
 
                                                 <Border Grid.Column="1"
-                                                        Width="72"
-                                                        Height="72"
-                                                        CornerRadius="11"
+                                                        Width="66"
+                                                        Height="66"
+                                                        CornerRadius="10"
                                                         Background="{StaticResource SurfaceElevatedBrush}"
                                                         ClipToBounds="True">
                                                     <Image Source="{Binding ThumbnailUrl}"
                                                            Stretch="UniformToFill"/>
                                                 </Border>
 
-                                                <Grid Grid.Column="1"
-                                                      Margin="86,0,0,0">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                    </Grid.RowDefinitions>
+                                                <StackPanel Grid.Column="2"
+                                                            Margin="12,0,12,0">
                                                     <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                                              BorderThickness="0"
                                                              Background="Transparent"
                                                              Padding="0"
-                                                             FontSize="15"
+                                                             FontSize="14"
                                                              FontWeight="SemiBold"/>
-                                                    <TextBlock Grid.Row="1"
-                                                               Text="{Binding SourceUrl}"
-                                                               Margin="0,5,0,0"
+                                                    <TextBlock Text="{Binding SourceUrl}"
+                                                               Margin="0,4,0,0"
                                                                FontSize="10"
                                                                Foreground="{StaticResource MutedTextBrush}"
                                                                TextTrimming="CharacterEllipsis"/>
-                                                </Grid>
-                                            </Grid>
-
-                                            <Grid Grid.Row="1"
-                                                  Margin="86,12,0,0">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="1.2*"/>
-                                                    <ColumnDefinition Width="1*"/>
-                                                    <ColumnDefinition Width="1*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <StackPanel>
-                                                    <TextBlock Text="FORMAT"
-                                                               FontSize="9"
-                                                               FontWeight="Bold"
-                                                               Foreground="{StaticResource MutedTextBrush}"/>
-                                                    <ComboBox ItemsSource="{Binding Formats}"
-                                                              SelectedItem="{Binding Format}"
-                                                              Margin="0,4,8,0">
-                                                        <ComboBox.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
-                                                            </DataTemplate>
-                                                        </ComboBox.ItemTemplate>
-                                                    </ComboBox>
-                                                </StackPanel>
-
-                                                <StackPanel Grid.Column="1">
-                                                    <TextBlock Text="AUDIO"
-                                                               FontSize="9"
-                                                               FontWeight="Bold"
-                                                               Foreground="{StaticResource MutedTextBrush}"/>
-                                                    <ComboBox ItemsSource="{Binding AudioQualities}"
-                                                              SelectedItem="{Binding AudioQuality}"
-                                                              Margin="0,4,8,0">
-                                                        <ComboBox.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
-                                                            </DataTemplate>
-                                                        </ComboBox.ItemTemplate>
-                                                    </ComboBox>
-                                                </StackPanel>
-
-                                                <StackPanel Grid.Column="2">
-                                                    <TextBlock Text="VIDEO"
-                                                               FontSize="9"
-                                                               FontWeight="Bold"
-                                                               Foreground="{StaticResource MutedTextBrush}"/>
-                                                    <ComboBox ItemsSource="{Binding VideoQualities}"
-                                                              SelectedItem="{Binding VideoQuality}"
-                                                              Margin="0,4,8,0">
-                                                        <ComboBox.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
-                                                            </DataTemplate>
-                                                        </ComboBox.ItemTemplate>
-                                                    </ComboBox>
                                                 </StackPanel>
 
                                                 <Border Grid.Column="3"
-                                                        Margin="8,15,0,0"
-                                                        Padding="10,7"
+                                                        Margin="4,0,0,0"
+                                                        Padding="9,6"
                                                         CornerRadius="8"
                                                         Background="{StaticResource AccentSoftBrush}">
                                                     <TextBlock Text="{Binding IsVideo, Converter={StaticResource BooleanModeConverter}}"
@@ -247,6 +204,66 @@
                                                                FontSize="10"
                                                                FontWeight="SemiBold"/>
                                                 </Border>
+                                            </Grid>
+
+                                            <Grid Grid.Row="1"
+                                                  Margin="90,11,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="1.1*"/>
+                                                    <ColumnDefinition Width="1*"/>
+                                                    <ColumnDefinition Width="1*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Margin="0,0,7,0">
+                                                    <TextBlock Text="FORMAT"
+                                                               FontSize="9"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                    <ComboBox ItemsSource="{Binding Formats}"
+                                                              SelectedItem="{Binding Format}"
+                                                              Margin="0,4,0,0}">
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                    </ComboBox>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1"
+                                                            Margin="4,0,4,0">
+                                                    <TextBlock Text="AUDIO"
+                                                               FontSize="9"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                    <ComboBox ItemsSource="{Binding AudioQualities}"
+                                                              SelectedItem="{Binding AudioQuality}"
+                                                              Margin="0,4,0,0}">
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                    </ComboBox>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="2"
+                                                            Margin="7,0,0,0">
+                                                    <TextBlock Text="VIDEO"
+                                                               FontSize="9"
+                                                               FontWeight="Bold"
+                                                               Foreground="{StaticResource MutedTextBrush}"/>
+                                                    <ComboBox ItemsSource="{Binding VideoQualities}"
+                                                              SelectedItem="{Binding VideoQuality}"
+                                                              IsEnabled="{Binding IsVideo}"
+                                                              Margin="0,4,0,0}">
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                    </ComboBox>
+                                                </StackPanel>
                                             </Grid>
                                         </Grid>
                                     </Border>
@@ -261,42 +278,66 @@
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Items.Count}" Value="0">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
+                                <DataTrigger Binding="{Binding Items.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
                             </Style>
                         </StackPanel.Style>
                         <TextBlock Text=""
                                    FontFamily="Segoe Fluent Icons"
-                                   FontSize="38"
+                                   FontSize="34"
                                    Foreground="{StaticResource AccentBrush}"
                                    HorizontalAlignment="Center"/>
-                        <TextBlock Text="Nothing analyzed yet"
-                                   Margin="0,12,0,0"
-                                   FontSize="15"
+                        <TextBlock Text="No media loaded"
+                                   Margin="0,10,0,0"
+                                   FontSize="14"
                                    FontWeight="SemiBold"
-                                   Foreground="{StaticResource TextBrush}"
                                    HorizontalAlignment="Center"/>
-                        <TextBlock Text="Paste a YouTube link above and press Analyze."
-                                   Margin="0,5,0,0"
+                        <TextBlock Text="Paste a YouTube link above and select Analyze."
+                                   Margin="0,4,0,0"
                                    FontSize="11"
                                    Foreground="{StaticResource MutedTextBrush}"
                                    HorizontalAlignment="Center"/>
                     </StackPanel>
+
+                    <Border HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Padding="18,14"
+                            Background="{StaticResource SurfaceElevatedBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <DataTrigger Binding="{Binding IsResolving}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock Text="Analyzing link…"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"/>
+                            <ProgressBar Width="180"
+                                         Height="4"
+                                         Margin="0,9,0,0"
+                                         IsIndeterminate="True"/>
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </Border>
 
             <Border Grid.Row="4"
-                    Margin="0,14,0,0"
-                    Padding="14"
+                    Margin="0,13,0,0"
+                    Padding="13"
                     Background="{StaticResource SurfaceBrush}"
                     BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="14">
+                    CornerRadius="13">
                 <Grid>
-                    <StackPanel MaxWidth="560">
+                    <StackPanel MaxWidth="500">
                         <TextBlock Text="DESTINATION"
                                    FontSize="9"
                                    FontWeight="Bold"
@@ -312,11 +353,12 @@
                                 VerticalAlignment="Center">
                         <Button Content="Cancel"
                                 Style="{StaticResource GhostButton}"
-                                Click="Close_Click"/>
+                                Click="Close_Click"
+                                MinWidth="78"/>
                         <Button Content="Stage selected"
                                 Style="{StaticResource PrimaryButton}"
                                 Margin="8,0,0,0"
-                                MinWidth="138"
+                                MinWidth="130"
                                 Click="Add_Click"/>
                     </StackPanel>
                 </Grid>
