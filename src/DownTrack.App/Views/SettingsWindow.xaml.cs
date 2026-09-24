@@ -1,34 +1,37 @@
 using System.Windows;
 using System.Windows.Input;
-using DownTrack.Infrastructure.Localization;
+using DownTrack.Application.Services;
+using DownTrack.ViewModels;
 
 namespace DownTrack.Views;
 
 public partial class SettingsWindow : Window
 {
-    private sealed record LanguageOption(string Code, string DisplayName);
+    private readonly SettingsViewModel _viewModel;
 
-    private readonly LocalizationService _localization;
-
-    public SettingsWindow()
+    public SettingsWindow(IAppToolManager toolManager)
     {
         InitializeComponent();
-        _localization = LocalizationService.Instance;
-        LanguageBox.ItemsSource = LocalizationService.SupportedLanguages
-            .Select(x => new LanguageOption(
-                x.Code,
-                x.Code == "auto"
-                    ? _localization.T("Settings.Automatic")
-                    : x.NativeName))
-            .ToList();
-        LanguageBox.SelectedValue = _localization.SelectedCode;
-        Loaded += (_, _) => LanguageBox.Focus();
+
+        _viewModel = new SettingsViewModel(toolManager);
+        DataContext = _viewModel;
     }
 
-    private void Apply_Click(object sender, RoutedEventArgs e)
+    private async void Save_Click(object sender, RoutedEventArgs e)
     {
-        _localization.SetLanguage(LanguageBox.SelectedValue as string ?? "en");
-        DialogResult = true;
+        try
+        {
+            await _viewModel.SaveAsync();
+            DialogResult = true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                ex.Message,
+                "DownTrack",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
     }
 
     private void Close_Click(object sender, RoutedEventArgs e) =>

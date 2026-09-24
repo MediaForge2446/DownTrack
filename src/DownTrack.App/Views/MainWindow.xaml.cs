@@ -2,7 +2,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using DownTrack.Infrastructure.Localization;
+using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Tools;
+using DownTrack.ViewModels;
 
 namespace DownTrack.Views;
 
@@ -11,62 +13,42 @@ public partial class MainWindow : Window
     private const uint MonitorDefaultToNearest = 2;
     private Rect _restoreBounds;
     private bool _workAreaMaximized;
-    private bool _updatingLanguageSelector;
+    private bool _syncingRootSelection;
 
     public MainWindow()
     {
         InitializeComponent();
         StateChanged += MainWindow_StateChanged;
-
-        LocalizationService.Instance.PropertyChanged += Localization_PropertyChanged;
-        RefreshLanguageSelector();
     }
 
-    private sealed record LanguageOption(string Code, string DisplayName);
-
-    private void RefreshLanguageSelector()
-    {
-        _updatingLanguageSelector = true;
-        try
-        {
-            LanguageBox.ItemsSource = LocalizationService.SupportedLanguages
-                .Select(x => new LanguageOption(
-                    x.Code,
-                    x.Code == "auto"
-                        ? LocalizationService.Instance.T("Settings.Automatic")
-                        : x.NativeName))
-                .ToList();
-
-            LanguageBox.SelectedValue = LocalizationService.Instance.SelectedCode;
-        }
-        finally
-        {
-            _updatingLanguageSelector = false;
-        }
-    }
-
-    private void Localization_PropertyChanged(
-        object? sender,
-        System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
-            RefreshLanguageSelector();
-    }
-
-    private void LanguageBox_SelectionChanged(
-        object sender,
-        System.Windows.Controls.SelectionChangedEventArgs e)
-    {
-        if (_updatingLanguageSelector)
-            return;
-
-        if (LanguageBox.SelectedValue is string code)
-            LocalizationService.Instance.SetLanguage(code);
-    }
+    private MainWindowViewModel? ViewModel => DataContext as MainWindowViewModel;
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         MaximizeToWorkArea();
+        SyncRootSelection();
+    }
+
+    private void RootList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (_syncingRootSelection)
+            return;
+
+        if (RootList.SelectedItem is RootFolder root)
+            ViewModel?.OpenRootCommand.Execute(root);
+    }
+
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null)
+            return;
+
+        var dialog = new SettingsWindow(ViewModel.ToolManager)
+        {
+            Owner = this
+        };
+
+        dialog.ShowDialog();
     }
 
     private void MainWindow_StateChanged(object? sender, System.EventArgs e)
@@ -80,7 +62,7 @@ public partial class MainWindow : Window
 
         RootBorder.CornerRadius = _workAreaMaximized
             ? new CornerRadius(0)
-            : new CornerRadius(20);
+            : new CornerRadius(0);
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -99,15 +81,6 @@ public partial class MainWindow : Window
         {
             DragMove();
         }
-    }
-
-    private void Settings_Click(object sender, RoutedEventArgs e)
-    {
-        var dialog = new SettingsWindow
-        {
-            Owner = this
-        };
-        dialog.ShowDialog();
     }
 
     private void Minimize_Click(object sender, RoutedEventArgs e) =>
@@ -159,7 +132,7 @@ public partial class MainWindow : Window
             Height = _restoreBounds.Height;
         }
 
-        RootBorder.CornerRadius = new CornerRadius(20);
+        RootBorder.CornerRadius = new CornerRadius(0);
     }
 
     private void SaveRestoreBounds()
@@ -167,12 +140,25 @@ public partial class MainWindow : Window
         if (_workAreaMaximized)
             return;
 
-        var width = Width > 0 ? Width : 1320;
-        var height = Height > 0 ? Height : 820;
-        var left = double.IsNaN(Left) ? 90 : Left;
-        var top = double.IsNaN(Top) ? 70 : Top;
+        var width = Width > 0 ? Width : 1440;
+        var height = Height > 0 ? Height : 900;
+        var left = double.IsNaN(Left) ? 50 : Left;
+        var top = double.IsNaN(Top) ? 50 : Top;
 
         _restoreBounds = new Rect(left, top, width, height);
+    }
+
+    private void SyncRootSelection()
+    {
+        _syncingRootSelection = true;
+        try
+        {
+            RootList.SelectedItem = ViewModel?.CurrentRoot;
+        }
+        finally
+        {
+            _syncingRootSelection = false;
+        }
     }
 
     private Rect GetCurrentMonitorWorkArea()

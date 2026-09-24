@@ -3,10 +3,11 @@ using System.Windows.Threading;
 using DownTrack.Application.Services;
 using DownTrack.Infrastructure;
 using DownTrack.Infrastructure.Downloads;
+using DownTrack.Infrastructure.Localization;
+using DownTrack.Infrastructure.Settings;
 using DownTrack.Infrastructure.Storage;
 using DownTrack.Infrastructure.Tools;
 using DownTrack.Infrastructure.Windows;
-using DownTrack.Infrastructure.Localization;
 using DownTrack.Views;
 
 namespace DownTrack;
@@ -19,10 +20,18 @@ public partial class App : System.Windows.Application
 
         ShutdownMode = ShutdownMode.OnMainWindowClose;
         DispatcherUnhandledException += OnDispatcherUnhandledException;
-        LocalizationService.Instance.Initialize();
 
         try
         {
+            LocalizationService.Instance.Initialize();
+            await SettingsService.Instance.InitializeAsync();
+
+            LocalizationService.Instance.SetLanguage(
+                SettingsService.Instance.Current.LanguageCode);
+
+            ThemeService.Instance.Apply(
+                SettingsService.Instance.Current.Theme);
+
             var stateStore = new JsonAppStateStore(AppPaths.StateFile);
             var processRunner = new ProcessRunner();
             var locator = new ToolLocator();
@@ -60,7 +69,9 @@ public partial class App : System.Windows.Application
         }
     }
 
-    private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    private void OnDispatcherUnhandledException(
+        object sender,
+        DispatcherUnhandledExceptionEventArgs e)
     {
         e.Handled = true;
         ShowFatalError(e.Exception);
@@ -69,7 +80,7 @@ public partial class App : System.Windows.Application
     private static void ShowFatalError(Exception ex)
     {
         MessageBox.Show(
-            $"DownTrack hit an unexpected error and kept the application open when possible.\n\n{ex.Message}",
+            $"{LocalizationService.Instance.T("Error.UnexpectedTitle")}\n\n{ex.Message}",
             "DownTrack",
             MessageBoxButton.OK,
             MessageBoxImage.Error);

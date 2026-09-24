@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows.Data;
 using DownTrack.Core.Enums;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.Infrastructure.Windows;
 
@@ -19,7 +20,7 @@ public sealed class MediaOptionLabelConverter : IValueConverter
             VideoQuality.P480 => "480p",
             VideoQuality.P720 => "720p",
             VideoQuality.P1080 => "1080p",
-            VideoQuality.Source => "Source",
+            VideoQuality.Source => LocalizationService.Instance.T("Settings.Original"),
             _ => value?.ToString() ?? string.Empty
         };
 

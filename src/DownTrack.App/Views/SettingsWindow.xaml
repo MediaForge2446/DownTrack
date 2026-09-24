@@ -4,31 +4,31 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:loc="clr-namespace:DownTrack.Infrastructure.Localization"
         FlowDirection="{Binding FlowDirection, Source={x:Static loc:LocalizationService.Instance}}"
-        Width="520"
-        Height="430"
-        MinWidth="520"
-        MinHeight="430"
+        Width="760"
+        Height="760"
+        MinWidth="650"
+        MinHeight="600"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
-        ResizeMode="NoResize"
+        ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="False"
         AllowsTransparency="True"
         Background="Transparent"
         UseLayoutRounding="True">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="0"
-                            ResizeBorderThickness="4"
-                            CornerRadius="18"
+                            ResizeBorderThickness="5"
+                            CornerRadius="20"
                             GlassFrameThickness="0"
                             UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
-    <Border Background="{StaticResource WindowBrush}"
-            BorderBrush="{StaticResource BorderStrongBrush}"
+    <Border Background="{DynamicResource SurfaceBrush}"
+            BorderBrush="{DynamicResource BorderStrongBrush}"
             BorderThickness="1"
-            CornerRadius="18"
+            CornerRadius="20"
             Padding="26"
-            Effect="{StaticResource DialogShadowEffect}">
+            Effect="{DynamicResource DialogShadowEffect}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -39,70 +39,275 @@
             <Grid MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
                 <StackPanel>
                     <TextBlock Text="{loc:Loc Key=Settings.Title}"
-                               FontSize="25"
+                               FontSize="26"
                                FontWeight="SemiBold"/>
-                    <TextBlock Text="{loc:Loc Key=Settings.LanguageDescription}"
-                               Margin="0,6,50,0"
+                    <TextBlock Text="{loc:Loc Key=Settings.Subtitle}"
+                               Margin="0,5,50,0"
                                FontSize="12"
-                               Foreground="{StaticResource MutedTextBrush}"
-                               TextWrapping="Wrap"/>
+                               Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
 
                 <Button Content="×"
                         Style="{StaticResource IconButton}"
-                        FontFamily="Segoe UI Symbol"
-                        FontSize="18"
                         HorizontalAlignment="Right"
                         Click="Close_Click"
                         ToolTip="{loc:Loc Key=Window.Close}"/>
             </Grid>
 
-            <Border Grid.Row="1"
-                    Margin="0,22,0,20"
-                    Padding="18"
-                    Background="{StaticResource SurfaceBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="15">
+            <ScrollViewer Grid.Row="1"
+                          Margin="0,22,0,20"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
-                    <TextBlock Text="{loc:Loc Key=Settings.Language}"
-                               FontSize="11"
-                               FontWeight="SemiBold"/>
-                    <TextBlock Text="{loc:Loc Key=Settings.Current}"
-                               Margin="0,4,0,12"
-                               FontSize="10"
-                               Foreground="{StaticResource MutedTextBrush}"/>
 
-                    <ComboBox x:Name="LanguageBox"
-                              DisplayMemberPath="DisplayName"
-                              SelectedValuePath="Code"
-                              MinHeight="42"/>
-                    
-                    <Border Margin="0,14,0,0"
-                            Padding="12,9"
-                            Background="{StaticResource CyanSoftBrush}"
-                            BorderBrush="#B9E4DE"
+                    <Border Padding="18"
+                            Margin="0,0,0,13"
+                            Background="{DynamicResource SurfaceSoftBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
                             BorderThickness="1"
-                            CornerRadius="10">
-                        <TextBlock Text="{loc:Loc Key=Settings.RestartNotNeeded}"
-                                   FontSize="10"
-                                   Foreground="{StaticResource CyanBrush}"/>
+                            CornerRadius="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="235"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="{loc:Loc Key=Settings.Appearance}"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="{loc:Loc Key=Settings.AppearanceSubtitle}"
+                                           Margin="0,4,20,0"
+                                           FontSize="10"
+                                           Foreground="{DynamicResource MutedTextBrush}"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <ComboBox Grid.Column="1"
+                                      ItemsSource="{Binding ThemeOptions}"
+                                      DisplayMemberPath="DisplayName"
+                                      SelectedValuePath="Mode"
+                                      SelectedValue="{Binding Theme, Mode=TwoWay}"
+                                      MinHeight="40"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Padding="18"
+                            Margin="0,0,0,13"
+                            Background="{DynamicResource SurfaceSoftBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="16">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="235"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="{loc:Loc Key=Settings.Language}"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="{loc:Loc Key=Settings.LanguageDescription}"
+                                           Margin="0,4,20,0"
+                                           FontSize="10"
+                                           Foreground="{DynamicResource MutedTextBrush}"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <ComboBox Grid.Column="1"
+                                      ItemsSource="{Binding Languages}"
+                                      DisplayMemberPath="DisplayName"
+                                      SelectedValuePath="Code"
+                                      SelectedValue="{Binding LanguageCode, Mode=TwoWay}"
+                                      MinHeight="40"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Padding="18"
+                            Margin="0,0,0,13"
+                            Background="{DynamicResource SurfaceSoftBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="16">
+                        <StackPanel>
+                            <TextBlock Text="{loc:Loc Key=Settings.Updates}"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{loc:Loc Key=Settings.UpdatesSubtitle}"
+                                       Margin="0,4,0,14"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
+
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Loc Key=Settings.AppUpdates}"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="{loc:Loc Key=Settings.AutoUpdate}"
+                                               Margin="0,3,0,0"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Content="{loc:Loc Key=Settings.Check}"
+                                        Style="{StaticResource GhostButton}"
+                                        Width="78"
+                                        Margin="8,0"
+                                        Command="{Binding CheckForUpdatesCommand}"/>
+                                <Button Grid.Column="2"
+                                        Content="{loc:Loc Key=Settings.Update}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Width="82"
+                                        Command="{Binding UpdateAppCommand}"/>
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Loc Key=Settings.ToolUpdates}"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="{loc:Loc Key=Settings.AutoToolUpdate}"
+                                               Margin="0,3,0,0"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Content="{loc:Loc Key=Settings.Update}"
+                                        Style="{StaticResource SecondaryButton}"
+                                        Width="82"
+                                        Command="{Binding UpdateToolsCommand}"/>
+                            </Grid>
+
+                            <TextBlock Text="{Binding UpdateStatus}"
+                                       Margin="0,13,0,0"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource AccentBlueBrush}"
+                                       TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Padding="18"
+                            Background="{DynamicResource SurfaceSoftBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="16">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel>
+                                <TextBlock Text="{loc:Loc Key=Settings.Defaults}"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="{loc:Loc Key=Settings.DefaultsSubtitle}"
+                                           Margin="0,4,0,15"
+                                           FontSize="10"
+                                           Foreground="{DynamicResource MutedTextBrush}"/>
+                            </StackPanel>
+
+                            <Grid Grid.Row="1" Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="235"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{loc:Loc Key=Settings.DefaultFormat}"
+                                           FontSize="11"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding Formats}"
+                                          SelectedItem="{Binding DefaultFormat, Mode=TwoWay}"
+                                          MinHeight="38">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+
+                            <Grid Grid.Row="2" Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="235"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{loc:Loc Key=Settings.DefaultAudioQuality}"
+                                           FontSize="11"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding AudioQualities}"
+                                          SelectedItem="{Binding DefaultAudioQuality, Mode=TwoWay}"
+                                          MinHeight="38">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="235"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{loc:Loc Key=Settings.DefaultVideoQuality}"
+                                           FontSize="11"
+                                           VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding VideoQualities}"
+                                          SelectedItem="{Binding DefaultVideoQuality, Mode=TwoWay}"
+                                          MinHeight="38">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <Border Margin="0,13,0,0"
+                            Padding="15"
+                            Background="{DynamicResource CyanSoftBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="13">
+                        <StackPanel>
+                            <CheckBox Content="{loc:Loc Key=Settings.AutoUpdate}"
+                                      IsChecked="{Binding AutoUpdateApp, Mode=TwoWay}"
+                                      Margin="0,0,0,10"/>
+                            <CheckBox Content="{loc:Loc Key=Settings.AutoToolUpdate}"
+                                      IsChecked="{Binding AutoUpdateTools, Mode=TwoWay}"/>
+                        </StackPanel>
                     </Border>
                 </StackPanel>
-            </Border>
+            </ScrollViewer>
 
             <StackPanel Grid.Row="2"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
-                <Button Content="{loc:Loc Key=Settings.Done}"
+                <Button Content="{loc:Loc Key=Settings.Cancel}"
                         Style="{StaticResource GhostButton}"
                         MinWidth="90"
                         Click="Close_Click"/>
-                <Button Content="{loc:Loc Key=Settings.Apply}"
+                <Button Content="{loc:Loc Key=Settings.Save}"
                         Style="{StaticResource PrimaryButton}"
                         Margin="8,0,0,0"
-                        MinWidth="90"
-                        Click="Apply_Click"/>
+                        MinWidth="125"
+                        Click="Save_Click"/>
             </StackPanel>
         </Grid>
     </Border>

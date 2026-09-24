@@ -10,45 +10,48 @@ public sealed class ToolLocator
         File.Exists(AppPaths.BundledFfprobePath) &&
         File.Exists(AppPaths.BundledDenoPath);
 
+    private bool HasUserMediaEngine =>
+        File.Exists(AppPaths.YtDlpPath) &&
+        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe")) &&
+        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe")) &&
+        File.Exists(AppPaths.DenoPath);
+
     public string GetYtDlpPath()
     {
+        if (HasUserMediaEngine)
+            return AppPaths.YtDlpPath;
+
         if (HasBundledMediaEngine)
             return AppPaths.BundledYtDlpPath;
 
-        if (File.Exists(AppPaths.YtDlpPath))
-            return AppPaths.YtDlpPath;
-
         throw new FileNotFoundException(
-            "yt-dlp is not installed. Run Media Engine setup from Home.",
+            "yt-dlp is not installed.",
             AppPaths.YtDlpPath);
     }
 
     public string GetToolsDirectory()
     {
+        if (HasUserMediaEngine)
+            return AppPaths.ToolsDirectory;
+
         if (HasBundledMediaEngine)
             return AppPaths.BundledToolsDirectory;
 
-        var ffmpeg = Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe");
-        var ffprobe = Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe");
-
-        if (File.Exists(ffmpeg) && File.Exists(ffprobe))
-            return AppPaths.ToolsDirectory;
-
         throw new FileNotFoundException(
-            "FFmpeg is not installed correctly. Run Media Engine setup from Home.",
+            "FFmpeg is not installed correctly.",
             AppPaths.ToolsDirectory);
     }
 
     public string GetDenoPath()
     {
+        if (HasUserMediaEngine)
+            return AppPaths.DenoPath;
+
         if (HasBundledMediaEngine)
             return AppPaths.BundledDenoPath;
 
-        if (File.Exists(AppPaths.DenoPath))
-            return AppPaths.DenoPath;
-
         throw new FileNotFoundException(
-            "Deno is not installed correctly. Run Media Engine setup from Home.",
+            "Deno is not installed correctly.",
             AppPaths.DenoPath);
     }
 }
