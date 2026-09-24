@@ -303,7 +303,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
             change.ErrorMessage = null;
             await PersistAsync();
 
-            progress?.Report(change.Description);
+            progress?.Report(DescribeChange(change));
 
             try
             {
@@ -330,7 +330,9 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
             {
                 change.Status = PendingChangeStatus.Error;
                 change.ProgressPercent = 100;
-                change.ErrorMessage = ex.Message;
+                change.ErrorMessage = LocalizationService.Instance.T(
+                    "Errors.ActionFailed",
+                    ex.Message);
                 await PersistAsync();
             }
 
@@ -338,6 +340,27 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
                 (int)Math.Round(
                     (index + 1) * 100d / ordered.Count));
         }
+    }
+
+    private static string DescribeChange(PendingChange change)
+    {
+        var source = Path.GetFileName(change.SourcePath) ?? string.Empty;
+        var target = Path.GetFileName(change.TargetPath) ?? string.Empty;
+        var media = change.Media?.Title ?? target;
+
+        return change.ChangeType switch
+        {
+            PendingChangeType.CreateFolder =>
+                LocalizationService.Instance.T("Pending.CreateFolder", target),
+            PendingChangeType.Rename =>
+                LocalizationService.Instance.T("Pending.Rename", source, target),
+            PendingChangeType.Delete =>
+                LocalizationService.Instance.T("Pending.Delete", source),
+            PendingChangeType.Download =>
+                LocalizationService.Instance.T("Pending.Download", media),
+            _ =>
+                LocalizationService.Instance.T("Pending.Generic")
+        };
     }
 
     private async Task PersistAsync() => await _store.SaveAsync(_state);
