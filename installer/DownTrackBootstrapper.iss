@@ -493,9 +493,6 @@ begin
     if LatestVersion = '' then
       RaiseException('Latest release has no version.');
 
-    if SetupUrl = '' then
-      RaiseException('Latest release has no setup URL.');
-
     if Pos(
       'https://github.com/mediaforge2446/downtrack/releases/download/',
       LowerCase(PayloadUrl)) <> 1 then
@@ -549,11 +546,20 @@ begin
   SetupForm.Close;
 end;
 
+function GetLatestVersionText: String;
+var
+  S: String;
+begin
+  S := CustomMessage('Latest');
+  StringChangeEx(S, '%1', LatestVersion, True);
+  Result := S;
+end;
+
 procedure ShowCompleted;
 begin
   ProgressBar.Position := 100;
   SetInstallState(CustomMessage('Title'), CustomMessage('Complete'));
-  VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
+  VersionText.Caption := GetLatestVersionText();
   PrimaryButton.Caption := CustomMessage('Open');
   PrimaryButton.Enabled := True;
   PrimaryButton.OnClick := @OpenDownTrack;
@@ -664,9 +670,7 @@ begin
       Exit;
     end;
 
-    VersionText.Caption := FmtMessage(
-      CustomMessage('Latest'),
-      [LatestVersion]);
+    VersionText.Caption := GetLatestVersionText();
 
     PayloadPath := ExpandConstant('{tmp}\DownTrack-Payload.zip');
     InstallDirectory := ExpandConstant('{localappdata}\Programs\DownTrack');
