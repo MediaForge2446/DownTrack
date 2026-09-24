@@ -114,6 +114,8 @@ public sealed class ExplorerViewModel : ObservableObject
                 : "Explorer.Queued",
             PendingChanges.Count);
 
+    public event Action? NavigationChanged;
+
     public RelayCommand BackCommand { get; }
     public RelayCommand ForwardCommand { get; }
     public RelayCommand HomeCommand { get; }
