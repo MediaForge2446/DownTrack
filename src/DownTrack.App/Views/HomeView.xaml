@@ -180,24 +180,15 @@
         </Border>
 
         <Border Grid.Row="3"
-                Margin="0,18,0,0"
+                Margin="0,16,0,0"
                 Padding="12,10"
                 CornerRadius="12"
                 Background="{StaticResource SurfaceBrush}"
                 BorderBrush="{StaticResource BorderBrush}"
                 BorderThickness="1">
-            <Grid>
-                <TextBlock Text="{Binding ToolStatus}"
-                           FontSize="10"
-                           Foreground="{StaticResource MutedTextBrush}"/>
-                <Button HorizontalAlignment="Right"
-                        Style="{StaticResource GhostButton}"
-                        Command="{Binding SetupMediaEngineCommand}"
-                        IsEnabled="{Binding ToolReady, Converter={StaticResource BooleanModeConverter}, ConverterParameter=Inverse}"
-                        Content="{loc:Loc Key=Engine.Setup}"
-                        MinWidth="106"
-                        Height="34"/>
-            </Grid>
+            <TextBlock Text="{Binding ToolStatus}"
+                       FontSize="10"
+                       Foreground="{StaticResource MutedTextBrush}"/>
         </Border>
     </Grid>
 </UserControl>
