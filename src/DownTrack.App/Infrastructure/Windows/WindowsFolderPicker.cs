@@ -58,17 +58,19 @@ public sealed class WindowsFolderPicker : IFolderPicker
 
     private static IShellItem? ShellItemFromPath(string path)
     {
+        var iid = typeof(IShellItem).GUID;
+
         return SHCreateItemFromParsingName(
             path,
             IntPtr.Zero,
-            typeof(IShellItem).GUID,
+            ref iid,
             out var item) == 0
             ? item
             : null;
     }
 
     private static IntPtr GetActiveWindow() =>
-        Application.Current?.MainWindow is { } window
+        System.Windows.Application.Current?.MainWindow is { } window
             ? new System.Windows.Interop.WindowInteropHelper(window).Handle
             : IntPtr.Zero;
 
