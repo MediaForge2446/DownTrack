@@ -14,6 +14,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private readonly ITextPromptService _textPrompt;
     private readonly IMediaDialogService _mediaDialog;
     private readonly AppSettingsService _settings;
+    private readonly IAppToolManager _toolManager;
     private object _currentViewModel;
 
     public MainWindowViewModel(
@@ -29,6 +30,7 @@ public sealed class MainWindowViewModel : ObservableObject
         _textPrompt = textPrompt;
         _mediaDialog = mediaDialog;
         _settings = AppSettingsService.Instance;
+        _toolManager = toolManager;
 
         Home = new HomeViewModel(staging, folderPicker, toolManager);
         Home.OpenRootRequested += OpenRoot;
@@ -55,6 +57,7 @@ public sealed class MainWindowViewModel : ObservableObject
 
     public HomeViewModel Home { get; }
     public ITextPromptService TextPrompt => _textPrompt;
+    public IAppToolManager ToolManager => _toolManager;
     public IMediaDialogService MediaDialog => _mediaDialog;
 
     public ObservableCollection<RootFolder> RootFolders => Home.Roots;
