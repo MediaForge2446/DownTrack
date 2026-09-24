@@ -417,6 +417,8 @@ zhtw.Error=無法完成安裝。
 zhtw.Progress=正在準備安裝…
 
 [Code]
+procedure OpenDownTrack(Sender: TObject); forward;
+
 var
   SetupForm: TSetupForm;
   HeaderPanel: TPanel;
@@ -541,7 +543,7 @@ begin
   SecondaryButton.Caption := CustomMessage('Close');
 end;
 
-procedure OpenDownTrack;
+procedure OpenDownTrack(Sender: TObject);
 var
   ResultCode: Integer;
 begin
