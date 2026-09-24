@@ -9,6 +9,7 @@ public static class AppPaths
 
     public static string StateFile => Path.Combine(RootDirectory, "state.json");
     public static string StateBackupFile => Path.Combine(RootDirectory, "state.json.bak");
+    public static string LanguageFile => Path.Combine(RootDirectory, "language.txt");
 
     // Installed read-only engine shipped with Setup.exe.
     public static string BundledToolsDirectory =>
