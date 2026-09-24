@@ -103,6 +103,23 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
         await PersistAsync();
     }
 
+    public async Task RenameRootAsync(Guid rootId, string name)
+    {
+        var root = _state.RootFolders.FirstOrDefault(x => x.Id == rootId)
+            ?? throw new KeyNotFoundException("Root folder not found.");
+
+        var safeName = name.Trim();
+        foreach (var invalid in Path.GetInvalidFileNameChars())
+            safeName = safeName.Replace(invalid, '-');
+
+        safeName = safeName.Trim().TrimEnd('.');
+        if (string.IsNullOrWhiteSpace(safeName))
+            throw new InvalidOperationException("The folder name cannot be empty.");
+
+        root.Name = safeName;
+        await PersistAsync();
+    }
+
     public async Task StageCreateFolderAsync(RootFolder root, string parentPath, string name)
     {
         var safeName = SanitizeName(name, "New Folder");
