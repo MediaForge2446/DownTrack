@@ -25,7 +25,7 @@ public partial class AddMediaWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        Owner ??= Application.Current.MainWindow;
+        Owner ??= System.Windows.Application.Current.MainWindow;
 
         if (Owner is null)
             return;
