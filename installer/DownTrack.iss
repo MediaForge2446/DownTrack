@@ -18,12 +18,19 @@ Name: "tr"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "uk"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "ar"; MessagesFile: "compiler:Languages\Arabic.isl"
-Name: "el"; MessagesFile: "compiler:Languages\Greek.isl"
+Name: "el"; MessagesFile: "compiler:Default.isl"
 Name: "ro"; MessagesFile: "compiler:Languages\Romanian.isl"
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "ko"; MessagesFile: "compiler:Languages\Korean.isl"
 Name: "zhcn"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 Name: "zhtw"; MessagesFile: "compiler:Languages\ChineseTraditional.isl"
+[LangOptions]
+el.LanguageName=Ελληνικά
+el.LanguageID=$0408
+el.LanguageCodePage=0
+el.DialogFontName=Segoe UI
+el.DialogFontSize=9
+el.RightToLeft=no
 
 [Setup]
 AppId={{B57A9A4C-0A15-47C6-9F18-2C0EDB2E6E2D}
