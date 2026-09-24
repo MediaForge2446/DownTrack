@@ -429,9 +429,10 @@ var
   PrimaryButton: TNewButton;
   SecondaryButton: TNewButton;
   LatestVersion: String;
-  SetupUrl: String;
-  SetupHash: String;
-  SetupSize: Int64;
+  PayloadUrl: String;
+  PayloadHash: String;
+  PayloadSize: Int64;
+  InstallDirectory: String;
   ManifestLoaded: Boolean;
   Installing: Boolean;
 
@@ -483,10 +484,10 @@ begin
       RaiseException('Manifest was not downloaded.');
 
     LatestVersion := Trim(GetIniString('release', 'Version', '', ManifestPath));
-    SetupUrl := Trim(GetIniString('release', 'SetupUrl', '', ManifestPath));
-    SetupHash := Trim(GetIniString('release', 'SetupSha256', '', ManifestPath));
-    SetupSize := StrToInt64Def(
-      Trim(GetIniString('release', 'SetupSize', '0', ManifestPath)),
+    PayloadUrl := Trim(GetIniString('release', 'PayloadUrl', '', ManifestPath));
+    PayloadHash := Trim(GetIniString('release', 'PayloadSha256', '', ManifestPath));
+    PayloadSize := StrToInt64Def(
+      Trim(GetIniString('release', 'PayloadSize', '0', ManifestPath)),
       0);
 
     if LatestVersion = '' then
@@ -497,14 +498,14 @@ begin
 
     if Pos(
       'https://github.com/mediaforge2446/downtrack/releases/download/',
-      LowerCase(SetupUrl)) <> 1 then
-      RaiseException('Setup URL is not a trusted DownTrack release URL.');
+      LowerCase(PayloadUrl)) <> 1 then
+      RaiseException('Payload URL is not a trusted DownTrack release URL.');
 
-    if Length(SetupHash) <> 64 then
-      RaiseException('Latest setup hash is invalid.');
+    if Length(PayloadHash) <> 64 then
+      RaiseException('Latest payload hash is invalid.');
 
-    if SetupSize <= 0 then
-      RaiseException('Latest setup size is invalid.');
+    if PayloadSize <= 0 then
+      RaiseException('Latest payload size is invalid.');
 
     ManifestLoaded := True;
     Result := True;
@@ -561,10 +562,91 @@ begin
 end;
 
 
+procedure CreateInstallShortcuts(const AppPath, InstallPath: String);
+begin
+  ForceDirectories(ExpandConstant('{userprograms}\DownTrack'));
+
+  CreateShellLink(
+    ExpandConstant('{autodesktop}\DownTrack.lnk'),
+    'DownTrack',
+    AppPath,
+    '',
+    InstallPath,
+    AppPath,
+    0,
+    SW_SHOWNORMAL);
+
+  CreateShellLink(
+    ExpandConstant('{userprograms}\DownTrack\DownTrack.lnk'),
+    'DownTrack',
+    AppPath,
+    '',
+    InstallPath,
+    AppPath,
+    0,
+    SW_SHOWNORMAL);
+end;
+
+function ExtractPayload(const PayloadPath, InstallPath: String): Boolean;
+var
+  ScriptPath: String;
+  PowerShellPath: String;
+  ResultCode: Integer;
+  Script: AnsiString;
+begin
+  Result := False;
+
+  if not ForceDirectories(InstallPath) then
+    RaiseException('Could not create the DownTrack installation directory.');
+
+  ScriptPath := ExpandConstant('{tmp}\extract-downtrack.ps1');
+  Script :=
+    '$ErrorActionPreference = "Stop"' + #13#10 +
+    'New-Item -ItemType Directory -Force -Path $args[1] | Out-Null' + #13#10 +
+    'Expand-Archive -LiteralPath $args[0] -DestinationPath $args[1] -Force' + #13#10;
+
+  if not SaveStringToFile(ScriptPath, Script, False) then
+    RaiseException('Could not prepare the payload extraction script.');
+
+  PowerShellPath := ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe');
+
+  if not Exec(
+    PowerShellPath,
+    '-NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass ' +
+    '-File "' + ScriptPath + '" "' + PayloadPath + '" "' + InstallPath + '"',
+    '',
+    SW_HIDE,
+    ewWaitUntilTerminated,
+    ResultCode) then
+    RaiseException('Windows PowerShell could not be started.');
+
+  if ResultCode <> 0 then
+    RaiseException(
+      Format('Payload extraction returned exit code %d.', [ResultCode]));
+
+  Result := FileExists(InstallPath + '\DownTrack.exe');
+end;
+
+procedure CompleteInstallation;
+var
+  InstallIni: String;
+begin
+  InstallIni := InstallDirectory + '\DownTrack.Install.ini';
+  SetIniString('Install', 'Version', LatestVersion, InstallIni);
+  SetIniString('Install', 'InstalledUtc',
+    GetDateTimeString('yyyy-mm-dd hh:nn:ss', '-', ':'), InstallIni);
+
+  CreateInstallShortcuts(
+    InstallDirectory + '\DownTrack.exe',
+    InstallDirectory);
+
+  ShowCompleted;
+end;
+
 procedure InstallLatest(Sender: TObject);
 var
-  SetupPath: String;
-  ResultCode: Integer;
+  PayloadPath: String;
+  InstallIni: String;
 begin
   if Installing then
     Exit;
@@ -576,51 +658,58 @@ begin
     if not LoadLatestManifest then
     begin
       SetInstallState(CustomMessage('Title'), CustomMessage('Error'));
-      StatusText.Caption := CustomMessage('Retry');
+      PrimaryButton.Caption := CustomMessage('Retry');
+      PrimaryButton.Enabled := True;
+      PrimaryButton.OnClick := @InstallLatest;
       Exit;
     end;
 
-    VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
+    VersionText.Caption := FmtMessage(
+      CustomMessage('Latest'),
+      [LatestVersion]);
 
-    SetupPath := ExpandConstant('{tmp}\DownTrack-latest.exe');
-    DeleteFile(SetupPath);
+    PayloadPath := ExpandConstant('{tmp}\DownTrack-Payload.zip');
+    InstallDirectory := ExpandConstant('{localappdata}\Programs\DownTrack');
 
-    SetInstallState(CustomMessage('Title'), CustomMessage('Checking'));
+    SetInstallState(
+      CustomMessage('Title'),
+      CustomMessage('Checking'));
     ProgressBar.Position := 5;
 
     DownloadTemporaryFile(
-      SetupUrl,
-      'DownTrack-latest.exe',
-      SetupHash,
+      PayloadUrl,
+      'DownTrack-Payload.zip',
+      PayloadHash,
       @DownloadProgress);
 
-    SetInstallState(CustomMessage('Title'), CustomMessage('Verifying'));
-    ProgressBar.Position := 75;
+    SetInstallState(
+      CustomMessage('Title'),
+      CustomMessage('Verifying'));
+    ProgressBar.Position := 65;
 
-    if not FileExists(SetupPath) then
-      RaiseException('Downloaded setup was not found.');
+    if not FileExists(PayloadPath) then
+      RaiseException('The downloaded DownTrack payload was not found.');
 
-    SetInstallState(CustomMessage('Title'), CustomMessage('Installing'));
-    ProgressBar.Position := 82;
+    if DirExists(InstallDirectory) then
+    begin
+      if not DelTree(InstallDirectory, False, True, True) then
+        RaiseException(
+          'DownTrack is currently in use. Close DownTrack and try again.');
+    end;
 
-    if not Exec(
-      SetupPath,
-      '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS',
-      '',
-      SW_HIDE,
-      ewWaitUntilTerminated,
-      ResultCode) then
-      RaiseException('DownTrack setup could not be started.');
+    SetInstallState(
+      CustomMessage('Title'),
+      CustomMessage('Installing'));
+    ProgressBar.Position := 78;
 
-    if ResultCode <> 0 then
+    if not ExtractPayload(PayloadPath, InstallDirectory) then
       RaiseException(
-        Format('DownTrack setup returned exit code %d.', [ResultCode]));
+        'The DownTrack payload did not contain the application executable.');
 
-    if not FileExists(
-      ExpandConstant('{localappdata}\Programs\DownTrack\DownTrack.exe')) then
-      RaiseException('The DownTrack executable was not found after installation.');
+    InstallIni := InstallDirectory + '\DownTrack.Install.ini';
+    SetIniString('Install', 'Version', LatestVersion, InstallIni);
 
-    ShowCompleted;
+    CompleteInstallation;
   except
     SetInstallState(CustomMessage('Title'), CustomMessage('Error'));
     PrimaryButton.Caption := CustomMessage('Retry');
