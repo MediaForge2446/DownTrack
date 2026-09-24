@@ -7,10 +7,12 @@ namespace DownTrack.Infrastructure.Downloads;
 
 public sealed class YouTubeMetadataResolver(
     ToolLocator locator,
-    IProcessRunner processRunner) : IMediaResolver
+    IProcessRunner processRunner,
+    IAppToolManager toolManager) : IMediaResolver
 {
     public async Task<IReadOnlyList<MediaDownloadSpec>> ResolveAsync(
         string url,
+        IProgress<string>? progress = null,
         CancellationToken cancellationToken = default)
     {
         var trimmedUrl = url.Trim();
@@ -21,8 +23,11 @@ public sealed class YouTubeMetadataResolver(
             throw new ArgumentException("Please paste a valid YouTube video or playlist URL.");
         }
 
+        await toolManager.EnsureReadyAsync(progress, cancellationToken);
+
         var executable = locator.GetYtDlpPath();
-        var args = $"--flat-playlist --dump-single-json --skip-download --no-warnings {Quote(trimmedUrl)}";
+        var deno = locator.GetDenoPath();
+        var args = $"--flat-playlist --dump-single-json --skip-download --no-warnings --js-runtimes {Quote("deno:" + deno)} {Quote(trimmedUrl)}";
 
         var result = await processRunner.RunAsync(
             executable,

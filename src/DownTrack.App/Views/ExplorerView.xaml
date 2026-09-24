@@ -15,11 +15,11 @@
             <StackPanel Orientation="Horizontal">
                 <Button Style="{StaticResource IconButton}"
                         Command="{Binding BackCommand}"
-                        Content="&#xE72B;"
+                        Content="←"
                         ToolTip="Back"/>
                 <Button Style="{StaticResource IconButton}"
                         Command="{Binding ForwardCommand}"
-                        Content="&#xE72A;"
+                        Content="→"
                         Margin="3,0,0,0"
                         ToolTip="Forward"/>
                 <Button Style="{StaticResource GhostButton}"
@@ -66,7 +66,7 @@
                         Margin="12,0,0,0"
                         MinWidth="128">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE1F7;" FontFamily="Segoe Fluent Icons"/>
+                        <TextBlock Text="＋" FontFamily="Segoe UI Symbol"/>
                         <TextBlock Text="  Add Media"/>
                     </StackPanel>
                 </Button>

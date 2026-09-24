@@ -24,13 +24,13 @@ public partial class App : System.Windows.Application
             var stateStore = new JsonAppStateStore(AppPaths.StateFile);
             var processRunner = new ProcessRunner();
             var locator = new ToolLocator();
+            var toolManager = new ToolManager();
             var downloader = new YtDlpDownloader(locator, processRunner);
-            var commitService = new CommitService(downloader);
+            var commitService = new CommitService(downloader, toolManager);
             var staging = new StagingService(stateStore, commitService);
             var folderPicker = new WindowsFolderPicker();
             var prompt = new WpfTextPromptService();
-            var toolManager = new ToolManager();
-            var resolver = new YouTubeMetadataResolver(locator, processRunner);
+            var resolver = new YouTubeMetadataResolver(locator, processRunner, toolManager);
             var mediaDialog = new WpfMediaDialogService(resolver);
 
             var viewModel = new ViewModels.MainWindowViewModel(

@@ -294,7 +294,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
 
             try
             {
-                await _commitService.ApplyAsync(change, cancellationToken);
+                await _commitService.ApplyAsync(change, progress, cancellationToken);
                 _state.PendingChanges.RemoveAll(x => x.Id == change.Id);
             }
             catch (Exception ex)

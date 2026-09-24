@@ -11,7 +11,8 @@
         AllowsTransparency="True"
         Background="Transparent"
         SnapsToDevicePixels="True"
-        UseLayoutRounding="True">
+        UseLayoutRounding="True"
+        Loaded="Window_Loaded">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="0"
                             ResizeBorderThickness="6"
@@ -77,17 +78,17 @@
                                 Orientation="Horizontal"
                                 Margin="0,0,12,0"
                                 VerticalAlignment="Center">
-                        <Button Content="&#xE921;"
+                        <Button Content="—"
                                 FontFamily="Segoe Fluent Icons"
                                 Style="{StaticResource IconButton}"
                                 ToolTip="Minimize"
                                 Click="Minimize_Click"/>
-                        <Button Content="&#xE922;"
+                        <Button Content="□"
                                 FontFamily="Segoe Fluent Icons"
                                 Style="{StaticResource IconButton}"
                                 ToolTip="Maximize / restore"
                                 Click="Maximize_Click"/>
-                        <Button Content="&#xE8BB;"
+                        <Button Content="×"
                                 FontFamily="Segoe Fluent Icons"
                                 Style="{StaticResource IconButton}"
                                 ToolTip="Close"

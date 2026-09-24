@@ -5,7 +5,9 @@ using DownTrack.Infrastructure.Tools;
 
 namespace DownTrack.Infrastructure.Downloads;
 
-public sealed class YtDlpDownloader(ToolLocator locator, IProcessRunner processRunner)
+public sealed class YtDlpDownloader(
+    ToolLocator locator,
+    IProcessRunner processRunner)
 {
     public async Task DownloadAsync(
         MediaDownloadSpec spec,
@@ -13,7 +15,12 @@ public sealed class YtDlpDownloader(ToolLocator locator, IProcessRunner processR
         CancellationToken cancellationToken = default)
     {
         var executable = locator.GetYtDlpPath();
-        var args = BuildArguments(spec, targetPath);
+        var args = BuildArguments(
+            spec,
+            targetPath,
+            locator.GetToolsDirectory(),
+            locator.GetDenoPath());
+
         var result = await processRunner.RunAsync(
             executable,
             args,
@@ -33,24 +40,32 @@ public sealed class YtDlpDownloader(ToolLocator locator, IProcessRunner processR
         }
     }
 
-    private static string BuildArguments(MediaDownloadSpec spec, string targetPath)
+    private static string BuildArguments(
+        MediaDownloadSpec spec,
+        string targetPath,
+        string toolsDirectory,
+        string denoPath)
     {
         var url = Quote(spec.SourceUrl);
         var output = Quote(targetPath);
+        var ffmpegLocation = Quote(toolsDirectory);
+        var jsRuntime = Quote("deno:" + denoPath);
+        var common =
+            $"--no-playlist --newline --no-overwrites --ffmpeg-location {ffmpegLocation} --js-runtimes {jsRuntime}";
 
         return spec.Format switch
         {
             MediaFormat.Mp3 =>
-                $"--no-playlist --newline -x --audio-format mp3 --audio-quality {((int)spec.AudioQuality)}K -o {output} {url}",
+                $"{common} -x --audio-format mp3 --audio-quality {((int)spec.AudioQuality)}K -o {output} {url}",
 
             MediaFormat.M4a =>
-                $"--no-playlist --newline -x --audio-format m4a --audio-quality best -o {output} {url}",
+                $"{common} -x --audio-format m4a --audio-quality best -o {output} {url}",
 
             MediaFormat.Wav =>
-                $"--no-playlist --newline -x --audio-format wav --audio-quality best -o {output} {url}",
+                $"{common} -x --audio-format wav --audio-quality best -o {output} {url}",
 
             MediaFormat.Mp4 =>
-                $"--no-playlist --newline -f {Quote(GetVideoSelector(spec.VideoQuality))} --merge-output-format mp4 -o {output} {url}",
+                $"{common} -f {Quote(GetVideoSelector(spec.VideoQuality))} --merge-output-format mp4 -o {output} {url}",
 
             _ => throw new ArgumentOutOfRangeException()
         };

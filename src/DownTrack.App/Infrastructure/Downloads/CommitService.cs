@@ -4,11 +4,17 @@ using DownTrack.Core.Models;
 
 namespace DownTrack.Infrastructure.Downloads;
 
-public sealed class CommitService(YtDlpDownloader downloader) : ICommitService
+public sealed class CommitService(
+    YtDlpDownloader downloader,
+    IAppToolManager toolManager) : ICommitService
 {
     private readonly YtDlpDownloader _downloader = downloader;
+    private readonly IAppToolManager _toolManager = toolManager;
 
-    public async Task ApplyAsync(PendingChange change, CancellationToken cancellationToken = default)
+    public async Task ApplyAsync(
+        PendingChange change,
+        IProgress<string>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         switch (change.ChangeType)
         {
@@ -29,6 +35,10 @@ public sealed class CommitService(YtDlpDownloader downloader) : ICommitService
                 if (change.Media is null || change.TargetPath is null)
                     throw new InvalidOperationException("Download change is missing media information.");
 
+                progress?.Report("Preparing media engine…");
+                await _toolManager.EnsureReadyAsync(progress, cancellationToken);
+
+                progress?.Report($"Downloading {change.Media.Title}…");
                 await _downloader.DownloadAsync(change.Media, change.TargetPath, cancellationToken);
                 break;
 

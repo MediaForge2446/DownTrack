@@ -1,5 +1,5 @@
-using System.Net.Http;
 using System.IO.Compression;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -18,13 +18,19 @@ public sealed class ToolManager : IAppToolManager
         "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
     private const string FfmpegChecksumUrl =
         "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip.sha256";
+    private const string DenoUrl =
+        "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip";
+    private const string DenoChecksumUrl =
+        "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip.sha256sum";
 
     private static readonly HttpClient Client = CreateClient();
     private readonly SemaphoreSlim _gate = new(1, 1);
 
     public bool IsReady =>
         File.Exists(AppPaths.YtDlpPath) &&
-        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe"));
+        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe")) &&
+        File.Exists(Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe")) &&
+        File.Exists(AppPaths.DenoPath);
 
     public string Status =>
         IsReady
@@ -46,15 +52,29 @@ public sealed class ToolManager : IAppToolManager
 
             Directory.CreateDirectory(AppPaths.ToolsDirectory);
 
-            progress?.Report("Downloading yt-dlp…");
-            await DownloadAndVerifyAsync(
-                YtDlpUrl,
-                YtDlpChecksumsUrl,
-                "yt-dlp.exe",
-                cancellationToken);
+            if (!File.Exists(AppPaths.YtDlpPath))
+            {
+                progress?.Report("Downloading yt-dlp…");
+                await DownloadAndVerifyAsync(
+                    YtDlpUrl,
+                    YtDlpChecksumsUrl,
+                    "yt-dlp.exe",
+                    cancellationToken);
+            }
 
-            progress?.Report("Downloading FFmpeg…");
-            await DownloadAndExtractFfmpegAsync(progress, cancellationToken);
+            var ffmpeg = Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe");
+            var ffprobe = Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe");
+            if (!File.Exists(ffmpeg) || !File.Exists(ffprobe))
+            {
+                progress?.Report("Downloading FFmpeg…");
+                await DownloadAndExtractFfmpegAsync(progress, cancellationToken);
+            }
+
+            if (!File.Exists(AppPaths.DenoPath))
+            {
+                progress?.Report("Installing YouTube runtime…");
+                await DownloadAndExtractDenoAsync(cancellationToken);
+            }
 
             progress?.Report("Media engine ready.");
         }
@@ -145,6 +165,50 @@ public sealed class ToolManager : IAppToolManager
 
         File.Copy(ffmpeg, Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe"), overwrite: true);
         File.Copy(ffprobe, Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe"), overwrite: true);
+
+        File.Delete(zipPath);
+        Directory.Delete(extractPath, recursive: true);
+    }
+
+    private static async Task DownloadAndExtractDenoAsync(
+        CancellationToken cancellationToken)
+    {
+        var zipPath = Path.Combine(AppPaths.ToolsDirectory, "deno-download.zip");
+        var extractPath = Path.Combine(AppPaths.ToolsDirectory, "deno-extract");
+
+        await using (var source = await Client.GetStreamAsync(DenoUrl, cancellationToken))
+        await using (var destination = File.Create(zipPath))
+        {
+            await source.CopyToAsync(destination, cancellationToken);
+        }
+
+        var checksumText = await Client.GetStringAsync(DenoChecksumUrl, cancellationToken);
+        var expected = ExtractChecksum(
+            checksumText,
+            Path.GetFileName(DenoUrl))
+            ?? throw new InvalidOperationException("No SHA-256 checksum was found for Deno.");
+
+        var actual = await ComputeSha256Async(zipPath, cancellationToken);
+        if (!string.Equals(expected, actual, StringComparison.OrdinalIgnoreCase))
+        {
+            File.Delete(zipPath);
+            throw new InvalidOperationException("Checksum verification failed for Deno.");
+        }
+
+        if (Directory.Exists(extractPath))
+            Directory.Delete(extractPath, recursive: true);
+
+        Directory.CreateDirectory(extractPath);
+        ZipFile.ExtractToDirectory(zipPath, extractPath);
+
+        var deno = Directory
+            .EnumerateFiles(extractPath, "deno.exe", SearchOption.AllDirectories)
+            .FirstOrDefault();
+
+        if (deno is null)
+            throw new InvalidOperationException("The Deno package did not contain deno.exe.");
+
+        File.Copy(deno, AppPaths.DenoPath, overwrite: true);
 
         File.Delete(zipPath);
         Directory.Delete(extractPath, recursive: true);

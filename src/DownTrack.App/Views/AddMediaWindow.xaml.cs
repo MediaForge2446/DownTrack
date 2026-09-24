@@ -25,27 +25,24 @@ public partial class AddMediaWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        if (Owner is null)
-            Owner = System.Windows.Application.Current.MainWindow;
+        Owner ??= System.Windows.Application.Current.MainWindow;
 
-        if (Owner is null)
-            return;
+        var workArea = SystemParameters.WorkArea;
+        var maxWidth = Math.Min(980, workArea.Width * 0.84);
+        var maxHeight = Math.Min(700, workArea.Height * 0.86);
 
-        var availableWidth = Math.Max(MinWidth, Owner.ActualWidth - 80);
-        var availableHeight = Math.Max(MinHeight, Owner.ActualHeight - 120);
-
-        Width = Math.Min(1120, availableWidth);
-        Height = Math.Min(780, availableHeight);
-        WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        Width = Math.Max(MinWidth, maxWidth);
+        Height = Math.Max(MinHeight, maxHeight);
+        WindowStartupLocation = Owner is null
+            ? WindowStartupLocation.CenterScreen
+            : WindowStartupLocation.CenterOwner;
 
         UrlBox.Focus();
-        UrlBox.SelectAll();
+        UrlBox.CaretIndex = UrlBox.Text.Length;
     }
 
-    private void OnAccepted(IReadOnlyList<MediaDownloadSpec> specs)
-    {
+    private void OnAccepted(IReadOnlyList<MediaDownloadSpec> specs) =>
         SelectedSpecs = specs;
-    }
 
     private void Add_Click(object sender, RoutedEventArgs e)
     {
@@ -55,28 +52,12 @@ public partial class AddMediaWindow : Window
             DialogResult = true;
     }
 
-    private void Close_Click(object sender, RoutedEventArgs e)
-    {
+    private void Close_Click(object sender, RoutedEventArgs e) =>
         DialogResult = false;
-    }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.ClickCount == 2)
-        {
-            ToggleMaximize();
-            return;
-        }
-
-        if (e.LeftButton == MouseButtonState.Pressed &&
-            WindowState != WindowState.Maximized)
-        {
+        if (e.LeftButton == MouseButtonState.Pressed)
             DragMove();
-        }
     }
-
-    private void ToggleMaximize() =>
-        WindowState = WindowState == WindowState.Maximized
-            ? WindowState.Normal
-            : WindowState.Maximized;
 }
