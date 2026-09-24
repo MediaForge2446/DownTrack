@@ -74,10 +74,8 @@
                                Foreground="{StaticResource MutedTextBrush}"/>
 
                     <ComboBox x:Name="LanguageBox"
-                              ItemsSource="{Binding Languages}"
                               DisplayMemberPath="NativeName"
                               SelectedValuePath="Code"
-                              SelectedValue="{Binding SelectedCode, Mode=TwoWay}"
                               MinHeight="42"/>
                     
                     <Border Margin="0,14,0,0"
