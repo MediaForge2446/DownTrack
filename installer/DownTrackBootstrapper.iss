@@ -417,8 +417,6 @@ zhtw.Error=無法完成安裝。
 zhtw.Progress=正在準備安裝…
 
 [Code]
-procedure OpenDownTrack(Sender: TObject); forward;
-
 var
   SetupForm: TSetupForm;
   HeaderPanel: TPanel;
@@ -531,18 +529,6 @@ begin
   SetupForm.Update;
 end;
 
-procedure ShowCompleted;
-begin
-  ProgressBar.Position := 100;
-  SetInstallState(CustomMessage('Title'), CustomMessage('Complete'));
-  VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
-  PrimaryButton.Caption := CustomMessage('Open');
-  PrimaryButton.Enabled := True;
-  PrimaryButton.OnClick := @OpenDownTrack;
-  SecondaryButton.Visible := True;
-  SecondaryButton.Caption := CustomMessage('Close');
-end;
-
 procedure OpenDownTrack(Sender: TObject);
 var
   ResultCode: Integer;
@@ -634,6 +620,19 @@ begin
     Installing := False;
   end;
 end;
+
+procedure ShowCompleted;
+begin
+  ProgressBar.Position := 100;
+  SetInstallState(CustomMessage('Title'), CustomMessage('Complete'));
+  VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
+  PrimaryButton.Caption := CustomMessage('Open');
+  PrimaryButton.Enabled := True;
+  PrimaryButton.OnClick := @OpenDownTrack;
+  SecondaryButton.Visible := True;
+  SecondaryButton.Caption := CustomMessage('Close');
+end;
+
 
 procedure CloseInstaller(Sender: TObject);
 begin
