@@ -93,6 +93,7 @@
                                 VerticalAlignment="Center">
                         <Button Style="{StaticResource IconButton}"
                                 Command="{Binding GoHomeCommand}"
+                                Click="HomeShell_Click"
                                 Content="⌂"
                                 ToolTip="{loc:Loc Key=Shell.Home}"/>
                         <Button Style="{StaticResource IconButton}"
