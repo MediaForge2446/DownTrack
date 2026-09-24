@@ -140,7 +140,7 @@ jobs:
           $size = (Get-Item $payload).Length
           $template = Get-Content -Raw (Join-Path $env:GITHUB_WORKSPACE "installer\DownTrackWebSetup.iss.template")
           $script = $template.Replace("__PAYLOAD_SIZE__", [string]$size).Replace("__PAYLOAD_HASH__", $hash)
-          $webScript = Join-Path $env:RUNNER_TEMP "DownTrackWebSetup.iss"
+          $webScript = Join-Path $env:GITHUB_WORKSPACE "installer\DownTrackWebSetup.generated.iss"
           Set-Content -Path $webScript -Value $script -Encoding UTF8
           $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
           $issc = if ($programFilesX86) { Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe" } else { $null }
