@@ -4,7 +4,7 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         WindowStartupLocation="CenterOwner"
         Width="1120" Height="730"
-        MinWidth="760" MinHeight="540"
+        MinWidth="640" MinHeight="480"
         ResizeMode="CanResize"
         WindowStyle="None"
         AllowsTransparency="True"
