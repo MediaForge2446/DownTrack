@@ -4,7 +4,7 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         Title="DownTrack"
         Width="1440" Height="900"
-        MinWidth="760" MinHeight="560"
+        MinWidth="640" MinHeight="480"
         WindowState="Maximized"
         WindowStyle="None" ResizeMode="CanResize" AllowsTransparency="True"
         Background="Transparent" SnapsToDevicePixels="True"
