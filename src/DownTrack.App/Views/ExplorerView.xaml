@@ -308,7 +308,7 @@
                                                 <Setter Property="Background" Value="{StaticResource CyanSoftBrush}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding State}" Value="Pending">
-                                                        <Setter Property="Background" Value="#3B311B"/>
+                                                        <Setter Property="Background" Value="#FFF5D7"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding State}" Value="Error">
                                                         <Setter Property="Background" Value="{StaticResource DangerSoftBrush}"/>
@@ -386,7 +386,7 @@
                         <Border Width="28"
                                 Height="28"
                                 CornerRadius="9"
-                                Background="#3B311B">
+                                Background="#FFF5D7">
                             <TextBlock Text="•"
                                        FontSize="22"
                                        Foreground="{StaticResource PendingBrush}"
