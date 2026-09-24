@@ -25,13 +25,13 @@ public sealed class PendingChangeItemViewModel : ObservableObject
         Change.ChangeType switch
         {
             PendingChangeType.CreateFolder =>
-                LocalizationService.Instance.T("Explorer.PendingCreate", Path.GetFileName(Change.TargetPath)),
+                LocalizationService.Instance.T("Explorer.PendingCreate", Path.GetFileName(Change.TargetPath) ?? string.Empty),
             PendingChangeType.Rename =>
-                LocalizationService.Instance.T("Explorer.PendingRename", Path.GetFileName(Change.TargetPath)),
+                LocalizationService.Instance.T("Explorer.PendingRename", Path.GetFileName(Change.TargetPath) ?? string.Empty),
             PendingChangeType.Delete =>
-                LocalizationService.Instance.T("Explorer.PendingDelete", Path.GetFileName(Change.SourcePath)),
+                LocalizationService.Instance.T("Explorer.PendingDelete", Path.GetFileName(Change.SourcePath) ?? string.Empty),
             PendingChangeType.Download =>
-                Change.Media?.Title ?? Path.GetFileName(Change.TargetPath) ?? LocalizationService.Instance.T("Explorer.AddMedia"),
+                Change.Media?.Title ?? Path.GetFileName(Change.TargetPath) ?? string.Empty ?? LocalizationService.Instance.T("Explorer.AddMedia"),
             _ => LocalizationService.Instance.T("Pending.Change")
         };
 
