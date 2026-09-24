@@ -166,7 +166,7 @@
                                         <ComboBox Grid.Column="3"
                                                   ItemsSource="{Binding Source={x:Static local:MediaOptions.Formats}}"
                                                   SelectedItem="{Binding Format}"
-                                                  Margin="0,0,8,0}">
+                                                  Margin="0,0,8,0">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding Converter={StaticResource MediaOptionLabelConverter}}"/>
