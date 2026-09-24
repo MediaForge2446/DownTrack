@@ -69,6 +69,14 @@ public partial class MainWindow : Window
         dialog.ShowDialog();
     }
 
+    private void HomeShell_Click(object sender, RoutedEventArgs e)
+    {
+        RootList.SelectedItem = null;
+
+        if (DataContext is ViewModels.MainWindowViewModel viewModel)
+            viewModel.GoHomeCommand.Execute(null);
+    }
+
     private void RootList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         if (DataContext is ViewModels.MainWindowViewModel viewModel &&
