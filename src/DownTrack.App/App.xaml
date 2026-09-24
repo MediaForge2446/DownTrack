@@ -10,6 +10,7 @@
         <local:MediaOptionLabelConverter x:Key="MediaOptionLabelConverter"/>
         <local:BooleanModeConverter x:Key="BooleanModeConverter"/>
         <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <local:EntryStateBrushConverter x:Key="EntryStateBrushConverter"/>
         <local:PendingStatusBrushConverter x:Key="PendingStatusBrushConverter"/>
         <local:PendingDescriptionConverter x:Key="PendingDescriptionConverter"/>
