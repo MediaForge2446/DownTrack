@@ -4,5 +4,8 @@ namespace DownTrack.Application.Services;
 
 public interface IMediaResolver
 {
-    Task<IReadOnlyList<MediaDownloadSpec>> ResolveAsync(string url, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<MediaDownloadSpec>> ResolveAsync(
+        string url,
+        IProgress<string>? progress = null,
+        CancellationToken cancellationToken = default);
 }
