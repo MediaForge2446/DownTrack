@@ -1,6 +1,7 @@
 using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.ViewModels;
 
@@ -68,7 +69,7 @@ public sealed class MediaRowViewModel : ObservableObject
     public MediaDownloadSpec ToSpec() => new()
     {
         SourceUrl = SourceUrl,
-        Title = string.IsNullOrWhiteSpace(Title) ? "Untitled" : Title.Trim(),
+        Title = string.IsNullOrWhiteSpace(Title) ? LocalizationService.Instance.T("Media.Untitled") : Title.Trim(),
         ThumbnailUrl = ThumbnailUrl,
         Format = Format,
         AudioQuality = AudioQuality,
