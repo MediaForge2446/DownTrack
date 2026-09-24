@@ -20,6 +20,7 @@ public sealed class ExplorerViewModel : ObservableObject
     private VirtualEntry? _selectedEntry;
     private string _statusMessage = LocalizationService.Instance.T("Explorer.AllSaved");
     private bool _isSaving;
+    private int _overallProgress;
 
     public ExplorerViewModel(
         RootFolder root,
@@ -93,6 +94,12 @@ public sealed class ExplorerViewModel : ObservableObject
     {
         get => _statusMessage;
         private set => SetProperty(ref _statusMessage, value);
+    }
+
+    public int OverallProgress
+    {
+        get => _overallProgress;
+        private set => SetProperty(ref _overallProgress, value);
     }
 
     public string SaveButtonText => PendingChanges.Count == 0
@@ -290,6 +297,7 @@ public sealed class ExplorerViewModel : ObservableObject
             return;
 
         _isSaving = true;
+        OverallProgress = 0;
         StatusMessage = LocalizationService.Instance.T("Explorer.ApplyingChanges");
         SaveChangesCommand.RaiseCanExecuteChanged();
 
