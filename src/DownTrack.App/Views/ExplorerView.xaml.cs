@@ -32,7 +32,7 @@ public partial class ExplorerView : UserControl
         if (ViewModel is null)
             return;
 
-        if (sender is Button button && button.DataContext is PendingChange change)
+        if (sender is Button button && button.Tag is PendingChange change)
             ViewModel.CancelPending(change);
     }
 }
