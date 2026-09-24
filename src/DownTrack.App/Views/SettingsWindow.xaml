@@ -86,7 +86,8 @@
                                       MinHeight="42"
                                       Margin="18,0,0,0"
                                       DisplayMemberPath="Label"
-                                      SelectedValuePath="Code"/>
+                                      SelectedValuePath="Code"
+                                      SelectionChanged="ThemeBox_SelectionChanged"/>
                         </Grid>
                     </Border>
 
@@ -117,7 +118,8 @@
                                       MinHeight="42"
                                       Margin="18,0,0,0"
                                       DisplayMemberPath="DisplayName"
-                                      SelectedValuePath="Code"/>
+                                      SelectedValuePath="Code"
+                                      SelectionChanged="LanguageBox_SelectionChanged"/>
                         </Grid>
                     </Border>
 
