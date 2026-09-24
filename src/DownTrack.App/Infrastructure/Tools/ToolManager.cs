@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using DownTrack.Application.Services;
 using DownTrack.Infrastructure;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.Infrastructure.Tools;
 
@@ -41,8 +42,8 @@ public sealed class ToolManager : IAppToolManager
 
     public string Status =>
         IsReady
-            ? "Media engine ready"
-            : "Media engine setup required";
+            ? LocalizationService.Instance.T("Home.EngineReady")
+            : LocalizationService.Instance.T("Home.EngineNeedsSetup");
 
     public async Task EnsureReadyAsync(
         IProgress<string>? progress = null,
@@ -61,7 +62,7 @@ public sealed class ToolManager : IAppToolManager
 
             if (!File.Exists(AppPaths.YtDlpPath))
             {
-                progress?.Report("Downloading yt-dlp…");
+                progress?.Report(LocalizationService.Instance.T("Engine.DownloadingYtDlp"));
                 await DownloadAndVerifyAsync(
                     YtDlpUrl,
                     YtDlpChecksumsUrl,
@@ -73,17 +74,17 @@ public sealed class ToolManager : IAppToolManager
             var ffprobe = Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe");
             if (!File.Exists(ffmpeg) || !File.Exists(ffprobe))
             {
-                progress?.Report("Downloading FFmpeg…");
+                progress?.Report(LocalizationService.Instance.T("Engine.DownloadingFfmpeg"));
                 await DownloadAndExtractFfmpegAsync(progress, cancellationToken);
             }
 
             if (!File.Exists(AppPaths.DenoPath))
             {
-                progress?.Report("Installing YouTube runtime…");
+                progress?.Report(LocalizationService.Instance.T("Engine.InstallingRuntime"));
                 await DownloadAndExtractDenoAsync(cancellationToken);
             }
 
-            progress?.Report("Media engine ready.");
+            progress?.Report(LocalizationService.Instance.T("Engine.Ready"));
         }
         finally
         {
@@ -140,7 +141,7 @@ public sealed class ToolManager : IAppToolManager
             await source.CopyToAsync(destination, cancellationToken);
         }
 
-        progress?.Report("Verifying FFmpeg package…");
+        progress?.Report(LocalizationService.Instance.T("Engine.VerifyingFfmpeg"));
 
         var checksumText = await Client.GetStringAsync(FfmpegChecksumUrl, cancellationToken);
         var expected = ExtractChecksum(checksumText, Path.GetFileName(FfmpegUrl))
