@@ -103,6 +103,21 @@ jobs:
             if (-not (Test-Path (Join-Path $tools $file))) { throw "Installer payload is missing $file." }
           }
 
+      - name: Build Web Installer payload
+        if: github.event_name == 'push'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $releaseDir = Join-Path $env:GITHUB_WORKSPACE "artifacts\release"
+          New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
+          $payload = Join-Path $releaseDir "DownTrack-Payload.zip"
+          if (Test-Path $payload) { Remove-Item $payload -Force }
+          Compress-Archive -Path (Join-Path $env:GITHUB_WORKSPACE "artifacts\publish\*") -DestinationPath $payload -CompressionLevel Optimal
+          $hash = (Get-FileHash -Algorithm SHA256 $payload).Hash.ToLowerInvariant()
+          $size = (Get-Item $payload).Length
+          Write-Host "Payload bytes: $size"
+          Write-Host "Payload SHA-256: $hash"
+
       - name: Install Inno Setup
         shell: pwsh
         run: choco install innosetup --no-progress -y
@@ -134,7 +149,11 @@ jobs:
           if (-not (Test-Path $setupPath)) { throw "Full Setup.exe was not created." }
           $setupHash = (Get-FileHash -Algorithm SHA256 $setupPath).Hash.ToLowerInvariant()
           $setupSize = (Get-Item $setupPath).Length
-          $manifest = "[release]`nVersion=$env:DOWNTRACK_VERSION`nChannel=nightly`nSetupUrl=https://github.com/MediaForge2446/DownTrack/releases/download/nightly/Setup.exe`nSetupSha256=$setupHash`nSetupSize=$setupSize`nYtDlpVersion=2026.08.19`nDenoVersion=2.9.7`nFfmpegVersion=current-essentials`n"
+          $payloadPath = Join-Path $releaseDir "DownTrack-Payload.zip"
+          if (-not (Test-Path $payloadPath)) { throw "DownTrack-Payload.zip was not created." }
+          $payloadHash = (Get-FileHash -Algorithm SHA256 $payloadPath).Hash.ToLowerInvariant()
+          $payloadSize = (Get-Item $payloadPath).Length
+          $manifest = "[release]`nVersion=$env:DOWNTRACK_VERSION`nChannel=nightly`nPayloadUrl=https://github.com/MediaForge2446/DownTrack/releases/download/nightly/DownTrack-Payload.zip`nPayloadSha256=$payloadHash`nPayloadSize=$payloadSize`nSetupUrl=https://github.com/MediaForge2446/DownTrack/releases/download/nightly/Setup.exe`nSetupSha256=$setupHash`nSetupSize=$setupSize`nYtDlpVersion=2026.08.19`nDenoVersion=2.9.7`nFfmpegVersion=current-essentials`n"
           $manifestPath = Join-Path $releaseDir "latest.ini"
           Set-Content -Path $manifestPath -Value $manifest -Encoding UTF8
           $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
@@ -157,7 +176,7 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          foreach ($file in @("artifacts\installer\DownTrack-WebSetup.exe","artifacts\installer\Setup.exe","artifacts\release\latest.ini")) {
+          foreach ($file in @("artifacts\installer\DownTrack-WebSetup.exe","artifacts\installer\Setup.exe","artifacts\release\latest.ini","artifacts\release\DownTrack-Payload.zip")) {
             if (-not (Test-Path $file)) { throw "Missing web installer asset: $file" }
           }
 
@@ -169,6 +188,7 @@ jobs:
           path: |
             artifacts/installer/DownTrack-WebSetup.exe
             artifacts/release/latest.ini
+            artifacts/release/DownTrack-Payload.zip
           if-no-files-found: error
 
       - name: Publish Nightly Release
@@ -183,7 +203,7 @@ jobs:
             gh release create nightly --repo $env:GITHUB_REPOSITORY --title "DownTrack Nightly" --notes "Latest validated DownTrack build from main." --prerelease --latest=false
             if ($LASTEXITCODE -ne 0) { throw "Failed to create nightly release." }
           }
-          gh release upload nightly "artifacts/release/latest.ini" "artifacts/installer/DownTrack-WebSetup.exe" "artifacts/installer/Setup.exe" --repo $env:GITHUB_REPOSITORY --clobber
+          gh release upload nightly "artifacts/release/latest.ini" "artifacts/release/DownTrack-Payload.zip" "artifacts/installer/DownTrack-WebSetup.exe" "artifacts/installer/Setup.exe" --repo $env:GITHUB_REPOSITORY --clobber
           if ($LASTEXITCODE -ne 0) { throw "Failed to publish nightly release assets." }
 
       - name: Upload Setup.exe

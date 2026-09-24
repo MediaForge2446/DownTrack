@@ -11,11 +11,57 @@ public partial class MainWindow : Window
     private const uint MonitorDefaultToNearest = 2;
     private Rect _restoreBounds;
     private bool _workAreaMaximized;
+    private bool _updatingLanguageSelector;
 
     public MainWindow()
     {
         InitializeComponent();
         StateChanged += MainWindow_StateChanged;
+
+        LocalizationService.Instance.PropertyChanged += Localization_PropertyChanged;
+        RefreshLanguageSelector();
+    }
+
+    private sealed record LanguageOption(string Code, string DisplayName);
+
+    private void RefreshLanguageSelector()
+    {
+        _updatingLanguageSelector = true;
+        try
+        {
+            LanguageBox.ItemsSource = LocalizationService.SupportedLanguages
+                .Select(x => new LanguageOption(
+                    x.Code,
+                    x.Code == "auto"
+                        ? LocalizationService.Instance.T("Settings.Automatic")
+                        : x.NativeName))
+                .ToList();
+
+            LanguageBox.SelectedValue = LocalizationService.Instance.SelectedCode;
+        }
+        finally
+        {
+            _updatingLanguageSelector = false;
+        }
+    }
+
+    private void Localization_PropertyChanged(
+        object? sender,
+        System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
+            RefreshLanguageSelector();
+    }
+
+    private void LanguageBox_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (_updatingLanguageSelector)
+            return;
+
+        if (LanguageBox.SelectedValue is string code)
+            LocalizationService.Instance.SetLanguage(code);
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)

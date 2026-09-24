@@ -1,6 +1,7 @@
 using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.Infrastructure.Downloads;
 
@@ -20,7 +21,7 @@ public sealed class CommitService(
         {
             case PendingChangeType.CreateFolder:
                 Directory.CreateDirectory(change.TargetPath
-                    ?? throw new InvalidOperationException("Missing target path."));
+                    ?? throw new InvalidOperationException(LocalizationService.Instance.T("Error.MissingTargetPath")));
                 break;
 
             case PendingChangeType.Rename:
@@ -33,12 +34,12 @@ public sealed class CommitService(
 
             case PendingChangeType.Download:
                 if (change.Media is null || change.TargetPath is null)
-                    throw new InvalidOperationException("Download change is missing media information.");
+                    throw new InvalidOperationException(LocalizationService.Instance.T("Error.MissingMedia"));
 
-                progress?.Report("Preparing media engine…");
+                progress?.Report(LocalizationService.Instance.T("Download.PreparingEngine"));
                 await _toolManager.EnsureReadyAsync(progress, cancellationToken);
 
-                progress?.Report($"Downloading {change.Media.Title}…");
+                progress?.Report(LocalizationService.Instance.T("Download.Downloading", change.Media.Title));
                 await _downloader.DownloadAsync(change.Media, change.TargetPath, cancellationToken);
                 break;
 
@@ -50,10 +51,10 @@ public sealed class CommitService(
     private static void ApplyRename(PendingChange change)
     {
         if (change.SourcePath is null || change.TargetPath is null)
-            throw new InvalidOperationException("Rename change is incomplete.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Error.IncompleteRename"));
 
         if (File.Exists(change.TargetPath) || Directory.Exists(change.TargetPath))
-            throw new IOException($"Target already exists: {change.TargetPath}");
+            throw new IOException(LocalizationService.Instance.T("Error.TargetExists", change.TargetPath));
 
         if (change.IsDirectory)
             Directory.Move(change.SourcePath, change.TargetPath);
@@ -64,7 +65,7 @@ public sealed class CommitService(
     private static void ApplyDelete(PendingChange change)
     {
         var path = change.SourcePath
-            ?? throw new InvalidOperationException("Delete change is incomplete.");
+            ?? throw new InvalidOperationException(LocalizationService.Instance.T("Error.IncompleteDelete"));
 
         if (change.IsDirectory)
         {

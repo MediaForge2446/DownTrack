@@ -91,7 +91,7 @@
                                          Height="7"
                                          Fill="{StaticResource SuccessBrush}"
                                          VerticalAlignment="Center"/>
-                                <TextBlock Text="  Media Engine"
+                                <TextBlock Text="{loc:Loc Key=App.MediaEngine}"
                                            FontSize="10"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource CyanBrush}"/>
@@ -124,7 +124,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBlock Text="SETUP REQUIRED"
+                            <TextBlock Text="{loc:Loc Key=Home.SetupRequired}"
                                        FontSize="10"
                                        FontWeight="SemiBold"
                                        Foreground="{StaticResource AccentBlueBrush}"/>
@@ -142,6 +142,14 @@
                                 Style="{StaticResource IconButton}"
                                 ToolTip="{loc:Loc Key=Window.Maximize}"
                                 Click="Maximize_Click"/>
+                        <ComboBox x:Name="LanguageBox"
+                                  Width="150"
+                                  Height="34"
+                                  Margin="8,0,0,0"
+                                  DisplayMemberPath="NativeName"
+                                  SelectedValuePath="Code"
+                                  ToolTip="{loc:Loc Key=Settings.Language}"
+                                  SelectionChanged="LanguageBox_SelectionChanged"/>
                         <Button Content="⚙"
                                 Style="{StaticResource IconButton}"
                                 Margin="3,0,0,0"

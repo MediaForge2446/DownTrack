@@ -157,7 +157,7 @@ public sealed class AddMediaViewModel : ObservableObject
             message = message[..480] + "…";
 
         return string.IsNullOrWhiteSpace(message)
-            ? "We couldn't analyze this link. Please try again."
+            ? LocalizationService.Instance.T("AddMedia.ErrorFallback")
             : message;
     }
 }

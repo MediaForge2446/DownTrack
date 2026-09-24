@@ -1,6 +1,7 @@
 using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 using DownTrack.Infrastructure.Tools;
 
 namespace DownTrack.Infrastructure.Downloads;
@@ -70,7 +71,7 @@ public sealed class YtDlpDownloader(
         if (length <= 0)
         {
             File.Delete(targetPath);
-            throw new InvalidOperationException("The downloaded file is empty.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Error.DownloadedFileEmpty"));
         }
     }
 

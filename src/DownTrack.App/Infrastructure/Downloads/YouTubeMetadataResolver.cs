@@ -1,6 +1,7 @@
 using System.Text.Json;
 using DownTrack.Application.Services;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 using DownTrack.Infrastructure.Tools;
 
 namespace DownTrack.Infrastructure.Downloads;
@@ -107,7 +108,7 @@ public sealed class YouTubeMetadataResolver(
         if (first >= 0 && last > first)
             return trimmed[first..(last + 1)];
 
-        throw new InvalidOperationException("The media resolver did not return metadata.");
+        throw new InvalidOperationException(LocalizationService.Instance.T("Error.MetadataMissing"));
     }
 
     private static string? GetString(JsonElement item, string property) =>

@@ -128,7 +128,7 @@
                     BorderThickness="1"
                     CornerRadius="16">
                 <StackPanel>
-                    <TextBlock Text="LIBRARY"
+                    <TextBlock Text="{loc:Loc Key=Home.LibraryEyebrow}"
                                FontSize="9"
                                FontWeight="Bold"
                                Foreground="{StaticResource AccentBlueBrush}"/>

@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using DownTrack.Application.Services;
 using DownTrack.Infrastructure;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.Infrastructure.Tools;
 
@@ -41,8 +42,8 @@ public sealed class ToolManager : IAppToolManager
 
     public string Status =>
         IsReady
-            ? "Media engine ready"
-            : "Media engine setup required";
+            ? LocalizationService.Instance.T("Home.EngineReady")
+            : LocalizationService.Instance.T("Home.EngineNeedsSetup");
 
     public async Task EnsureReadyAsync(
         IProgress<string>? progress = null,
@@ -61,7 +62,7 @@ public sealed class ToolManager : IAppToolManager
 
             if (!File.Exists(AppPaths.YtDlpPath))
             {
-                progress?.Report("Downloading yt-dlp…");
+                progress?.Report(LocalizationService.Instance.T("Engine.DownloadingYtDlp"));
                 await DownloadAndVerifyAsync(
                     YtDlpUrl,
                     YtDlpChecksumsUrl,
@@ -73,17 +74,17 @@ public sealed class ToolManager : IAppToolManager
             var ffprobe = Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe");
             if (!File.Exists(ffmpeg) || !File.Exists(ffprobe))
             {
-                progress?.Report("Downloading FFmpeg…");
+                progress?.Report(LocalizationService.Instance.T("Engine.DownloadingFfmpeg"));
                 await DownloadAndExtractFfmpegAsync(progress, cancellationToken);
             }
 
             if (!File.Exists(AppPaths.DenoPath))
             {
-                progress?.Report("Installing YouTube runtime…");
+                progress?.Report(LocalizationService.Instance.T("Engine.InstallingRuntime"));
                 await DownloadAndExtractDenoAsync(cancellationToken);
             }
 
-            progress?.Report("Media engine ready.");
+            progress?.Report(LocalizationService.Instance.T("Engine.Ready"));
         }
         finally
         {
@@ -115,13 +116,13 @@ public sealed class ToolManager : IAppToolManager
 
         var checksumText = await Client.GetStringAsync(checksumUrl, cancellationToken);
         var expected = ExtractChecksum(checksumText, fileName)
-            ?? throw new InvalidOperationException($"No SHA-256 checksum was found for {fileName}.");
+            ?? throw new InvalidOperationException(LocalizationService.Instance.T("Engine.HashMissingFile", fileName));
 
         var actual = await ComputeSha256Async(tempPath, cancellationToken);
         if (!string.Equals(expected, actual, StringComparison.OrdinalIgnoreCase))
         {
             File.Delete(tempPath);
-            throw new InvalidOperationException($"Checksum verification failed for {fileName}.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Engine.HashFailedFile", fileName));
         }
 
         File.Move(tempPath, Path.Combine(AppPaths.ToolsDirectory, fileName), overwrite: true);
@@ -140,17 +141,17 @@ public sealed class ToolManager : IAppToolManager
             await source.CopyToAsync(destination, cancellationToken);
         }
 
-        progress?.Report("Verifying FFmpeg package…");
+        progress?.Report(LocalizationService.Instance.T("Engine.VerifyingFfmpeg"));
 
         var checksumText = await Client.GetStringAsync(FfmpegChecksumUrl, cancellationToken);
         var expected = ExtractChecksum(checksumText, Path.GetFileName(FfmpegUrl))
-            ?? throw new InvalidOperationException("No SHA-256 checksum was found for the FFmpeg package.");
+            ?? throw new InvalidOperationException(LocalizationService.Instance.T("Engine.HashMissingFfmpeg"));
 
         var actual = await ComputeSha256Async(zipPath, cancellationToken);
         if (!string.Equals(expected, actual, StringComparison.OrdinalIgnoreCase))
         {
             File.Delete(zipPath);
-            throw new InvalidOperationException("Checksum verification failed for the FFmpeg package.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Engine.HashFailedFfmpeg"));
         }
 
         if (Directory.Exists(extractPath))
@@ -168,7 +169,7 @@ public sealed class ToolManager : IAppToolManager
             .FirstOrDefault();
 
         if (ffmpeg is null || ffprobe is null)
-            throw new InvalidOperationException("The FFmpeg package did not contain the expected executables.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Engine.FfmpegMissingExecutables"));
 
         File.Copy(ffmpeg, Path.Combine(AppPaths.ToolsDirectory, "ffmpeg.exe"), overwrite: true);
         File.Copy(ffprobe, Path.Combine(AppPaths.ToolsDirectory, "ffprobe.exe"), overwrite: true);
@@ -193,13 +194,13 @@ public sealed class ToolManager : IAppToolManager
         var expected = ExtractChecksum(
             checksumText,
             Path.GetFileName(DenoUrl))
-            ?? throw new InvalidOperationException("No SHA-256 checksum was found for Deno.");
+            ?? throw new InvalidOperationException(LocalizationService.Instance.T("Engine.HashMissingDeno"));
 
         var actual = await ComputeSha256Async(zipPath, cancellationToken);
         if (!string.Equals(expected, actual, StringComparison.OrdinalIgnoreCase))
         {
             File.Delete(zipPath);
-            throw new InvalidOperationException("Checksum verification failed for Deno.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Engine.HashFailedDeno"));
         }
 
         if (Directory.Exists(extractPath))
@@ -213,7 +214,7 @@ public sealed class ToolManager : IAppToolManager
             .FirstOrDefault();
 
         if (deno is null)
-            throw new InvalidOperationException("The Deno package did not contain deno.exe.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Engine.DenoMissingExecutable"));
 
         File.Copy(deno, AppPaths.DenoPath, overwrite: true);
 
