@@ -166,6 +166,56 @@ jobs:
           Write-Host "Web installer bytes: $webSize"
           Write-Host "Web installer hash: $((Get-FileHash -Algorithm SHA256 $webSetup).Hash)"
 
+      - name: Build always-latest Bootstrapper
+        if: github.event_name == 'push'
+        shell: pwsh
+        env:
+          DOWNTRACK_VERSION: "0.1.${{ github.run_number }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $releaseDir = Join-Path $env:GITHUB_WORKSPACE "artifacts\release"
+          $installerDir = Join-Path $env:GITHUB_WORKSPACE "artifacts\installer"
+          New-Item -ItemType Directory -Force -Path $releaseDir,$installerDir | Out-Null
+
+          $payload = Join-Path $releaseDir "DownTrack-Payload.zip"
+          if (-not (Test-Path $payload)) { throw "Payload is missing before bootstrapper build." }
+          $payloadHash = (Get-FileHash -Algorithm SHA256 $payload).Hash.ToLowerInvariant()
+          $payloadSize = (Get-Item $payload).Length
+
+          $manifest = @"
+          [release]
+          Version=$env:DOWNTRACK_VERSION
+          Channel=nightly
+          PayloadUrl=https://github.com/MediaForge2446/DownTrack/releases/download/nightly/DownTrack-Payload.zip
+          PayloadSha256=$payloadHash
+          PayloadSize=$payloadSize
+          YtDlpVersion=2026.08.19
+          DenoVersion=2.9.7
+          FfmpegVersion=current-essentials
+          "@
+          Set-Content -Path (Join-Path $releaseDir "latest.ini") -Value $manifest -Encoding UTF8
+
+          $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+          $issc = if ($programFilesX86) { Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe" } else { $null }
+          if (-not $issc -or -not (Test-Path $issc)) { $issc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe" }
+          if (-not (Test-Path $issc)) { throw "Inno Setup compiler was not found." }
+
+          & $issc "installer\DownTrackBootstrapper.iss"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $bootstrapper = Join-Path $installerDir "DownTrack-Installer.exe"
+          if (-not (Test-Path $bootstrapper)) { throw "Bootstrapper was not created." }
+
+          $size = (Get-Item $bootstrapper).Length
+          if ($size -gt 15MB) { throw "Bootstrapper is unexpectedly large: $size bytes." }
+
+          Write-Host "Latest version: $env:DOWNTRACK_VERSION"
+          Write-Host "Payload SHA-256: $payloadHash"
+          Write-Host "Payload bytes: $payloadSize"
+          Write-Host "Bootstrapper bytes: $size"
+          Write-Host "Bootstrapper SHA-256: $((Get-FileHash -Algorithm SHA256 $bootstrapper).Hash)"
+          Get-Content (Join-Path $releaseDir "latest.ini")
+
       - name: Upload Web Installer artifacts
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
@@ -188,8 +238,18 @@ jobs:
             gh release create nightly --repo $env:GITHUB_REPOSITORY --title "DownTrack Nightly" --notes "Latest validated DownTrack build from main." --prerelease --latest=false
             if ($LASTEXITCODE -ne 0) { throw "Failed to create nightly release." }
           }
-          gh release upload nightly "artifacts/release/DownTrack-Payload.zip" "artifacts/installer/DownTrack-WebSetup.exe" "artifacts/installer/Setup.exe" --repo $env:GITHUB_REPOSITORY --clobber
+          gh release upload nightly "artifacts/release/DownTrack-Payload.zip" "artifacts/release/latest.ini" "artifacts/installer/DownTrack-Installer.exe" "artifacts/installer/DownTrack-WebSetup.exe" "artifacts/installer/Setup.exe" --repo $env:GITHUB_REPOSITORY --clobber
           if ($LASTEXITCODE -ne 0) { throw "Failed to publish nightly release assets." }
+
+      - name: Upload Bootstrapper artifacts
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DownTrack-Bootstrapper
+          path: |
+            artifacts/installer/DownTrack-Installer.exe
+            artifacts/release/latest.ini
+          if-no-files-found: error
 
       - name: Upload Setup.exe
         uses: actions/upload-artifact@v4
