@@ -5,7 +5,6 @@
 #define ManifestUrl "https://github.com/MediaForge2446/DownTrack/releases/download/nightly/latest.ini"
 
 [Languages]
-[Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
 Name: "ar"; MessagesFile: "compiler:Languages\Arabic.isl"
 Name: "zh-CN"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
@@ -46,7 +45,6 @@ WizardSizePercent=120,115
 LanguageDetectionMethod=uilanguage
 ShowLanguageDialog=auto
 UsePreviousLanguage=no
-WizardBackColor=#F8F7FC
 WizardImageFile=
 WizardSmallImageFile=
 WizardBackColor=$F8F7FC
@@ -63,6 +61,167 @@ VersionInfoDescription=DownTrack Latest Installer
 VersionInfoProductName=DownTrack
 VersionInfoCompany=MediaForge2446
 SetupLogging=yes
+
+[CustomMessages]
+en.BootstrapIntro=This lightweight installer always checks for the latest verified DownTrack build and current media engine.
+en.LatestDetected=Latest verified build: %1
+en.CheckingLatest=Checking for the latest verified release...
+en.DownloadInstall=Download & install
+en.InstallReady=DownTrack %1 is ready to install.
+en.InstallVerificationFailed=DownTrack was downloaded, but the installed files could not be verified.
+en.NetworkError=DownTrack could not retrieve the latest release information.%n%nPlease check your internet connection and try again.
+
+ar.BootstrapIntro=يتحقق هذا المثبّت الخفيف دائمًا من أحدث إصدار موثوق من DownTrack ومحرك الوسائط الحالي.
+ar.LatestDetected=أحدث إصدار موثوق: %1
+ar.CheckingLatest=جارٍ التحقق من أحدث إصدار موثوق...
+ar.DownloadInstall=تنزيل وتثبيت
+ar.InstallReady=الإصدار %1 من DownTrack جاهز للتثبيت.
+ar.InstallVerificationFailed=تم تنزيل DownTrack، ولكن تعذّر التحقق من الملفات المثبّتة.
+ar.NetworkError=تعذّر على DownTrack الحصول على معلومات أحدث إصدار.%n%nتحقق من اتصال الإنترنت وحاول مرة أخرى.
+
+zh-CN.BootstrapIntro=此轻量安装程序每次都会检查最新的已验证 DownTrack 版本和当前媒体引擎。
+zh-CN.LatestDetected=最新已验证版本：%1
+zh-CN.CheckingLatest=正在检查最新的已验证版本...
+zh-CN.DownloadInstall=下载并安装
+zh-CN.InstallReady=DownTrack %1 已准备好安装。
+zh-CN.InstallVerificationFailed=DownTrack 已下载，但无法验证已安装的文件。
+zh-CN.NetworkError=DownTrack 无法获取最新版本信息。%n%n请检查网络连接后重试。
+
+cs.BootstrapIntro=Tento odlehčený instalátor vždy ověří nejnovější ověřenou verzi DownTrack a aktuální mediální engine.
+cs.LatestDetected=Nejnovější ověřená verze: %1
+cs.CheckingLatest=Ověřování nejnovější ověřené verze...
+cs.DownloadInstall=Stáhnout a nainstalovat
+cs.InstallReady=DownTrack %1 je připraven k instalaci.
+cs.InstallVerificationFailed=DownTrack byl stažen, ale nainstalované soubory se nepodařilo ověřit.
+cs.NetworkError=DownTrack nemohl získat informace o nejnovější verzi.%n%nZkontrolujte připojení k internetu a zkuste to znovu.
+
+da.BootstrapIntro=Dette lette installationsprogram kontrollerer altid den seneste verificerede DownTrack-version og den aktuelle mediemotor.
+da.LatestDetected=Seneste verificerede version: %1
+da.CheckingLatest=Kontrollerer den seneste verificerede version...
+da.DownloadInstall=Download og installer
+da.InstallReady=DownTrack %1 er klar til installation.
+da.InstallVerificationFailed=DownTrack blev downloadet, men de installerede filer kunne ikke verificeres.
+da.NetworkError=DownTrack kunne ikke hente oplysninger om den seneste version.%n%nKontrollér din internetforbindelse, og prøv igen.
+
+nl.BootstrapIntro=Dit lichte installatieprogramma controleert altijd de nieuwste geverifieerde DownTrack-versie en de huidige media-engine.
+nl.LatestDetected=Nieuwste geverifieerde versie: %1
+nl.CheckingLatest=Nieuwste geverifieerde versie controleren...
+nl.DownloadInstall=Downloaden en installeren
+nl.InstallReady=DownTrack %1 is klaar om te installeren.
+nl.InstallVerificationFailed=DownTrack is gedownload, maar de geïnstalleerde bestanden konden niet worden geverifieerd.
+nl.NetworkError=DownTrack kon de nieuwste releasegegevens niet ophalen.%n%nControleer je internetverbinding en probeer het opnieuw.
+
+fi.BootstrapIntro=Tämä kevyt asennusohjelma tarkistaa aina uusimman vahvistetun DownTrack-version ja nykyisen mediamoottorin.
+fi.LatestDetected=Uusin vahvistettu versio: %1
+fi.CheckingLatest=Tarkistetaan uusinta vahvistettua versiota...
+fi.DownloadInstall=Lataa ja asenna
+fi.InstallReady=DownTrack %1 on valmis asennettavaksi.
+fi.InstallVerificationFailed=DownTrack ladattiin, mutta asennettujen tiedostojen vahvistaminen epäonnistui.
+fi.NetworkError=DownTrack ei voinut hakea uusimman julkaisun tietoja.%n%nTarkista internet-yhteytesi ja yritä uudelleen.
+
+fr.BootstrapIntro=Ce programme d’installation léger vérifie toujours la dernière version vérifiée de DownTrack ainsi que le moteur multimédia actuel.
+fr.LatestDetected=Dernière version vérifiée : %1
+fr.CheckingLatest=Vérification de la dernière version vérifiée...
+fr.DownloadInstall=Télécharger et installer
+fr.InstallReady=DownTrack %1 est prêt à être installé.
+fr.InstallVerificationFailed=DownTrack a été téléchargé, mais les fichiers installés n’ont pas pu être vérifiés.
+fr.NetworkError=DownTrack n’a pas pu récupérer les informations de la dernière version.%n%nVérifiez votre connexion Internet et réessayez.
+
+de.BootstrapIntro=Dieses schlanke Installationsprogramm prüft immer die neueste verifizierte DownTrack-Version und die aktuelle Medienengine.
+de.LatestDetected=Neueste verifizierte Version: %1
+de.CheckingLatest=Neueste verifizierte Version wird geprüft...
+de.DownloadInstall=Herunterladen und installieren
+de.InstallReady=DownTrack %1 ist zur Installation bereit.
+de.InstallVerificationFailed=DownTrack wurde heruntergeladen, aber die installierten Dateien konnten nicht überprüft werden.
+de.NetworkError=DownTrack konnte die Informationen zur neuesten Version nicht abrufen.%n%nÜberprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.
+
+he.BootstrapIntro=מתקין קל זה בודק תמיד את הגרסה המאומתת האחרונה של DownTrack ואת מנוע המדיה העדכני.
+he.LatestDetected=הגרסה המאומתת האחרונה: %1
+he.CheckingLatest=בודק את הגרסה המאומתת האחרונה...
+he.DownloadInstall=הורדה והתקנה
+he.InstallReady=DownTrack %1 מוכן להתקנה.
+he.InstallVerificationFailed=DownTrack הורד, אך לא ניתן היה לאמת את הקבצים שהותקנו.
+he.NetworkError=DownTrack לא הצליח לקבל את פרטי הגרסה האחרונה.%n%nבדוק את חיבור האינטרנט ונסה שוב.
+
+it.BootstrapIntro=Questo programma di installazione leggero controlla sempre l'ultima versione verificata di DownTrack e il motore multimediale corrente.
+it.LatestDetected=Ultima versione verificata: %1
+it.CheckingLatest=Verifica dell'ultima versione verificata...
+it.DownloadInstall=Scarica e installa
+it.InstallReady=DownTrack %1 è pronto per l'installazione.
+it.InstallVerificationFailed=DownTrack è stato scaricato, ma non è stato possibile verificare i file installati.
+it.NetworkError=DownTrack non ha potuto recuperare le informazioni sull'ultima versione.%n%nControlla la connessione Internet e riprova.
+
+ja.BootstrapIntro=この軽量インストーラーは、常に最新の検証済み DownTrack バージョンと現在のメディアエンジンを確認します。
+ja.LatestDetected=最新の検証済みバージョン: %1
+ja.CheckingLatest=最新の検証済みバージョンを確認しています...
+ja.DownloadInstall=ダウンロードしてインストール
+ja.InstallReady=DownTrack %1 のインストール準備ができました。
+ja.InstallVerificationFailed=DownTrack はダウンロードされましたが、インストールされたファイルを確認できませんでした。
+ja.NetworkError=DownTrack は最新リリースの情報を取得できませんでした。%n%nインターネット接続を確認して、もう一度お試しください。
+
+ko.BootstrapIntro=이 경량 설치 프로그램은 항상 최신의 검증된 DownTrack 버전과 현재 미디어 엔진을 확인합니다.
+ko.LatestDetected=최신 검증 버전: %1
+ko.CheckingLatest=최신 검증 버전을 확인하는 중...
+ko.DownloadInstall=다운로드 및 설치
+ko.InstallReady=DownTrack %1을(를) 설치할 준비가 되었습니다.
+ko.InstallVerificationFailed=DownTrack을 다운로드했지만 설치된 파일을 확인할 수 없습니다.
+ko.NetworkError=DownTrack에서 최신 릴리스 정보를 가져오지 못했습니다.%n%n인터넷 연결을 확인한 후 다시 시도하세요.
+
+no.BootstrapIntro=Dette lette installasjonsprogrammet kontrollerer alltid den nyeste verifiserte DownTrack-versjonen og den aktuelle mediemotoren.
+no.LatestDetected=Nyeste verifiserte versjon: %1
+no.CheckingLatest=Kontrollerer nyeste verifiserte versjon...
+no.DownloadInstall=Last ned og installer
+no.InstallReady=DownTrack %1 er klar til å installeres.
+no.InstallVerificationFailed=DownTrack ble lastet ned, men de installerte filene kunne ikke verifiseres.
+no.NetworkError=DownTrack kunne ikke hente informasjon om den nyeste versjonen.%n%nKontroller internettforbindelsen og prøv igjen.
+
+pl.BootstrapIntro=Ten lekki instalator zawsze sprawdza najnowszą zweryfikowaną wersję DownTrack i bieżący silnik multimediów.
+pl.LatestDetected=Najnowsza zweryfikowana wersja: %1
+pl.CheckingLatest=Sprawdzanie najnowszej zweryfikowanej wersji...
+pl.DownloadInstall=Pobierz i zainstaluj
+pl.InstallReady=DownTrack %1 jest gotowy do instalacji.
+pl.InstallVerificationFailed=DownTrack został pobrany, ale nie udało się zweryfikować zainstalowanych plików.
+pl.NetworkError=DownTrack nie mógł pobrać informacji o najnowszym wydaniu.%n%nSprawdź połączenie z internetem i spróbuj ponownie.
+
+pt.BootstrapIntro=Este instalador leve verifica sempre a versão mais recente verificada do DownTrack e o mecanismo de mídia atual.
+pt.LatestDetected=Versão verificada mais recente: %1
+pt.CheckingLatest=Verificando a versão verificada mais recente...
+pt.DownloadInstall=Baixar e instalar
+pt.InstallReady=O DownTrack %1 está pronto para ser instalado.
+pt.InstallVerificationFailed=O DownTrack foi baixado, mas não foi possível verificar os arquivos instalados.
+pt.NetworkError=O DownTrack não conseguiu obter as informações da versão mais recente.%n%nVerifique sua conexão com a Internet e tente novamente.
+
+ru.BootstrapIntro=Этот лёгкий установщик всегда проверяет последнюю проверенную версию DownTrack и текущий медиа-движок.
+ru.LatestDetected=Последняя проверенная версия: %1
+ru.CheckingLatest=Проверка последней проверенной версии...
+ru.DownloadInstall=Скачать и установить
+ru.InstallReady=DownTrack %1 готов к установке.
+ru.InstallVerificationFailed=DownTrack загружен, но установленные файлы не удалось проверить.
+ru.NetworkError=DownTrack не удалось получить информацию о последней версии.%n%nПроверьте подключение к Интернету и повторите попытку.
+
+es.BootstrapIntro=Este instalador ligero comprueba siempre la versión verificada más reciente de DownTrack y el motor multimedia actual.
+es.LatestDetected=Última versión verificada: %1
+es.CheckingLatest=Comprobando la última versión verificada...
+es.DownloadInstall=Descargar e instalar
+es.InstallReady=DownTrack %1 está listo para instalarse.
+es.InstallVerificationFailed=DownTrack se descargó, pero no se pudieron verificar los archivos instalados.
+es.NetworkError=DownTrack no pudo obtener la información de la última versión.%n%nComprueba tu conexión a Internet y vuelve a intentarlo.
+
+tr.BootstrapIntro=Bu hafif yükleyici, her zaman doğrulanmış en yeni DownTrack sürümünü ve güncel medya motorunu kontrol eder.
+tr.LatestDetected=En yeni doğrulanmış sürüm: %1
+tr.CheckingLatest=En yeni doğrulanmış sürüm denetleniyor...
+tr.DownloadInstall=İndir ve yükle
+tr.InstallReady=DownTrack %1 yüklenmeye hazır.
+tr.InstallVerificationFailed=DownTrack indirildi, ancak yüklenen dosyalar doğrulanamadı.
+tr.NetworkError=DownTrack en son sürüm bilgilerini alamadı.%n%nİnternet bağlantınızı kontrol edip tekrar deneyin.
+
+uk.BootstrapIntro=Цей легкий інсталятор завжди перевіряє останню перевірену версію DownTrack і поточний медіадвигун.
+uk.LatestDetected=Остання перевірена версія: %1
+uk.CheckingLatest=Перевірка останньої перевіреної версії...
+uk.DownloadInstall=Завантажити й встановити
+uk.InstallReady=DownTrack %1 готовий до встановлення.
+uk.InstallVerificationFailed=DownTrack завантажено, але перевірити встановлені файли не вдалося.
+uk.NetworkError=DownTrack не вдалося отримати інформацію про останню версію.%n%nПеревірте підключення до Інтернету та повторіть спробу.
 
 [Files]
 Source: "{code:GetPayloadUrl}"; DestDir: "{app}"; DestName: "DownTrack-Payload.zip"; ExternalSize: {code:GetPayloadSize}; Hash: "{code:GetPayloadHash}"; Flags: external download extractarchive ignoreversion recursesubdirs createallsubdirs nocompression
@@ -157,7 +316,7 @@ begin
       @OnManifestDownloadProgress);
 
     if not FileExists(ManifestPath) then
-      RaiseException('The latest release manifest was not downloaded.');
+      RaiseException(CustomMessage('NetworkError'));
 
     LatestVersion := Trim(GetIniString('release', 'Version', '', ManifestPath));
     LatestPayloadUrl := Trim(GetIniString('release', 'PayloadUrl', '', ManifestPath));
@@ -265,12 +424,11 @@ begin
   WizardForm.WelcomeLabel1.Caption := 'DownTrack';
   WizardForm.WelcomeLabel1.Font.Size := 24;
   WizardForm.WelcomeLabel1.Font.Style := [fsBold];
-  WizardForm.WelcomeLabel2.Caption :=
-    'A lightweight installer that always checks for the latest verified build, including the current media engine.';
+  WizardForm.WelcomeLabel2.Caption := CustomMessage('BootstrapIntro');
   WizardForm.WelcomeLabel2.Font.Size := 10;
 
-  WizardForm.NextButton.Caption := 'Get latest version';
-  WizardForm.CancelButton.Caption := 'Close';
+  WizardForm.NextButton.Caption := SetupMessage(msgButtonNext);
+  WizardForm.CancelButton.Caption := SetupMessage(msgButtonCancel);
   WizardForm.BackButton.Visible := False;
 
   InstalledIni := ExpandConstant('{localappdata}\Programs\DownTrack\DownTrack.Install.ini');
@@ -280,19 +438,16 @@ begin
   begin
     if InstalledVersion <> '' then
       WizardForm.StatusLabel.Caption :=
-        Format('Installed: %s  •  Latest: %s', [InstalledVersion, LatestVersion])
+        FmtMessage('%1  •  %2', [InstalledVersion, LatestVersion])
     else
       WizardForm.StatusLabel.Caption :=
-        Format('Latest verified build: %s', [LatestVersion]);
+        Format(CustomMessage('LatestDetected'), [LatestVersion]);
 
-    WizardForm.WelcomeLabel2.Caption :=
-      Format(
-        'Latest verified build %s is ready. The installer will also bring the current media engine with it.',
-        [LatestVersion]);
+    WizardForm.WelcomeLabel2.Caption := FmtMessage(CustomMessage('LatestDetected'), [LatestVersion]);
   end
   else
   begin
-    WizardForm.StatusLabel.Caption := 'Latest version could not be checked yet.';
+    WizardForm.StatusLabel.Caption := CustomMessage('CheckingLatest');
   end;
 end;
 
@@ -313,9 +468,9 @@ begin
       Exit;
     end;
 
-    WizardForm.NextButton.Caption := 'Download & install';
+    WizardForm.NextButton.Caption := CustomMessage('DownloadInstall');
     WizardForm.StatusLabel.Caption :=
-      Format('Latest verified build: %s', [LatestVersion]);
+      Format(CustomMessage('LatestDetected'), [LatestVersion]);
   end;
 end;
 
@@ -327,15 +482,14 @@ begin
 
     if InstallIsValid then
     begin
-      WizardForm.StatusLabel.Caption :=
-        Format('DownTrack %s is installed and ready.', [LatestVersion]);
+      WizardForm.StatusLabel.Caption := FmtMessage(CustomMessage('InstallReady'), [LatestVersion]);
     end
     else
     begin
       WizardForm.StatusLabel.Caption := 'Installation verification failed.';
       MsgBox(
-        'DownTrack was downloaded, but the installed files could not be verified.' + #13#10 + #13#10 +
-        'The application was not launched. Please try the installer again.',
+        CustomMessage('InstallVerificationFailed') + #13#10 + #13#10 +
+        SetupMessage(msgPleaseWait) + ' ' + SetupMessage(msgTryAgain),
         mbCriticalError,
         MB_OK);
     end;
