@@ -4,26 +4,26 @@
 #define ManifestUrl "https://github.com/MediaForge2446/DownTrack/releases/download/nightly/latest.ini"
 
 [Languages]
-Name: "en"; MessagesFile: "compiler:Default.isl"; LanguageName: "English"; LanguageID: $0409
-Name: "he"; MessagesFile: "compiler:Default.isl"; LanguageName: "עברית"; LanguageID: $040D
-Name: "es"; MessagesFile: "compiler:Default.isl"; LanguageName: "Español"; LanguageID: $0C0A
-Name: "fr"; MessagesFile: "compiler:Default.isl"; LanguageName: "Français"; LanguageID: $040C
-Name: "de"; MessagesFile: "compiler:Default.isl"; LanguageName: "Deutsch"; LanguageID: $0407
-Name: "it"; MessagesFile: "compiler:Default.isl"; LanguageName: "Italiano"; LanguageID: $0410
-Name: "pt"; MessagesFile: "compiler:Default.isl"; LanguageName: "Português"; LanguageID: $0416
-Name: "nl"; MessagesFile: "compiler:Default.isl"; LanguageName: "Nederlands"; LanguageID: $0413
-Name: "pl"; MessagesFile: "compiler:Default.isl"; LanguageName: "Polski"; LanguageID: $0415
-Name: "cs"; MessagesFile: "compiler:Default.isl"; LanguageName: "Čeština"; LanguageID: $0405
-Name: "tr"; MessagesFile: "compiler:Default.isl"; LanguageName: "Türkçe"; LanguageID: $041F
-Name: "uk"; MessagesFile: "compiler:Default.isl"; LanguageName: "Українська"; LanguageID: $0422
-Name: "ru"; MessagesFile: "compiler:Default.isl"; LanguageName: "Русский"; LanguageID: $0419
-Name: "ar"; MessagesFile: "compiler:Default.isl"; LanguageName: "العربية"; LanguageID: $0401
-Name: "el"; MessagesFile: "compiler:Default.isl"; LanguageName: "Ελληνικά"; LanguageID: $0408
-Name: "ro"; MessagesFile: "compiler:Default.isl"; LanguageName: "Română"; LanguageID: $0418
-Name: "ja"; MessagesFile: "compiler:Default.isl"; LanguageName: "日本語"; LanguageID: $0411
-Name: "ko"; MessagesFile: "compiler:Default.isl"; LanguageName: "한국어"; LanguageID: $0412
-Name: "zhcn"; MessagesFile: "compiler:Default.isl"; LanguageName: "简体中文"; LanguageID: $0804
-Name: "zhtw"; MessagesFile: "compiler:Default.isl"; LanguageName: "繁體中文"; LanguageID: $0404
+Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "he"; MessagesFile: "compiler:Default.isl"
+Name: "es"; MessagesFile: "compiler:Default.isl"
+Name: "fr"; MessagesFile: "compiler:Default.isl"
+Name: "de"; MessagesFile: "compiler:Default.isl"
+Name: "it"; MessagesFile: "compiler:Default.isl"
+Name: "pt"; MessagesFile: "compiler:Default.isl"
+Name: "nl"; MessagesFile: "compiler:Default.isl"
+Name: "pl"; MessagesFile: "compiler:Default.isl"
+Name: "cs"; MessagesFile: "compiler:Default.isl"
+Name: "tr"; MessagesFile: "compiler:Default.isl"
+Name: "uk"; MessagesFile: "compiler:Default.isl"
+Name: "ru"; MessagesFile: "compiler:Default.isl"
+Name: "ar"; MessagesFile: "compiler:Default.isl"
+Name: "el"; MessagesFile: "compiler:Default.isl"
+Name: "ro"; MessagesFile: "compiler:Default.isl"
+Name: "ja"; MessagesFile: "compiler:Default.isl"
+Name: "ko"; MessagesFile: "compiler:Default.isl"
+Name: "zhcn"; MessagesFile: "compiler:Default.isl"
+Name: "zhtw"; MessagesFile: "compiler:Default.isl"
 
 [LangOptions]
 he.LanguageName=עברית
