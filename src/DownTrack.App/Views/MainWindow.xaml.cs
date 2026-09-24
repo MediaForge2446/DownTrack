@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Tools;
 using DownTrack.ViewModels;
 
 namespace DownTrack.Views;
@@ -39,7 +40,10 @@ public partial class MainWindow : Window
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new SettingsWindow
+        if (ViewModel is null)
+            return;
+
+        var dialog = new SettingsWindow(ViewModel.ToolManager)
         {
             Owner = this
         };
