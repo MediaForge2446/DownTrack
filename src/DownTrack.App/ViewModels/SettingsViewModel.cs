@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
 using DownTrack.Application.Commands;
+using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Infrastructure.Localization;
 using DownTrack.Infrastructure.Settings;
+using DownTrack.Infrastructure.Updates;
 
 namespace DownTrack.ViewModels;
 
@@ -11,6 +13,7 @@ public sealed class SettingsViewModel : ObservableObject
     public sealed record ThemeOption(AppThemeMode Mode, string DisplayName);
 
     private readonly SettingsService _settings = SettingsService.Instance;
+    private readonly IAppToolManager _toolManager;
     private AppThemeMode _theme;
     private string _languageCode;
     private bool _autoUpdateApp;
@@ -19,9 +22,12 @@ public sealed class SettingsViewModel : ObservableObject
     private AudioQuality _defaultAudioQuality;
     private VideoQuality _defaultVideoQuality;
     private string _updateStatus = string.Empty;
+    private AppUpdateInfo? _availableUpdate;
 
-    public SettingsViewModel()
+    public SettingsViewModel(IAppToolManager toolManager)
     {
+        _toolManager = toolManager;
+
         var s = _settings.Current;
 
         _theme = s.Theme;
@@ -44,7 +50,9 @@ public sealed class SettingsViewModel : ObservableObject
 
         ApplyCommand = new AsyncRelayCommand(SaveAsync);
         CheckForUpdatesCommand = new AsyncRelayCommand(CheckForUpdatesAsync);
+        UpdateAppCommand = new AsyncRelayCommand(UpdateAppAsync, () => _availableUpdate?.IsUpdateAvailable == true);
         CheckForToolUpdatesCommand = new AsyncRelayCommand(CheckForToolUpdatesAsync);
+        UpdateToolsCommand = new AsyncRelayCommand(UpdateToolsAsync);
 
         LocalizationService.Instance.PropertyChanged += Localization_PropertyChanged;
     }
@@ -76,8 +84,6 @@ public sealed class SettingsViewModel : ObservableObject
                 return;
 
             LocalizationService.Instance.SetLanguage(value);
-            RebuildThemeOptions();
-            OnPropertyChanged(nameof(LanguageCode));
         }
     }
 
@@ -119,7 +125,9 @@ public sealed class SettingsViewModel : ObservableObject
 
     public AsyncRelayCommand ApplyCommand { get; }
     public AsyncRelayCommand CheckForUpdatesCommand { get; }
+    public AsyncRelayCommand UpdateAppCommand { get; }
     public AsyncRelayCommand CheckForToolUpdatesCommand { get; }
+    public AsyncRelayCommand UpdateToolsCommand { get; }
 
     public async Task SaveAsync()
     {
@@ -139,18 +147,81 @@ public sealed class SettingsViewModel : ObservableObject
         UpdateStatus = LocalizationService.Instance.T("Settings.Saved");
     }
 
-    private Task CheckForUpdatesAsync()
+    private async Task CheckForUpdatesAsync()
     {
         UpdateStatus = LocalizationService.Instance.T("Updates.Checking");
-        return Task.Delay(250);
+
+        try
+        {
+            _availableUpdate = await AppUpdateService.Instance.CheckAsync();
+            UpdateStatus = _availableUpdate.IsUpdateAvailable
+                ? LocalizationService.Instance.T("Updates.Available", _availableUpdate.Version)
+                : LocalizationService.Instance.T("Updates.UpToDate");
+
+            UpdateAppCommand.RaiseCanExecuteChanged();
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus = LocalizationService.Instance.T(
+                "Updates.CheckFailed",
+                ex.Message);
+        }
     }
 
-    private Task CheckForToolUpdatesAsync()
+    private async Task UpdateAppAsync()
     {
-        UpdateStatus = _settings.Current.AutoUpdateTools
-            ? LocalizationService.Instance.T("Settings.ToolsReady")
-            : LocalizationService.Instance.T("Settings.ToolsMissing");
-        return Task.Delay(250);
+        if (_availableUpdate is null || !_availableUpdate.IsUpdateAvailable)
+            return;
+
+        UpdateStatus = LocalizationService.Instance.T("Updates.Downloading");
+
+        try
+        {
+            await AppUpdateService.Instance.ApplyAsync(_availableUpdate);
+            UpdateStatus = LocalizationService.Instance.T("Updates.Restarting");
+            await Task.Delay(400);
+            System.Windows.Application.Current.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus = LocalizationService.Instance.T(
+                "Updates.CheckFailed",
+                ex.Message);
+        }
+    }
+
+    private async Task CheckForToolUpdatesAsync()
+    {
+        UpdateStatus = LocalizationService.Instance.T("Updates.Checking");
+
+        try
+        {
+            UpdateStatus = _toolManager.IsReady
+                ? LocalizationService.Instance.T("Settings.ToolsReady")
+                : LocalizationService.Instance.T("Settings.ToolsMissing");
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus = ex.Message;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task UpdateToolsAsync()
+    {
+        UpdateStatus = LocalizationService.Instance.T("Engine.UpdatingYtDlp");
+
+        try
+        {
+            var progress = new Progress<string>(message => UpdateStatus = message);
+            await _toolManager.UpdateAsync(progress);
+            UpdateStatus = LocalizationService.Instance.T("Settings.ToolsUpdated");
+        }
+        catch (Exception ex)
+        {
+            UpdateStatus = ex.Message;
+        }
     }
 
     private void Localization_PropertyChanged(
