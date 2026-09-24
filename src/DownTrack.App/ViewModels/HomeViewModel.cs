@@ -11,6 +11,7 @@ public sealed class HomeViewModel : ObservableObject
     private readonly StagingService _staging;
     private readonly IFolderPicker _folderPicker;
     private readonly IAppToolManager _toolManager;
+    private readonly ITextPromptService _prompt;
     private RootFolder? _selectedRoot;
     private string _toolStatus = string.Empty;
     private bool _toolBusy;
@@ -18,11 +19,13 @@ public sealed class HomeViewModel : ObservableObject
     public HomeViewModel(
         StagingService staging,
         IFolderPicker folderPicker,
-        IAppToolManager toolManager)
+        IAppToolManager toolManager,
+        ITextPromptService prompt)
     {
         _staging = staging;
         _folderPicker = folderPicker;
         _toolManager = toolManager;
+        _prompt = prompt;
 
         AddRootFolderCommand = new RelayCommand(_ => _ = AddRootFolderAsync());
         RenameRootCommand = new AsyncRelayCommand(RenameRootAsync, () => SelectedRoot is not null);
@@ -128,11 +131,10 @@ public sealed class HomeViewModel : ObservableObject
         if (SelectedRoot is null)
             return;
 
-        var name = await Task.FromResult(
-            new WpfTextPromptService().Prompt(
-                LocalizationService.Instance.T("Explorer.Rename"),
-                LocalizationService.Instance.T("Explorer.RenamePrompt"),
-                SelectedRoot.Name));
+        var name = _prompt.Prompt(
+            LocalizationService.Instance.T("Explorer.Rename"),
+            LocalizationService.Instance.T("Explorer.RenamePrompt"),
+            SelectedRoot.Name);
 
         if (string.IsNullOrWhiteSpace(name))
             return;
@@ -157,7 +159,7 @@ public sealed class HomeViewModel : ObservableObject
             "Explorer.DeleteFolderPrompt",
             SelectedRoot.Name);
 
-        if (!new WpfTextPromptService().Confirm(
+        if (!_prompt.Confirm(
                 LocalizationService.Instance.T("Explorer.ConfirmDelete"),
                 message))
             return;
