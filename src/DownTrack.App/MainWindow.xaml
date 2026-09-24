@@ -91,7 +91,7 @@
                                          Height="7"
                                          Fill="{StaticResource SuccessBrush}"
                                          VerticalAlignment="Center"/>
-                                <TextBlock Text="  Media Engine"
+                                <TextBlock Text="{loc:Loc Key=App.MediaEngine}"
                                            FontSize="10"
                                            FontWeight="SemiBold"
                                            Foreground="{StaticResource CyanBrush}"/>
