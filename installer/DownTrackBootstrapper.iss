@@ -847,7 +847,7 @@ begin
        SameText(InstalledVersion, LatestVersion) then
     begin
       SetInstallState(CustomMessage('Title'), CustomMessage('UpToDate'));
-      VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
+      VersionText.Caption := GetLatestVersionText();
       PrimaryButton.Caption := CustomMessage('Open');
       PrimaryButton.OnClick := @OpenDownTrack;
       ProgressBar.Position := 100;
@@ -855,11 +855,12 @@ begin
     else
     begin
       StatusText.Caption := CustomMessage('Latest');
-      VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
+      VersionText.Caption := GetLatestVersionText();
     end;
   end;
 
-  SetupForm.Show;
+  SetupForm.ShowModal;
+  WizardForm.Close;
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
