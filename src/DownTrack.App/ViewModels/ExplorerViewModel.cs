@@ -304,7 +304,8 @@ public sealed class ExplorerViewModel : ObservableObject
         try
         {
             var progress = new Progress<string>(message => StatusMessage = message);
-            await _staging.SaveChangesAsync(_root, progress);
+            var overall = new Progress<int>(value => OverallProgress = value);
+            await _staging.SaveChangesAsync(_root, progress, overall);
             StatusMessage = PendingChanges.Count == 0
                 ? LocalizationService.Instance.T("Explorer.AllSaved")
                 : LocalizationService.Instance.T("Explorer.SomeNeedAttention");
@@ -316,6 +317,8 @@ public sealed class ExplorerViewModel : ObservableObject
         finally
         {
             _isSaving = false;
+            if (PendingChanges.Count == 0)
+                OverallProgress = 100;
             Refresh();
         }
     }
