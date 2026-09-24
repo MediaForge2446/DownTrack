@@ -7,7 +7,6 @@
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
 Name: "ar"; MessagesFile: "compiler:Languages\Arabic.isl"
-Name: "zhcn"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 Name: "cs"; MessagesFile: "compiler:Languages\Czech.isl"
 Name: "da"; MessagesFile: "compiler:Languages\Danish.isl"
 Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
@@ -22,6 +21,7 @@ Name: "no"; MessagesFile: "compiler:Languages\Norwegian.isl"
 Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "pt"; MessagesFile: "compiler:Languages\Portuguese.isl"
 Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "sk"; MessagesFile: "compiler:Languages\Slovak.isl"
 Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "tr"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "uk"; MessagesFile: "compiler:Languages\Ukrainian.isl"
@@ -98,14 +98,6 @@ ar.DownloadInstall=تنزيل وتثبيت
 ar.InstallReady=الإصدار %1 من DownTrack جاهز للتثبيت.
 ar.InstallVerificationFailed=تم تنزيل DownTrack، ولكن تعذّر التحقق من الملفات المثبّتة.
 ar.NetworkError=تعذّر على DownTrack الحصول على معلومات أحدث إصدار.%n%nتحقق من اتصال الإنترنت وحاول مرة أخرى.
-
-zhcn.BootstrapIntro=此轻量安装程序每次都会检查最新的已验证 DownTrack 版本和当前媒体引擎。
-zhcn.LatestDetected=最新已验证版本：%1
-zhcn.CheckingLatest=正在检查最新的已验证版本...
-zhcn.DownloadInstall=下载并安装
-zhcn.InstallReady=DownTrack %1 已准备好安装。
-zhcn.InstallVerificationFailed=DownTrack 已下载，但无法验证已安装的文件。
-zhcn.NetworkError=DownTrack 无法获取最新版本信息。%n%n请检查网络连接后重试。
 
 cs.BootstrapIntro=Tento odlehčený instalátor vždy ověří nejnovější ověřenou verzi DownTrack a aktuální mediální engine.
 cs.LatestDetected=Nejnovější ověřená verze: %1
@@ -218,6 +210,15 @@ ru.DownloadInstall=Скачать и установить
 ru.InstallReady=DownTrack %1 готов к установке.
 ru.InstallVerificationFailed=DownTrack загружен, но установленные файлы не удалось проверить.
 ru.NetworkError=DownTrack не удалось получить информацию о последней версии.%n%nПроверьте подключение к Интернету и повторите попытку.
+sk.BootstrapIntro=Tento ľahký inštalátor vždy skontroluje najnovšiu overenú verziu DownTrack a aktuálny mediálny engine.
+sk.LatestDetected=Najnovšia overená verzia: %1
+sk.CheckingLatest=Kontrola najnovšej overenej verzie...
+sk.DownloadInstall=Stiahnuť a nainštalovať
+sk.InstallReady=DownTrack %1 je pripravený na inštaláciu.
+sk.InstallVerificationFailed=DownTrack bol stiahnutý, ale nainštalované súbory sa nepodarilo overiť.
+sk.NetworkError=DownTrack nemohol získať informácie o najnovšom vydaní.%n%nSkontrolujte internetové pripojenie a skúste to znova.
+sk.VerificationRetry=Spustite inštalátor znova.
+
 
 es.BootstrapIntro=Este instalador ligero comprueba siempre la versión verificada más reciente de DownTrack y el motor multimedia actual.
 es.LatestDetected=Última versión verificada: %1
