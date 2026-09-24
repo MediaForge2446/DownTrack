@@ -52,12 +52,12 @@
                 <Button Style="{StaticResource IconButton}"
                         Command="{Binding BackCommand}"
                         Content="←"
-                        ToolTip="Back"/>
+                        ToolTip="{loc:Loc Key=Explorer.Back}"/>
                 <Button Style="{StaticResource IconButton}"
                         Command="{Binding ForwardCommand}"
                         Content="→"
                         Margin="4,0,0,0"
-                        ToolTip="Forward"/>
+                        ToolTip="{loc:Loc Key=Explorer.Forward}"/>
                 <Button Style="{StaticResource SecondaryButton}"
                         Command="{Binding HomeCommand}"
                         Content="{loc:Loc Key=Explorer.Home}"
@@ -117,7 +117,7 @@
                              Height="7"
                              Fill="{StaticResource SuccessBrush}"
                              VerticalAlignment="Center"/>
-                    <TextBlock Text="  Changes are staged safely"
+                    <TextBlock Text="{loc:Loc Key=Explorer.Staged}"
                                FontSize="10"
                                Foreground="{StaticResource MutedTextBrush}"/>
                 </StackPanel>
