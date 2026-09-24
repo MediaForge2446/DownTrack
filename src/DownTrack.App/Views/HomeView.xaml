@@ -113,8 +113,8 @@
                                 Cursor="Hand">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{StaticResource SurfaceBrush}"
-                                            BorderBrush="{StaticResource BorderBrush}"
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="1"
                                             CornerRadius="16"
                                             Padding="18">
