@@ -548,6 +548,19 @@ begin
   SetupForm.Close;
 end;
 
+procedure ShowCompleted;
+begin
+  ProgressBar.Position := 100;
+  SetInstallState(CustomMessage('Title'), CustomMessage('Complete'));
+  VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
+  PrimaryButton.Caption := CustomMessage('Open');
+  PrimaryButton.Enabled := True;
+  PrimaryButton.OnClick := @OpenDownTrack;
+  SecondaryButton.Visible := True;
+  SecondaryButton.Caption := CustomMessage('Close');
+end;
+
+
 procedure InstallLatest(Sender: TObject);
 var
   SetupPath: String;
@@ -620,19 +633,6 @@ begin
     Installing := False;
   end;
 end;
-
-procedure ShowCompleted;
-begin
-  ProgressBar.Position := 100;
-  SetInstallState(CustomMessage('Title'), CustomMessage('Complete'));
-  VersionText.Caption := FmtMessage(CustomMessage('Latest'), [LatestVersion]);
-  PrimaryButton.Caption := CustomMessage('Open');
-  PrimaryButton.Enabled := True;
-  PrimaryButton.OnClick := @OpenDownTrack;
-  SecondaryButton.Visible := True;
-  SecondaryButton.Caption := CustomMessage('Close');
-end;
-
 
 procedure CloseInstaller(Sender: TObject);
 begin
