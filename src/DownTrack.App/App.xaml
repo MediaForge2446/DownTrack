@@ -8,6 +8,9 @@
         <local:EntryIconConverter x:Key="EntryIconConverter"/>
         <local:MediaOptionLabelConverter x:Key="MediaOptionLabelConverter"/>
         <local:BooleanModeConverter x:Key="BooleanModeConverter"/>
+        <local:EntryStateBrushConverter x:Key="EntryStateBrushConverter"/>
+        <local:PendingStatusBrushConverter x:Key="PendingStatusBrushConverter"/>
+
         <SolidColorBrush x:Key="WindowBrush" Color="#0B0D12"/>
         <SolidColorBrush x:Key="SurfaceBrush" Color="#12151C"/>
         <SolidColorBrush x:Key="SurfaceElevatedBrush" Color="#171B24"/>

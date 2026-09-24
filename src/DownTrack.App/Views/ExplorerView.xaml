@@ -18,7 +18,6 @@
                 <Button Style="{StaticResource IconButton}" Command="{Binding ForwardCommand}" Content="&#xE72A;" Margin="4,0,0,0"/>
                 <Button Style="{StaticResource GhostButton}" Command="{Binding HomeCommand}" Content="Home" Margin="14,0,0,0"/>
             </StackPanel>
-
             <Border HorizontalAlignment="Right" Width="560" Height="38" Padding="12,0"
                     Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1" CornerRadius="9">
@@ -42,7 +41,6 @@
                     <StackPanel Orientation="Horizontal"><TextBlock Text="&#xE1F7;" FontFamily="Segoe Fluent Icons"/><TextBlock Text="  Add Media"/></StackPanel>
                 </Button>
             </StackPanel>
-
             <TextBlock Text="{Binding RootName}" HorizontalAlignment="Right"
                        Foreground="{StaticResource MutedTextBrush}" FontSize="12"/>
         </Grid>
@@ -96,7 +94,7 @@
                                                     Background="{StaticResource SurfaceElevatedBrush}">
                                                 <TextBlock Text="{Binding IsDirectory, Converter={StaticResource EntryIconConverter}}"
                                                            FontFamily="Segoe Fluent Icons" HorizontalAlignment="Center"
-                                                           Foreground="{StaticResource AccentBrush}"/>
+                                                           Foreground="{Binding State, Converter={StaticResource EntryStateBrushConverter}}"/>
                                             </Border>
                                             <TextBlock Text="{Binding Name}" Margin="10,0,0,0"
                                                        FontSize="13" TextTrimming="CharacterEllipsis"/>
@@ -105,7 +103,14 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
                             <GridViewColumn Width="95" Header="Type" DisplayMemberBinding="{Binding Kind}"/>
-                            <GridViewColumn Width="95" Header="State" DisplayMemberBinding="{Binding StateText}"/>
+                            <GridViewColumn Width="95" Header="State">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding StateText}"
+                                                   Foreground="{Binding State, Converter={StaticResource EntryStateBrushConverter}}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -135,7 +140,8 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Ellipse Width="8" Height="8" Fill="{StaticResource PendingBrush}" VerticalAlignment="Center"/>
+                                    <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                                             Fill="{Binding Status, Converter={StaticResource PendingStatusBrushConverter}}"/>
                                     <StackPanel Grid.Column="1">
                                         <TextBlock Text="{Binding Description}" FontSize="12"/>
                                         <TextBlock Text="{Binding ErrorMessage}" Foreground="{StaticResource ErrorBrush}"
@@ -152,10 +158,9 @@
         </Border>
 
         <Grid Grid.Row="4" Margin="0,9,0,0">
-            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource MutedTextBrush}"
-                       FontSize="12"/>
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource MutedTextBrush}" FontSize="12"/>
             <Button HorizontalAlignment="Right" Style="{StaticResource PrimaryButton}"
-                    Command="{Binding SaveChangesCommand}" Content="Save Changes  →"/>
+                    Command="{Binding SaveChangesCommand}" Content="{Binding SaveButtonText}"/>
         </Grid>
     </Grid>
 </UserControl>

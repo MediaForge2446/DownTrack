@@ -242,7 +242,27 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
 
     public async Task CancelChangeAsync(Guid rootId, Guid changeId)
     {
-        _state.PendingChanges.RemoveAll(x => x.RootFolderId == rootId && x.Id == changeId);
+        var change = _state.PendingChanges.FirstOrDefault(x => x.RootFolderId == rootId && x.Id == changeId);
+        if (change is null)
+            return;
+
+        if (change.ChangeType == PendingChangeType.Rename &&
+            change.SourcePath is not null &&
+            change.TargetPath is not null)
+        {
+            RewriteDescendantPaths(rootId, change.TargetPath, change.SourcePath, change.Id);
+        }
+
+        _state.PendingChanges.RemoveAll(x => x.Id == changeId);
+
+        if (change.ChangeType == PendingChangeType.CreateFolder && change.TargetPath is not null)
+        {
+            _state.PendingChanges.RemoveAll(x =>
+                x.RootFolderId == rootId &&
+                (IsDescendantPath(x.SourcePath, change.TargetPath) ||
+                 IsDescendantPath(x.TargetPath, change.TargetPath)));
+        }
+
         await PersistAsync();
     }
 
@@ -326,9 +346,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
         var index = 2;
 
         while (GetEntries(root, currentFolder).Any(x => PathsEqual(x.FullPath, candidate)))
-        {
             candidate = Normalize(Path.Combine(currentFolder, $"{baseName} ({index++}){extension}"));
-        }
 
         return candidate;
     }
@@ -367,7 +385,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
         _state.PendingChanges.Any(x =>
             x.RootFolderId == rootId &&
             x.ChangeType == PendingChangeType.Delete &&
-            (PathsEqual(x.SourcePath, path) || IsDescendantPath(path, x.SourcePath)));
+            IsDescendantPath(path, x.SourcePath));
 
     private static bool IsDescendantPath(string? candidate, string? ancestor)
     {

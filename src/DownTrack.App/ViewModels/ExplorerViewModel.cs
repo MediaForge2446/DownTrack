@@ -49,6 +49,7 @@ public sealed class ExplorerViewModel : ObservableObject
     }
 
     public string RootName => _root.Name;
+
     public string CurrentPath
     {
         get => _currentPath;
@@ -78,7 +79,9 @@ public sealed class ExplorerViewModel : ObservableObject
         private set => SetProperty(ref _statusMessage, value);
     }
 
-    public bool HasPendingChanges => PendingChanges.Count > 0;
+    public string SaveButtonText => PendingChanges.Count == 0
+        ? "Save Changes  →"
+        : $"Save Changes ({PendingChanges.Count})  →";
 
     public RelayCommand BackCommand { get; }
     public RelayCommand ForwardCommand { get; }
@@ -104,7 +107,7 @@ public sealed class ExplorerViewModel : ObservableObject
         foreach (var change in _staging.GetPendingChanges(_root.Id))
             PendingChanges.Add(change);
 
-        OnPropertyChanged(nameof(HasPendingChanges));
+        OnPropertyChanged(nameof(SaveButtonText));
 
         BackCommand.RaiseCanExecuteChanged();
         ForwardCommand.RaiseCanExecuteChanged();
