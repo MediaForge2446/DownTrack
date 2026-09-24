@@ -1,6 +1,7 @@
 using DownTrack.Core.Enums;
 using DownTrack.Core.Models;
 using DownTrack.Infrastructure.Storage;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.Application.Services;
 
@@ -112,7 +113,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
         EnsureInsideRoot(root, target);
 
         if (GetEntries(root, parent).Any(x => PathsEqual(x.FullPath, target)))
-            throw new IOException($"An item named '{safeName}' already exists.");
+            throw new IOException(LocalizationService.Instance.T("Errors.ItemExists", safeName));
 
         _state.PendingChanges.Add(new PendingChange
         {
@@ -131,7 +132,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
         EnsureInsideRoot(root, source);
 
         if (PathsEqual(source, root.Path))
-            throw new InvalidOperationException("The root folder cannot be renamed.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Errors.RootCannotRename"));
 
         var parent = Normalize(Directory.GetParent(source)?.FullName ?? root.Path);
         var safeName = SanitizeName(newName, Path.GetFileName(source));
@@ -184,7 +185,7 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
         EnsureInsideRoot(root, source);
 
         if (PathsEqual(source, root.Path))
-            throw new InvalidOperationException("The root folder cannot be deleted.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Errors.RootCannotDelete"));
 
         var relatedPending = _state.PendingChanges
             .Where(x => x.RootFolderId == root.Id && x.TargetPath is not null && PathsEqual(x.TargetPath, source))
@@ -478,6 +479,6 @@ public sealed class StagingService(IAppStateStore store, ICommitService commitSe
             return;
 
         if (!candidate.StartsWith(rootPath + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-            throw new InvalidOperationException("The selected path is outside the configured root folder.");
+            throw new InvalidOperationException(LocalizationService.Instance.T("Errors.OutsideRoot"));
     }
 }
