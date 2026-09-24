@@ -6,13 +6,21 @@ namespace DownTrack.Views;
 
 public partial class SettingsWindow : Window
 {
+    private sealed record LanguageOption(string Code, string DisplayName);
+
     private readonly LocalizationService _localization;
 
     public SettingsWindow()
     {
         InitializeComponent();
         _localization = LocalizationService.Instance;
-        LanguageBox.ItemsSource = LocalizationService.SupportedLanguages;
+        LanguageBox.ItemsSource = LocalizationService.SupportedLanguages
+            .Select(x => new LanguageOption(
+                x.Code,
+                x.Code == "auto"
+                    ? _localization.T("Settings.Automatic")
+                    : x.NativeName))
+            .ToList();
         LanguageBox.SelectedValue = _localization.SelectedCode;
         Loaded += (_, _) => LanguageBox.Focus();
     }
