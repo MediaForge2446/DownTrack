@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Input;
+using DownTrack.Application.Services;
 using DownTrack.Core.Enums;
 using DownTrack.Infrastructure.Localization;
 using DownTrack.Infrastructure.Settings;
@@ -12,7 +13,7 @@ public partial class SettingsWindow : Window
     private sealed record ThemeOption(string Code, string Label);
     private sealed record LanguageOption(string Code, string DisplayName);
 
-    private readonly AppSettingsService _settings;
+    private readonly AppSettingsService _settings = AppSettingsService.Instance;
     private readonly IAppToolManager _toolManager;
     private AppUpdateInfo? _appUpdate;
     private bool _loading;
@@ -20,8 +21,6 @@ public partial class SettingsWindow : Window
     public SettingsWindow(IAppToolManager toolManager)
     {
         InitializeComponent();
-
-        _settings = AppSettingsService.Instance;
         _toolManager = toolManager;
 
         LocalizationService.Instance.PropertyChanged += Localization_PropertyChanged;
@@ -32,6 +31,7 @@ public partial class SettingsWindow : Window
     private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
     {
         _loading = true;
+
         try
         {
             PopulateThemeOptions();
@@ -43,21 +43,37 @@ public partial class SettingsWindow : Window
 
             ThemeBox.SelectedValue = _settings.Current.Theme;
             LanguageBox.SelectedValue = LocalizationService.Instance.SelectedCode;
-            FormatBox.SelectedItem = Enum.TryParse<MediaFormat>(_settings.Current.DefaultFormat, true, out var format)
+
+            FormatBox.SelectedItem = Enum.TryParse<MediaFormat>(
+                _settings.Current.DefaultFormat,
+                true,
+                out var format)
                 ? format
                 : MediaFormat.Mp3;
-            AudioQualityBox.SelectedItem = Enum.IsDefined(typeof(AudioQuality), _settings.Current.DefaultAudioQuality)
+
+            AudioQualityBox.SelectedItem = Enum.IsDefined(
+                typeof(AudioQuality),
+                _settings.Current.DefaultAudioQuality)
                 ? (AudioQuality)_settings.Current.DefaultAudioQuality
                 : AudioQuality.Kbps128;
-            VideoQualityBox.SelectedItem = Enum.IsDefined(typeof(VideoQuality), _settings.Current.DefaultVideoQuality)
+
+            VideoQualityBox.SelectedItem = Enum.IsDefined(
+                typeof(VideoQuality),
+                _settings.Current.DefaultVideoQuality)
                 ? (VideoQuality)_settings.Current.DefaultVideoQuality
                 : VideoQuality.P720;
 
             AutoUpdateBox.IsChecked = _settings.Current.AutoUpdate;
             AutoToolUpdateBox.IsChecked = _settings.Current.AutoUpdateTools;
 
-            AppUpdateStatus.Text = AppUpdateService.Instance.CurrentVersion;
-            ToolUpdateStatus.Text = LocalizationService.Instance.T("Settings.ToolsReady");
+            AppUpdateStatus.Text =
+                LocalizationService.Instance.T(
+                    "Settings.CurrentVersion",
+                    AppUpdateService.Instance.CurrentVersion);
+
+            ToolUpdateStatus.Text = _toolManager.IsReady
+                ? LocalizationService.Instance.T("Settings.ToolsReady")
+                : LocalizationService.Instance.T("Settings.ToolsMissing");
         }
         finally
         {
@@ -69,9 +85,15 @@ public partial class SettingsWindow : Window
     {
         ThemeBox.ItemsSource =
         [
-            new ThemeOption("System", LocalizationService.Instance.T("Settings.ThemeSystem")),
-            new ThemeOption("Light", LocalizationService.Instance.T("Settings.ThemeLight")),
-            new ThemeOption("Dark", LocalizationService.Instance.T("Settings.ThemeDark"))
+            new ThemeOption(
+                "System",
+                LocalizationService.Instance.T("Settings.ThemeSystem")),
+            new ThemeOption(
+                "Light",
+                LocalizationService.Instance.T("Settings.ThemeLight")),
+            new ThemeOption(
+                "Dark",
+                LocalizationService.Instance.T("Settings.ThemeDark"))
         ];
     }
 
@@ -86,28 +108,9 @@ public partial class SettingsWindow : Window
             .ToList();
     }
 
-    private void Localization_PropertyChanged(
-        object? sender,
-        System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
-        {
-            _loading = true;
-            try
-            {
-                PopulateThemeOptions();
-                PopulateLanguageOptions();
-                ThemeBox.SelectedValue = _settings.Current.Theme;
-                LanguageBox.SelectedValue = LocalizationService.Instance.SelectedCode;
-            }
-            finally
-            {
-                _loading = false;
-            }
-        }
-    }
-
-    private void ThemeBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    private void ThemeBox_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
     {
         if (_loading || ThemeBox.SelectedValue is not string theme)
             return;
@@ -116,21 +119,47 @@ public partial class SettingsWindow : Window
         _settings.Update(x => x.Theme = theme);
     }
 
-    private void LanguageBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    private void LanguageBox_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
     {
         if (_loading || LanguageBox.SelectedValue is not string code)
             return;
 
-        LocalizationService.Instance.SetLanguage(code);
         _settings.Update(x => x.Language = code);
+        LocalizationService.Instance.SetLanguage(code);
+    }
+
+    private void Localization_PropertyChanged(
+        object? sender,
+        System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is not ("Item[]" or nameof(LocalizationService.ActiveCode)))
+            return;
+
+        _loading = true;
+        try
+        {
+            PopulateThemeOptions();
+            PopulateLanguageOptions();
+            ThemeBox.SelectedValue = _settings.Current.Theme;
+            LanguageBox.SelectedValue = LocalizationService.Instance.SelectedCode;
+        }
+        finally
+        {
+            _loading = false;
+        }
     }
 
     private async void CheckApp_Click(object sender, RoutedEventArgs e)
     {
         CheckAppButton.IsEnabled = false;
+
         try
         {
-            AppUpdateStatus.Text = LocalizationService.Instance.T("Updates.Checking");
+            AppUpdateStatus.Text =
+                LocalizationService.Instance.T("Updates.Checking");
+
             _appUpdate = await AppUpdateService.Instance.CheckAsync();
 
             AppUpdateStatus.Text = _appUpdate.Message;
@@ -138,9 +167,8 @@ public partial class SettingsWindow : Window
         }
         catch (Exception ex)
         {
-            AppUpdateStatus.Text = LocalizationService.Instance.T(
-                "Updates.CheckFailed",
-                ex.Message);
+            AppUpdateStatus.Text =
+                LocalizationService.Instance.T("Updates.CheckFailed", ex.Message);
             UpdateAppButton.IsEnabled = false;
         }
         finally
@@ -155,46 +183,50 @@ public partial class SettingsWindow : Window
             return;
 
         UpdateAppButton.IsEnabled = false;
+
         try
         {
-            AppUpdateStatus.Text = LocalizationService.Instance.T("Updates.Downloading");
+            AppUpdateStatus.Text =
+                LocalizationService.Instance.T("Updates.Downloading");
+
             await AppUpdateService.Instance.InstallAsync(_appUpdate);
-            AppUpdateStatus.Text = LocalizationService.Instance.T("Updates.Restarting");
+
+            AppUpdateStatus.Text =
+                LocalizationService.Instance.T("Updates.Restarting");
         }
         catch (Exception ex)
         {
-            AppUpdateStatus.Text = LocalizationService.Instance.T(
-                "Updates.CheckFailed",
-                ex.Message);
+            AppUpdateStatus.Text =
+                LocalizationService.Instance.T("Updates.CheckFailed", ex.Message);
             UpdateAppButton.IsEnabled = true;
         }
     }
 
-    private async void CheckTools_Click(object sender, RoutedEventArgs e)
+    private void CheckTools_Click(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            ToolUpdateStatus.Text = _toolManager.IsReady
-                ? LocalizationService.Instance.T("Settings.ToolsReady")
-                : LocalizationService.Instance.T("Settings.ToolsMissing");
-        }
-        }
+        ToolUpdateStatus.Text = _toolManager.IsReady
+            ? LocalizationService.Instance.T("Settings.ToolsReady")
+            : LocalizationService.Instance.T("Settings.ToolsMissing");
     }
 
     private async void UpdateTools_Click(object sender, RoutedEventArgs e)
     {
         UpdateToolsButton.IsEnabled = false;
+
         try
         {
-            var progress = new Progress<string>(message => ToolUpdateStatus.Text = message);
+            var progress = new Progress<string>(
+                message => ToolUpdateStatus.Text = message);
+
             await _toolManager.UpdateAsync(progress);
-            ToolUpdateStatus.Text = LocalizationService.Instance.T("Settings.ToolsUpdated");
+
+            ToolUpdateStatus.Text =
+                LocalizationService.Instance.T("Settings.ToolsUpdated");
         }
         catch (Exception ex)
         {
-            ToolUpdateStatus.Text = LocalizationService.Instance.T(
-                "Updates.CheckFailed",
-                ex.Message);
+            ToolUpdateStatus.Text =
+                LocalizationService.Instance.T("Updates.CheckFailed", ex.Message);
         }
         finally
         {
@@ -204,24 +236,27 @@ public partial class SettingsWindow : Window
 
     private void Save_Click(object sender, RoutedEventArgs e)
     {
-        if (FormatBox.SelectedItem is MediaFormat format &&
-            AudioQualityBox.SelectedItem is AudioQuality audio &&
-            VideoQualityBox.SelectedItem is VideoQuality video)
-        {
-            _settings.Update(s =>
-            {
-                s.Theme = ThemeBox.SelectedValue as string ?? "System";
-                s.Language = LanguageBox.SelectedValue as string ?? "auto";
-                s.AutoUpdate = AutoUpdateBox.IsChecked == true;
-                s.AutoUpdateTools = AutoToolUpdateBox.IsChecked == true;
-                s.DefaultFormat = format.ToString();
-                s.DefaultAudioQuality = (int)audio;
-                s.DefaultVideoQuality = (int)video;
-            });
+        if (FormatBox.SelectedItem is not MediaFormat format ||
+            AudioQualityBox.SelectedItem is not AudioQuality audio ||
+            VideoQualityBox.SelectedItem is not VideoQuality video)
+            return;
 
-            ThemeService.Instance.Apply(_settings.Current.Theme);
-            LocalizationService.Instance.SetLanguage(_settings.Current.Language);
-        }
+        var language = LanguageBox.SelectedValue as string ?? "auto";
+        var theme = ThemeBox.SelectedValue as string ?? "System";
+
+        _settings.Update(settings =>
+        {
+            settings.Theme = theme;
+            settings.Language = language;
+            settings.AutoUpdate = AutoUpdateBox.IsChecked == true;
+            settings.AutoUpdateTools = AutoToolUpdateBox.IsChecked == true;
+            settings.DefaultFormat = format.ToString();
+            settings.DefaultAudioQuality = (int)audio;
+            settings.DefaultVideoQuality = (int)video;
+        });
+
+        ThemeService.Instance.Apply(theme);
+        LocalizationService.Instance.SetLanguage(language);
 
         DialogResult = true;
     }
