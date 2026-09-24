@@ -17,6 +17,7 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
 
     private static readonly IReadOnlyList<SupportedLanguage> _languages =
     [
+        new("auto", "Automatic (Windows)", "Automatic (Windows)"),
         new("en", "English", "English"),
         new("he", "עברית", "Hebrew", true),
         new("es", "Español", "Spanish"),
@@ -48,6 +49,7 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
             "DownTrack",
             "language.txt");
 
+    private readonly CultureInfo _windowsUiCulture = CultureInfo.CurrentUICulture;
     private string _selectedCode = AutoCode;
     private string _activeCode = "en";
 
@@ -110,8 +112,8 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
         var stored = ReadStoredSelection();
         SelectedCode = string.IsNullOrWhiteSpace(stored) ? AutoCode : stored;
         ActiveCode = ResolveLanguageCode(SelectedCode == AutoCode
-            ? CultureInfo.CurrentUICulture
-            : new CultureInfo(SelectedCode));
+            ? _windowsUiCulture
+            : CreateCultureSafely(SelectedCode));
 
         ApplyCulture(ActiveCode);
     }
@@ -124,8 +126,8 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
         SelectedCode = code;
         ActiveCode = ResolveLanguageCode(
             code == AutoCode
-                ? CultureInfo.CurrentUICulture
-                : new CultureInfo(code));
+                ? _windowsUiCulture
+                : CreateCultureSafely(code));
 
         ApplyCulture(ActiveCode);
         SaveStoredSelection(SelectedCode);
@@ -175,6 +177,17 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
         var match = _languages.FirstOrDefault(
             x => x.Code.Equals(neutral, StringComparison.OrdinalIgnoreCase));
         return match?.Code ?? "en";
+    }
+
+    private static CultureInfo CreateCultureSafely(string code)
+    {
+        return code switch
+        {
+            "zh-Hans" => CultureInfo.GetCultureInfo("zh-CN"),
+            "zh-Hant" => CultureInfo.GetCultureInfo("zh-TW"),
+            "he" => CultureInfo.GetCultureInfo("he-IL"),
+            _ => CultureInfo.GetCultureInfo(code)
+        };
     }
 
     private static void ApplyCulture(string code)
@@ -265,6 +278,26 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
             ["Home.ChooseFolder"] = "Choose folder",
             ["Home.MediaFooter"] = "Media engine ready",
             ["Home.Setup"] = "Setup",
+            ["Home.SettingUpEngine"] = "Setting up the media engine…",
+
+            ["Explorer.SaveChangesArrow"] = "Save changes  →",
+            ["Explorer.SaveChangesCount"] = "Save changes ({0})  →",
+            ["Explorer.QueuedOne"] = "1 queued",
+            ["Explorer.Queued"] = "{0} queued",
+            ["Explorer.NewFolderPrompt"] = "Choose a name for the new folder.",
+            ["Explorer.NewFolderDefault"] = "New Folder",
+            ["Explorer.RenamePrompt"] = "Enter the new name.",
+            ["Explorer.PendingCreate"] = "Pending: create “{0}”.",
+            ["Explorer.PendingRename"] = "Pending: rename “{0}”.",
+            ["Explorer.DeleteFolderPrompt"] = "Delete folder “{0}” from the staged plan?",
+            ["Explorer.DeleteFilePrompt"] = "Delete “{0}” from the staged plan?",
+            ["Explorer.ConfirmDelete"] = "Confirm delete",
+            ["Explorer.PendingDelete"] = "Pending: delete “{0}”.",
+            ["Explorer.MediaAddedOne"] = "Media added to the pending queue.",
+            ["Explorer.MediaAddedMany"] = "{0} media items added to the pending queue.",
+            ["Explorer.ApplyingChanges"] = "Applying staged changes…",
+            ["Explorer.SomeNeedAttention"] = "Some changes need attention.",
+            ["Explorer.Cancelled"] = "Cancelled: {0}",
 
             ["Explorer.Badge"] = "LIBRARY / EXPLORER",
             ["Explorer.Back"] = "Back",
@@ -301,6 +334,12 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
             ["AddMedia.NoMediaSubtitle"] = "The selected items will become pending changes. Nothing is downloaded here.",
             ["AddMedia.Preparing"] = "Preparing media…",
             ["AddMedia.PreparingSubtitle"] = "Checking the media engine and analyzing the link.",
+            ["AddMedia.PastePrompt"] = "Paste a YouTube video or playlist URL.",
+            ["AddMedia.NothingFound"] = "Nothing was found. Check the link and try again.",
+            ["AddMedia.OneReady"] = "1 media item ready. Edit the options before adding.",
+            ["AddMedia.ManyReady"] = "{0} media items ready. Each row is independent.",
+            ["AddMedia.AnalysisCancelled"] = "Analysis cancelled.",
+            ["AddMedia.ErrorFallback"] = "We couldn't analyze this link. Please try again.",
             ["AddMedia.Destination"] = "DESTINATION",
             ["AddMedia.Stage"] = "Stage selected",
             ["AddMedia.Cancel"] = "Cancel",
