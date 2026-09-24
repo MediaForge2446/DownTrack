@@ -177,7 +177,7 @@ jobs:
           if-no-files-found: error
 
       - name: Publish Nightly Release
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
