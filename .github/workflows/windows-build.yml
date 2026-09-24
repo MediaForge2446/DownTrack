@@ -28,7 +28,7 @@ jobs:
           dotnet-version: "10.x"
 
       - name: Restore
-        run: dotnet restore DownTrack.sln
+        run: dotnet restore DownTrack.sln -r win-x64 -p:Platform=x64
 
       - name: Build
         run: dotnet build DownTrack.sln -c Release --no-restore -p:Platform=x64
