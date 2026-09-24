@@ -482,6 +482,7 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
             dictionaries[code] = d;
         }
 
+        CompleteTranslationCatalog.Apply(dictionaries);
         return dictionaries;
     }
 
