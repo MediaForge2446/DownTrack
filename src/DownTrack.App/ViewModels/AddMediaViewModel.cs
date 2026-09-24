@@ -31,6 +31,9 @@ public sealed class AddMediaViewModel : ObservableObject
     }
 
     public string CurrentFolder { get; }
+    public IReadOnlyList<MediaFormat> Formats { get; } = Enum.GetValues<MediaFormat>();
+    public IReadOnlyList<AudioQuality> AudioQualities { get; } = Enum.GetValues<AudioQuality>();
+    public IReadOnlyList<VideoQuality> VideoQualities { get; } = Enum.GetValues<VideoQuality>();
     public ObservableCollection<MediaRowViewModel> Items { get; } = [];
 
     public string Url
