@@ -224,6 +224,9 @@ internal static class ModernTranslationCatalog
 
                 foreach (var (key, value) in extras)
                     dictionary[key] = value;
+
+                foreach (var (key, value) in CoreUi(language))
+                    dictionary[key] = value;
             }
         }
     }
@@ -268,6 +271,52 @@ internal static class ModernTranslationCatalog
     }
 
     private static readonly Dictionary<string, string> Empty = new();
+
+    private static Dictionary<string, string> CoreUi(string language) =>
+        language switch
+        {
+            "he" => Pack(
+                ("App.Settings","הגדרות"),
+                ("Home.AddRootFolder","הוסף תיקיית שורש"),
+                ("Home.EngineNeedsSetup","נדרשת הגדרת מנוע המדיה"),
+                ("Home.EngineReady","מנוע המדיה מוכן"),
+                ("Home.SettingUpEngine","מגדיר את מנוע המדיה…"),
+                ("Home.Setup","הגדרה"),
+                ("Library.RootCount","{0} תיקיות שורש"),
+                ("Shell.RootFolders","תיקיות שורש"),
+                ("Updates.Available","עדכון זמין: {0}"),
+                ("Updates.UpToDate","ברשותך הגרסה העדכנית ביותר.")),
+            "es" => Pack(("App.Settings","Configuración"),("Home.AddRootFolder","Añadir carpeta raíz"),("Home.EngineNeedsSetup","Se requiere configurar el motor multimedia"),("Home.EngineReady","Motor multimedia listo"),("Home.SettingUpEngine","Configurando el motor multimedia…"),("Home.Setup","Configurar"),("Library.RootCount","{0} carpetas raíz"),("Shell.RootFolders","Carpetas raíz"),("Updates.Available","Actualización disponible: {0}"),("Updates.UpToDate","Ya tienes la versión más reciente.")),
+            "fr" => Pack(("App.Settings","Paramètres"),("Home.AddRootFolder","Ajouter un dossier racine"),("Home.EngineNeedsSetup","Configuration du moteur multimédia requise"),("Home.EngineReady","Moteur multimédia prêt"),("Home.SettingUpEngine","Configuration du moteur multimédia…"),("Home.Setup","Configurer"),("Library.RootCount","{0} dossiers racine"),("Shell.RootFolders","Dossiers racine"),("Updates.Available","Mise à jour disponible : {0}"),("Updates.UpToDate","Vous disposez déjà de la dernière version.")),
+            "de" => Pack(("App.Settings","Einstellungen"),("Home.AddRootFolder","Stammordner hinzufügen"),("Home.EngineNeedsSetup","Medien-Engine muss eingerichtet werden"),("Home.EngineReady","Medien-Engine bereit"),("Home.SettingUpEngine","Medien-Engine wird eingerichtet…"),("Home.Setup","Einrichten"),("Library.RootCount","{0} Stammordner"),("Shell.RootFolders","Stammordner"),("Updates.Available","Update verfügbar: {0}"),("Updates.UpToDate","Du hast bereits die neueste Version.")),
+            "it" => Pack(("App.Settings","Impostazioni"),("Home.AddRootFolder","Aggiungi cartella principale"),("Home.EngineNeedsSetup","Configurazione del motore multimediale richiesta"),("Home.EngineReady","Motore multimediale pronto"),("Home.SettingUpEngine","Configurazione del motore multimediale…"),("Home.Setup","Configura"),("Library.RootCount","{0} cartelle principali"),("Shell.RootFolders","Cartelle principali"),("Updates.Available","Aggiornamento disponibile: {0}"),("Updates.UpToDate","Hai già l'ultima versione.")),
+            "pt" => Pack(("App.Settings","Configurações"),("Home.AddRootFolder","Adicionar pasta raiz"),("Home.EngineNeedsSetup","É necessário configurar o mecanismo de mídia"),("Home.EngineReady","Mecanismo de mídia pronto"),("Home.SettingUpEngine","Configurando o mecanismo de mídia…"),("Home.Setup","Configurar"),("Library.RootCount","{0} pastas raiz"),("Shell.RootFolders","Pastas raiz"),("Updates.Available","Atualização disponível: {0}"),("Updates.UpToDate","Você já tem a versão mais recente.")),
+            "nl" => Pack(("App.Settings","Instellingen"),("Home.AddRootFolder","Hoofdmap toevoegen"),("Home.EngineNeedsSetup","Media-engine instellen is vereist"),("Home.EngineReady","Media-engine gereed"),("Home.SettingUpEngine","Media-engine instellen…"),("Home.Setup","Instellen"),("Library.RootCount","{0} hoofdmap(pen)"),("Shell.RootFolders","Hoofdmappen"),("Updates.Available","Update beschikbaar: {0}"),("Updates.UpToDate","Je hebt al de nieuwste versie.")),
+            "pl" => Pack(("App.Settings","Ustawienia"),("Home.AddRootFolder","Dodaj folder główny"),("Home.EngineNeedsSetup","Wymagana konfiguracja silnika multimediów"),("Home.EngineReady","Silnik multimediów gotowy"),("Home.SettingUpEngine","Konfigurowanie silnika multimediów…"),("Home.Setup","Konfiguruj"),("Library.RootCount","{0} folderów głównych"),("Shell.RootFolders","Foldery główne"),("Updates.Available","Dostępna aktualizacja: {0}"),("Updates.UpToDate","Masz już najnowszą wersję.")),
+            "cs" => Pack(("App.Settings","Nastavení"),("Home.AddRootFolder","Přidat kořenovou složku"),("Home.EngineNeedsSetup","Je nutné nastavit mediální engine"),("Home.EngineReady","Mediální engine je připraven"),("Home.SettingUpEngine","Nastavování mediálního enginu…"),("Home.Setup","Nastavit"),("Library.RootCount","{0} kořenových složek"),("Shell.RootFolders","Kořenové složky"),("Updates.Available","Je k dispozici aktualizace: {0}"),("Updates.UpToDate","Máte již nejnovější verzi.")),
+            "tr" => Pack(("App.Settings","Ayarlar"),("Home.AddRootFolder","Kök klasör ekle"),("Home.EngineNeedsSetup","Medya motoru kurulumu gerekli"),("Home.EngineReady","Medya motoru hazır"),("Home.SettingUpEngine","Medya motoru kuruluyor…"),("Home.Setup","Kur"),("Library.RootCount","{0} kök klasör"),("Shell.RootFolders","Kök klasörler"),("Updates.Available","Güncelleme mevcut: {0}"),("Updates.UpToDate","Zaten en son sürüme sahipsiniz.")),
+            "uk" => Pack(("App.Settings","Налаштування"),("Home.AddRootFolder","Додати кореневу папку"),("Home.EngineNeedsSetup","Потрібне налаштування медіадвигуна"),("Home.EngineReady","Медіадвигун готовий"),("Home.SettingUpEngine","Налаштування медіадвигуна…"),("Home.Setup","Налаштувати"),("Library.RootCount","{0} кореневих папок"),("Shell.RootFolders","Кореневі папки"),("Updates.Available","Доступне оновлення: {0}"),("Updates.UpToDate","У вас уже остання версія.")),
+            "ru" => Pack(("App.Settings","Настройки"),("Home.AddRootFolder","Добавить корневую папку"),("Home.EngineNeedsSetup","Требуется настройка медиа-движка"),("Home.EngineReady","Медиа-движок готов"),("Home.SettingUpEngine","Настройка медиа-движка…"),("Home.Setup","Настроить"),("Library.RootCount","{0} корневых папок"),("Shell.RootFolders","Корневые папки"),("Updates.Available","Доступно обновление: {0}"),("Updates.UpToDate","У вас уже установлена последняя версия.")),
+            "ar" => Pack(("App.Settings","الإعدادات"),("Home.AddRootFolder","إضافة مجلد جذر"),("Home.EngineNeedsSetup","يلزم إعداد محرك الوسائط"),("Home.EngineReady","محرك الوسائط جاهز"),("Home.SettingUpEngine","جارٍ إعداد محرك الوسائط…"),("Home.Setup","إعداد"),("Library.RootCount","{0} مجلدات جذر"),("Shell.RootFolders","مجلدات الجذر"),("Updates.Available","يتوفر تحديث: {0}"),("Updates.UpToDate","لديك بالفعل أحدث إصدار.")),
+            "el" => Pack(("App.Settings","Ρυθμίσεις"),("Home.AddRootFolder","Προσθήκη βασικού φακέλου"),("Home.EngineNeedsSetup","Απαιτείται ρύθμιση της μηχανής πολυμέσων"),("Home.EngineReady","Η μηχανή πολυμέσων είναι έτοιμη"),("Home.SettingUpEngine","Ρύθμιση της μηχανής πολυμέσων…"),("Home.Setup","Ρύθμιση"),("Library.RootCount","{0} βασικοί φάκελοι"),("Shell.RootFolders","Βασικοί φάκελοι"),("Updates.Available","Διαθέσιμη ενημέρωση: {0}"),("Updates.UpToDate","Έχετε ήδη την πιο πρόσφατη έκδοση.")),
+            "ro" => Pack(("App.Settings","Setări"),("Home.AddRootFolder","Adaugă dosar rădăcină"),("Home.EngineNeedsSetup","Este necesară configurarea motorului media"),("Home.EngineReady","Motorul media este pregătit"),("Home.SettingUpEngine","Se configurează motorul media…"),("Home.Setup","Configurare"),("Library.RootCount","{0} dosare rădăcină"),("Shell.RootFolders","Dosare rădăcină"),("Updates.Available","Actualizare disponibilă: {0}"),("Updates.UpToDate","Ai deja cea mai recentă versiune.")),
+            "ja" => Pack(("App.Settings","設定"),("Home.AddRootFolder","ルートフォルダーを追加"),("Home.EngineNeedsSetup","メディアエンジンの設定が必要です"),("Home.EngineReady","メディアエンジンの準備完了"),("Home.SettingUpEngine","メディアエンジンを設定しています…"),("Home.Setup","設定"),("Library.RootCount","{0} 個のルートフォルダー"),("Shell.RootFolders","ルートフォルダー"),("Updates.Available","更新があります: {0}"),("Updates.UpToDate","すでに最新バージョンです。")),
+            "ko" => Pack(("App.Settings","설정"),("Home.AddRootFolder","루트 폴더 추가"),("Home.EngineNeedsSetup","미디어 엔진 설정이 필요합니다"),("Home.EngineReady","미디어 엔진 준비 완료"),("Home.SettingUpEngine","미디어 엔진을 설정하는 중…"),("Home.Setup","설정"),("Library.RootCount","{0}개의 루트 폴더"),("Shell.RootFolders","루트 폴더"),("Updates.Available","업데이트 있음: {0}"),("Updates.UpToDate","이미 최신 버전입니다.")),
+            "zh-Hans" => Pack(("App.Settings","设置"),("Home.AddRootFolder","添加根文件夹"),("Home.EngineNeedsSetup","需要设置媒体引擎"),("Home.EngineReady","媒体引擎已就绪"),("Home.SettingUpEngine","正在设置媒体引擎…"),("Home.Setup","设置"),("Library.RootCount","{0} 个根文件夹"),("Shell.RootFolders","根文件夹"),("Updates.Available","有可用更新：{0}"),("Updates.UpToDate","你已经是最新版本。")),
+            "zh-Hant" => Pack(("App.Settings","設定"),("Home.AddRootFolder","新增根資料夾"),("Home.EngineNeedsSetup","需要設定媒體引擎"),("Home.EngineReady","媒體引擎已就緒"),("Home.SettingUpEngine","正在設定媒體引擎…"),("Home.Setup","設定"),("Library.RootCount","{0} 個根資料夾"),("Shell.RootFolders","根資料夾"),("Updates.Available","有可用更新：{0}"),("Updates.UpToDate","你已經是最新版本。")),
+            _ => Pack(
+                ("App.Settings","Settings"),
+                ("Home.AddRootFolder","Add root folder"),
+                ("Home.EngineNeedsSetup","Media engine setup required"),
+                ("Home.EngineReady","Media engine ready"),
+                ("Home.SettingUpEngine","Setting up the media engine…"),
+                ("Home.Setup","Setup"),
+                ("Library.RootCount","{0} root folders"),
+                ("Shell.RootFolders","Root folders"),
+                ("Updates.Available","Update available: {0}"),
+                ("Updates.UpToDate","You're up to date.")
+            )
+        };
 
     private static readonly Dictionary<string, string> English =
         new(StringComparer.OrdinalIgnoreCase)
