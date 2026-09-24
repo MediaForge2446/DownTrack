@@ -407,7 +407,7 @@ begin
   begin
     Percent := (Progress * 100) div ProgressMax;
     ProgressBar.Position := Percent;
-    StatusText.Caption := Format(CustomMessage('Downloading'), [FormatFloat('0', Progress / 1048576)]);
+    StatusText.Caption := CustomMessage('Downloading');
   end
   else
     StatusText.Caption := CustomMessage('Downloading');
