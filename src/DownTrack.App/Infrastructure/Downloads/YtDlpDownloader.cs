@@ -15,7 +15,11 @@ public sealed class YtDlpDownloader(
         CancellationToken cancellationToken = default)
     {
         var executable = locator.GetYtDlpPath();
-        var args = BuildArguments(spec, targetPath, locator.GetToolsDirectory(), locator.GetDenoPath());
+        var args = BuildArguments(
+            spec,
+            targetPath,
+            locator.GetToolsDirectory(),
+            locator.GetDenoPath());
 
         var result = await processRunner.RunAsync(
             executable,
@@ -46,7 +50,8 @@ public sealed class YtDlpDownloader(
         var output = Quote(targetPath);
         var ffmpegLocation = Quote(toolsDirectory);
         var jsRuntime = Quote("deno:" + denoPath);
-        var common = $"--no-playlist --newline --no-overwrites --ffmpeg-location {ffmpegLocation} --js-runtimes {jsRuntime}";
+        var common =
+            $"--no-playlist --newline --no-overwrites --ffmpeg-location {ffmpegLocation} --js-runtimes {jsRuntime}";
 
         return spec.Format switch
         {
