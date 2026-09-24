@@ -11,6 +11,7 @@ public interface IStagingService
     Task InitializeAsync();
     Task AddRootAsync(string path);
     Task RemoveRootAsync(Guid rootId);
+    Task RenameRootAsync(Guid rootId, string name);
 
     Task StageCreateFolderAsync(RootFolder root, string parentPath, string name);
     Task StageRenameAsync(RootFolder root, string sourcePath, string newName, bool isDirectory);
