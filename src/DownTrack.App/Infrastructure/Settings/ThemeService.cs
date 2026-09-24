@@ -17,27 +17,27 @@ public sealed class ThemeService
             _ => DetectWindowsLightMode()
         };
 
-        var r = Application.Current.Resources;
+        var resources = System.Windows.Application.Current.Resources;
 
-        SetBrush(r, "WindowBrush", useLight ? "#F5F7FB" : "#10131B");
-        SetBrush(r, "SurfaceBrush", useLight ? "#FFFFFF" : "#171B24");
-        SetBrush(r, "SurfaceRaisedBrush", useLight ? "#FFFFFF" : "#1C212C");
-        SetBrush(r, "SurfaceHoverBrush", useLight ? "#F2F4FF" : "#252B38");
-        SetBrush(r, "SurfaceSoftBrush", useLight ? "#FAFBFD" : "#141821");
-        SetBrush(r, "BorderBrush", useLight ? "#E1E6EF" : "#303746");
-        SetBrush(r, "BorderStrongBrush", useLight ? "#CBD3E1" : "#414A5C");
-        SetBrush(r, "TextBrush", useLight ? "#182033" : "#F4F7FC");
-        SetBrush(r, "MutedTextBrush", useLight ? "#69758B" : "#A5AFC0");
+        SetBrush(resources, "WindowBrush", useLight ? "#F5F7FB" : "#10131B");
+        SetBrush(resources, "SurfaceBrush", useLight ? "#FFFFFF" : "#171B24");
+        SetBrush(resources, "SurfaceRaisedBrush", useLight ? "#FFFFFF" : "#1C212C");
+        SetBrush(resources, "SurfaceHoverBrush", useLight ? "#F2F4FF" : "#252B38");
+        SetBrush(resources, "SurfaceSoftBrush", useLight ? "#FAFBFD" : "#141821");
+        SetBrush(resources, "BorderBrush", useLight ? "#E1E6EF" : "#303746");
+        SetBrush(resources, "BorderStrongBrush", useLight ? "#CBD3E1" : "#414A5C");
+        SetBrush(resources, "TextBrush", useLight ? "#182033" : "#F4F7FC");
+        SetBrush(resources, "MutedTextBrush", useLight ? "#69758B" : "#A5AFC0");
 
-        SetBrush(r, "AccentSoftBrush", useLight ? "#F0EAFF" : "#2B2350");
-        SetBrush(r, "BlueSoftBrush", useLight ? "#EBF2FF" : "#1E2C46");
-        SetBrush(r, "CyanSoftBrush", useLight ? "#E8F8F5" : "#143A39");
-        SetBrush(r, "DangerSoftBrush", useLight ? "#FFF0F3" : "#42212E");
+        SetBrush(resources, "AccentSoftBrush", useLight ? "#F0EAFF" : "#2B2350");
+        SetBrush(resources, "BlueSoftBrush", useLight ? "#EBF2FF" : "#1E2C46");
+        SetBrush(resources, "CyanSoftBrush", useLight ? "#E8F8F5" : "#143A39");
+        SetBrush(resources, "DangerSoftBrush", useLight ? "#FFF0F3" : "#42212E");
 
-        SetGradient(r, "SoftGradientBrush",
+        SetGradient(resources, "SoftGradientBrush",
             useLight ? ["#F2ECFF", "#EEF4FF", "#EAFBF7"] : ["#201A33", "#18263B", "#16302E"]);
 
-        SetGradient(r, "CardGradientBrush",
+        SetGradient(resources, "CardGradientBrush",
             useLight ? ["#FFFFFF", "#F7F8FF", "#F2FBFA"] : ["#1A1F2A", "#1B2230", "#19302F"]);
     }
 
