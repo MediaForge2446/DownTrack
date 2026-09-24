@@ -1,6 +1,7 @@
 <Window x:Class="DownTrack.Views.AddMediaWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:DownTrack.Infrastructure.Localization"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
@@ -47,10 +48,10 @@
                                 CornerRadius="3"
                                 Background="{StaticResource AuroraGradientBrush}"/>
                         <StackPanel Margin="13,0,0,0">
-                            <TextBlock Text="Add media"
+                            <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Title]}"
                                        FontSize="28"
                                        FontWeight="SemiBold"/>
-                            <TextBlock Text="Analyze first. Review every item. Stage only what you want."
+                            <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Subtitle]}"
                                        Margin="0,4,0,0"
                                        FontSize="12"
                                        Foreground="{StaticResource MutedTextBrush}"/>
@@ -96,7 +97,7 @@
                             Command="{Binding AnalyzeCommand}"
                             MinWidth="112">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Analyze"
+                            <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Analyze]}"
                                        Margin="0,0,6,0"/>
                             <TextBlock Text="→"
                                        FontSize="14"/>
@@ -111,11 +112,11 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource SecondaryButton}"
                             Command="{Binding SelectAllCommand}"
-                            Content="Select all"
+                            Content="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.SelectAll]}"
                             MinWidth="92"/>
                     <Button Style="{StaticResource GhostButton}"
                             Command="{Binding ApplyMp3Command}"
-                            Content="MP3 to all"
+                            Content="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Mp3ToAll]}"
                             Margin="8,0,0,0"
                             MinWidth="96"/>
                 </StackPanel>
@@ -238,7 +239,7 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <StackPanel Margin="0,0,7,0">
-                                                    <TextBlock Text="FORMAT"
+                                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Format]}"
                                                                FontSize="9"
                                                                FontWeight="Bold"
                                                                Foreground="{StaticResource MutedTextBrush}"/>
@@ -255,7 +256,7 @@
 
                                                 <StackPanel Grid.Column="1"
                                                             Margin="4,0,4,0">
-                                                    <TextBlock Text="AUDIO QUALITY"
+                                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.AudioQuality]}"
                                                                FontSize="9"
                                                                FontWeight="Bold"
                                                                Foreground="{StaticResource MutedTextBrush}"/>
@@ -272,7 +273,7 @@
 
                                                 <StackPanel Grid.Column="2"
                                                             Margin="7,0,0,0">
-                                                    <TextBlock Text="VIDEO QUALITY"
+                                                    <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.VideoQuality]}"
                                                                FontSize="9"
                                                                FontWeight="Bold"
                                                                Foreground="{StaticResource MutedTextBrush}"/>
@@ -320,12 +321,12 @@
                                        Foreground="{StaticResource AccentBlueBrush}"
                                        HorizontalAlignment="Center"/>
                         </Border>
-                        <TextBlock Text="Paste a YouTube link"
+                        <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.NoMedia]}"
                                    Margin="0,13,0,0"
                                    FontSize="15"
                                    FontWeight="SemiBold"
                                    HorizontalAlignment="Center"/>
-                        <TextBlock Text="The selected items will become pending changes. Nothing is downloaded here."
+                        <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.NoMediaHint]}"
                                    Margin="0,5,0,0"
                                    FontSize="10"
                                    Foreground="{StaticResource MutedTextBrush}"
@@ -352,11 +353,11 @@
                             </Style>
                         </Border.Style>
                         <StackPanel Width="190">
-                            <TextBlock Text="Preparing media…"
+                            <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Preparing]}"
                                        FontSize="13"
                                        FontWeight="SemiBold"
                                        HorizontalAlignment="Center"/>
-                            <TextBlock Text="Checking the media engine and analyzing the link."
+                            <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.PreparingHint]}"
                                        Margin="0,5,0,0"
                                        FontSize="10"
                                        Foreground="{StaticResource MutedTextBrush}"
@@ -381,7 +382,7 @@
                     CornerRadius="14">
                 <Grid>
                     <StackPanel MaxWidth="510">
-                        <TextBlock Text="DESTINATION"
+                        <TextBlock Text="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Destination]}"
                                    FontSize="9"
                                    FontWeight="Bold"
                                    Foreground="{StaticResource CyanBrush}"/>
@@ -394,11 +395,11 @@
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center">
-                        <Button Content="Cancel"
+                        <Button Content="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.Cancel]}"
                                 Style="{StaticResource GhostButton}"
                                 Click="Close_Click"
                                 MinWidth="78"/>
-                        <Button Content="Stage selected"
+                        <Button Content="{Binding Source={x:Static loc:LocalizationManager.Instance}, Path=[AddMedia.StageSelected]}"
                                 Style="{StaticResource PrimaryButton}"
                                 Margin="8,0,0,0"
                                 MinWidth="132"
