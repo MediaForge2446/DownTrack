@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using DownTrack.Application.Commands;
 using DownTrack.Application.Services;
 using DownTrack.Core.Models;
+using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.ViewModels;
 
@@ -17,7 +18,7 @@ public sealed class ExplorerViewModel : ObservableObject
     private readonly Stack<string> _forwardHistory = [];
     private string _currentPath;
     private VirtualEntry? _selectedEntry;
-    private string _statusMessage = "All changes are saved.";
+    private string _statusMessage = LocalizationService.Instance.T("Explorer.AllSaved");
     private bool _isSaving;
 
     public ExplorerViewModel(
@@ -80,8 +81,15 @@ public sealed class ExplorerViewModel : ObservableObject
     }
 
     public string SaveButtonText => PendingChanges.Count == 0
-        ? "Save Changes  →"
-        : $"Save Changes ({PendingChanges.Count})  →";
+        ? LocalizationService.Instance.T("Explorer.SaveChangesArrow")
+        : LocalizationService.Instance.T("Explorer.SaveChangesCount", PendingChanges.Count);
+
+    public string PendingCountText =>
+        LocalizationService.Instance.T(
+            PendingChanges.Count == 1
+                ? "Explorer.QueuedOne"
+                : "Explorer.Queued",
+            PendingChanges.Count);
 
     public RelayCommand BackCommand { get; }
     public RelayCommand ForwardCommand { get; }
@@ -108,6 +116,7 @@ public sealed class ExplorerViewModel : ObservableObject
             PendingChanges.Add(change);
 
         OnPropertyChanged(nameof(SaveButtonText));
+        OnPropertyChanged(nameof(PendingCountText));
 
         BackCommand.RaiseCanExecuteChanged();
         ForwardCommand.RaiseCanExecuteChanged();
@@ -165,14 +174,14 @@ public sealed class ExplorerViewModel : ObservableObject
 
     private async Task CreateFolderAsync()
     {
-        var name = _prompt.Prompt("New folder", "Choose a name for the new folder.", "New Folder");
+        var name = _prompt.Prompt(LocalizationService.Instance.T("Explorer.NewFolder"), LocalizationService.Instance.T("Explorer.NewFolderPrompt"), LocalizationService.Instance.T("Explorer.NewFolderDefault"));
         if (string.IsNullOrWhiteSpace(name))
             return;
 
         try
         {
             await _staging.StageCreateFolderAsync(_root, CurrentPath, name);
-            StatusMessage = $"Pending: create “{name.Trim()}”.";
+            StatusMessage = LocalizationService.Instance.T("Explorer.PendingCreate", name.Trim());
             Refresh();
         }
         catch (Exception ex)
@@ -186,14 +195,14 @@ public sealed class ExplorerViewModel : ObservableObject
         if (SelectedEntry is null)
             return;
 
-        var name = _prompt.Prompt("Rename", "Enter the new name.", SelectedEntry.Name);
+        var name = _prompt.Prompt(LocalizationService.Instance.T("Explorer.Rename"), LocalizationService.Instance.T("Explorer.RenamePrompt"), SelectedEntry.Name);
         if (string.IsNullOrWhiteSpace(name))
             return;
 
         try
         {
             await _staging.StageRenameAsync(_root, SelectedEntry.FullPath, name, SelectedEntry.IsDirectory);
-            StatusMessage = $"Pending: rename “{SelectedEntry.Name}”.";
+            StatusMessage = LocalizationService.Instance.T("Explorer.PendingRename", SelectedEntry.Name);
             Refresh();
         }
         catch (Exception ex)
@@ -208,16 +217,16 @@ public sealed class ExplorerViewModel : ObservableObject
             return;
 
         var message = SelectedEntry.IsDirectory
-            ? $"Delete folder “{SelectedEntry.Name}” from the staged plan?"
-            : $"Delete “{SelectedEntry.Name}” from the staged plan?";
+            ? LocalizationService.Instance.T("Explorer.DeleteFolderPrompt", SelectedEntry.Name)
+            : LocalizationService.Instance.T("Explorer.DeleteFilePrompt", SelectedEntry.Name);
 
-        if (!_prompt.Confirm("Confirm delete", message))
+        if (!_prompt.Confirm(LocalizationService.Instance.T("Explorer.ConfirmDelete"), message))
             return;
 
         try
         {
             await _staging.StageDeleteAsync(_root, SelectedEntry.FullPath, SelectedEntry.IsDirectory);
-            StatusMessage = $"Pending: delete “{SelectedEntry.Name}”.";
+            StatusMessage = LocalizationService.Instance.T("Explorer.PendingDelete", SelectedEntry.Name);
             SelectedEntry = null;
             Refresh();
         }
@@ -237,8 +246,8 @@ public sealed class ExplorerViewModel : ObservableObject
             await _staging.StageDownloadAsync(_root, CurrentPath, spec);
 
         StatusMessage = specs.Count == 1
-            ? "Media added to the pending queue."
-            : $"{specs.Count} media items added to the pending queue.";
+            ? LocalizationService.Instance.T("Explorer.MediaAddedOne")
+            : LocalizationService.Instance.T("Explorer.MediaAddedMany", specs.Count);
 
         Refresh();
     }
@@ -249,7 +258,7 @@ public sealed class ExplorerViewModel : ObservableObject
             return;
 
         _isSaving = true;
-        StatusMessage = "Applying staged changes…";
+        StatusMessage = LocalizationService.Instance.T("Explorer.ApplyingChanges");
         SaveChangesCommand.RaiseCanExecuteChanged();
 
         try
@@ -257,8 +266,8 @@ public sealed class ExplorerViewModel : ObservableObject
             var progress = new Progress<string>(message => StatusMessage = message);
             await _staging.SaveChangesAsync(_root, progress);
             StatusMessage = PendingChanges.Count == 0
-                ? "All changes are saved."
-                : "Some changes need attention.";
+                ? LocalizationService.Instance.T("Explorer.AllSaved")
+                : LocalizationService.Instance.T("Explorer.SomeNeedAttention");
         }
         catch (Exception ex)
         {
@@ -279,7 +288,7 @@ public sealed class ExplorerViewModel : ObservableObject
     private async Task CancelPendingAsync(PendingChange change)
     {
         await _staging.CancelChangeAsync(_root.Id, change.Id);
-        StatusMessage = $"Cancelled: {change.Description}";
+        StatusMessage = LocalizationService.Instance.T("Explorer.Cancelled", change.Description);
         Refresh();
     }
 
