@@ -49,7 +49,6 @@ LanguageDetectionMethod=uilanguage
 WizardStyle=modern
 Compression=lzma2
 SolidCompression=yes
-WizardFormAutoCenter=no
 VersionInfoDescription=DownTrack lightweight web installer
 VersionInfoProductName=DownTrack
 VersionInfoCompany=MediaForge2446
