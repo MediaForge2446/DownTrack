@@ -12,7 +12,8 @@ public partial class SettingsWindow : Window
     {
         InitializeComponent();
         _localization = LocalizationService.Instance;
-        DataContext = _localization;
+        LanguageBox.ItemsSource = LocalizationService.SupportedLanguages;
+        LanguageBox.SelectedValue = _localization.SelectedCode;
         Loaded += (_, _) => LanguageBox.Focus();
     }
 
