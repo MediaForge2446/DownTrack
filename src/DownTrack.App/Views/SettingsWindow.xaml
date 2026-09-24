@@ -307,7 +307,7 @@
                         Style="{StaticResource PrimaryButton}"
                         Margin="8,0,0,0"
                         MinWidth="125"
-                        Command="{Binding ApplyCommand}"/>
+                        Click="Save_Click"/>
             </StackPanel>
         </Grid>
     </Border>
