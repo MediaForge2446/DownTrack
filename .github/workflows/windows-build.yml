@@ -45,7 +45,18 @@ jobs:
 
       - name: Build installer
         shell: pwsh
-        run: '& "$env:ProgramFiles(x86)\Inno Setup 6\ISCC.exe" "installer\DownTrack.iss"'
+        run: |
+          $issc = Join-Path \${env:ProgramFiles(x86)} "Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $issc)) {
+            $issc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe"
+          }
+          if (-not (Test-Path $issc)) {
+            throw "Inno Setup compiler (ISCC.exe) was not found."
+          }
+          & $issc "installer\DownTrack.iss"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Upload Setup.exe
         uses: actions/upload-artifact@v4
