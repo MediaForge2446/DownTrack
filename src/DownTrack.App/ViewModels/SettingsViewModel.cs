@@ -8,6 +8,8 @@ namespace DownTrack.ViewModels;
 
 public sealed class SettingsViewModel : ObservableObject
 {
+    public sealed record ThemeOption(AppThemeMode Mode, string DisplayName);
+
     private readonly SettingsService _settings = SettingsService.Instance;
     private AppThemeMode _theme;
     private string _languageCode;
@@ -21,6 +23,7 @@ public sealed class SettingsViewModel : ObservableObject
     public SettingsViewModel()
     {
         var s = _settings.Current;
+
         _theme = s.Theme;
         _languageCode = s.LanguageCode;
         _autoUpdateApp = s.AutoUpdateApp;
@@ -36,23 +39,31 @@ public sealed class SettingsViewModel : ObservableObject
         AudioQualities = new ObservableCollection<AudioQuality>(Enum.GetValues<AudioQuality>());
         VideoQualities = new ObservableCollection<VideoQuality>(Enum.GetValues<VideoQuality>());
 
+        ThemeOptions = new ObservableCollection<ThemeOption>();
+        RebuildThemeOptions();
+
         ApplyCommand = new AsyncRelayCommand(SaveAsync);
         CheckForUpdatesCommand = new AsyncRelayCommand(CheckForUpdatesAsync);
         CheckForToolUpdatesCommand = new AsyncRelayCommand(CheckForToolUpdatesAsync);
+
+        LocalizationService.Instance.PropertyChanged += Localization_PropertyChanged;
     }
 
     public ObservableCollection<SupportedLanguage> Languages { get; }
     public ObservableCollection<MediaFormat> Formats { get; }
     public ObservableCollection<AudioQuality> AudioQualities { get; }
     public ObservableCollection<VideoQuality> VideoQualities { get; }
+    public ObservableCollection<ThemeOption> ThemeOptions { get; }
 
     public AppThemeMode Theme
     {
         get => _theme;
         set
         {
-            if (SetProperty(ref _theme, value))
-                ThemeService.Instance.Apply(value);
+            if (!SetProperty(ref _theme, value))
+                return;
+
+            ThemeService.Instance.Apply(value);
         }
     }
 
@@ -61,8 +72,12 @@ public sealed class SettingsViewModel : ObservableObject
         get => _languageCode;
         set
         {
-            if (SetProperty(ref _languageCode, value))
-                LocalizationService.Instance.SetLanguage(value);
+            if (!SetProperty(ref _languageCode, value))
+                return;
+
+            LocalizationService.Instance.SetLanguage(value);
+            RebuildThemeOptions();
+            OnPropertyChanged(nameof(LanguageCode));
         }
     }
 
@@ -121,7 +136,6 @@ public sealed class SettingsViewModel : ObservableObject
 
         LocalizationService.Instance.SetLanguage(LanguageCode);
         ThemeService.Instance.Apply(Theme);
-
         UpdateStatus = LocalizationService.Instance.T("Settings.Saved");
     }
 
@@ -133,7 +147,37 @@ public sealed class SettingsViewModel : ObservableObject
 
     private Task CheckForToolUpdatesAsync()
     {
-        UpdateStatus = LocalizationService.Instance.T("Settings.ToolsReady");
+        UpdateStatus = _settings.Current.AutoUpdateTools
+            ? LocalizationService.Instance.T("Settings.ToolsReady")
+            : LocalizationService.Instance.T("Settings.ToolsMissing");
         return Task.Delay(250);
+    }
+
+    private void Localization_PropertyChanged(
+        object? sender,
+        System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
+        {
+            RebuildThemeOptions();
+            OnPropertyChanged(nameof(UpdateStatus));
+        }
+    }
+
+    private void RebuildThemeOptions()
+    {
+        ThemeOptions.Clear();
+
+        ThemeOptions.Add(new ThemeOption(
+            AppThemeMode.System,
+            LocalizationService.Instance.T("Settings.ThemeSystem")));
+
+        ThemeOptions.Add(new ThemeOption(
+            AppThemeMode.Light,
+            LocalizationService.Instance.T("Settings.ThemeLight")));
+
+        ThemeOptions.Add(new ThemeOption(
+            AppThemeMode.Dark,
+            LocalizationService.Instance.T("Settings.ThemeDark")));
     }
 }
