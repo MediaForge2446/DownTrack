@@ -12,52 +12,52 @@
         <local:PendingStatusBrushConverter x:Key="PendingStatusBrushConverter"/>
 
         <!-- DownTrack design system: playful tech, premium depth, restrained color. -->
-        <SolidColorBrush x:Key="WindowBrush" Color="#0B1020"/>
-        <SolidColorBrush x:Key="SurfaceBrush" Color="#121A2D"/>
-        <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#17223A"/>
-        <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#1F2C49"/>
-        <SolidColorBrush x:Key="SurfaceSoftBrush" Color="#0F1729"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="#2A3A5B"/>
-        <SolidColorBrush x:Key="BorderStrongBrush" Color="#3A4D73"/>
-        <SolidColorBrush x:Key="TextBrush" Color="#F7F8FC"/>
-        <SolidColorBrush x:Key="MutedTextBrush" Color="#98A8C4"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="#8B5CF6"/>
-        <SolidColorBrush x:Key="AccentBlueBrush" Color="#4F8CFF"/>
-        <SolidColorBrush x:Key="CyanBrush" Color="#43D7CD"/>
-        <SolidColorBrush x:Key="PinkBrush" Color="#EC74D7"/>
-        <SolidColorBrush x:Key="CoralBrush" Color="#FF8A78"/>
-        <SolidColorBrush x:Key="PendingBrush" Color="#F4C85B"/>
-        <SolidColorBrush x:Key="SuccessBrush" Color="#43D6AE"/>
-        <SolidColorBrush x:Key="ErrorBrush" Color="#FF6F82"/>
+        <SolidColorBrush x:Key="WindowBrush" Color="#F6F7FB"/>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SurfaceHoverBrush" Color="#F0F4FF"/>
+        <SolidColorBrush x:Key="SurfaceSoftBrush" Color="#F8FAFC"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#E3E8F1"/>
+        <SolidColorBrush x:Key="BorderStrongBrush" Color="#CAD3E2"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#182033"/>
+        <SolidColorBrush x:Key="MutedTextBrush" Color="#6C778B"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#7B61FF"/>
+        <SolidColorBrush x:Key="AccentBlueBrush" Color="#4F86FF"/>
+        <SolidColorBrush x:Key="CyanBrush" Color="#18B9A5"/>
+        <SolidColorBrush x:Key="PinkBrush" Color="#E96CC6"/>
+        <SolidColorBrush x:Key="CoralBrush" Color="#F4776D"/>
+        <SolidColorBrush x:Key="PendingBrush" Color="#D9A62E"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#18B98A"/>
+        <SolidColorBrush x:Key="ErrorBrush" Color="#E85D73"/>
 
         <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#7C5CFF" Offset="0"/>
-            <GradientStop Color="#9B63F7" Offset="0.42"/>
-            <GradientStop Color="#4C91FF" Offset="1"/>
+            <GradientStop Color="#7B61FF" Offset="0"/>
+            <GradientStop Color="#B66FF5" Offset="0.42"/>
+            <GradientStop Color="#4F86FF" Offset="1"/>
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="AuroraGradientBrush" StartPoint="0,0" EndPoint="1,0">
-            <GradientStop Color="#8B5CF6" Offset="0"/>
-            <GradientStop Color="#4F8CFF" Offset="0.5"/>
-            <GradientStop Color="#43D7CD" Offset="1"/>
+            <GradientStop Color="#7B61FF" Offset="0"/>
+            <GradientStop Color="#4F86FF" Offset="0.5"/>
+            <GradientStop Color="#18B9A5" Offset="1"/>
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="SoftGradientBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#271A52" Offset="0"/>
-            <GradientStop Color="#182D53" Offset="0.56"/>
-            <GradientStop Color="#12383B" Offset="1"/>
+            <GradientStop Color="#F2ECFF" Offset="0"/>
+            <GradientStop Color="#EEF4FF" Offset="0.56"/>
+            <GradientStop Color="#EAFBF7" Offset="1"/>
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="CardGradientBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#171F37" Offset="0"/>
-            <GradientStop Color="#17294A" Offset="0.68"/>
-            <GradientStop Color="#182F3D" Offset="1"/>
+            <GradientStop Color="#FFFFFF" Offset="0"/>
+            <GradientStop Color="#F7F8FF" Offset="0.68"/>
+            <GradientStop Color="#F2FBFA" Offset="1"/>
         </LinearGradientBrush>
 
-        <SolidColorBrush x:Key="AccentSoftBrush" Color="#2B2355"/>
-        <SolidColorBrush x:Key="BlueSoftBrush" Color="#1D335A"/>
-        <SolidColorBrush x:Key="CyanSoftBrush" Color="#153A3B"/>
-        <SolidColorBrush x:Key="DangerSoftBrush" Color="#41202D"/>
+        <SolidColorBrush x:Key="AccentSoftBrush" Color="#F0E9FF"/>
+        <SolidColorBrush x:Key="BlueSoftBrush" Color="#EAF2FF"/>
+        <SolidColorBrush x:Key="CyanSoftBrush" Color="#E8F8F5"/>
+        <SolidColorBrush x:Key="DangerSoftBrush" Color="#FFF0F3"/>
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
@@ -76,7 +76,7 @@
         <Style x:Key="PrimaryButton" TargetType="Button">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Background" Value="{StaticResource PrimaryGradientBrush}"/>
-            <Setter Property="BorderBrush" Value="#9B7CFF"/>
+            <Setter Property="BorderBrush" Value="#B594FF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="17,10"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -95,7 +95,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="Surface" Property="Opacity" Value="0.92"/>
-                                <Setter TargetName="Surface" Property="BorderBrush" Value="#C1B1FF"/>
+                                <Setter TargetName="Surface" Property="BorderBrush" Value="#8E72FF"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="Surface" Property="Opacity" Value="0.78"/>
