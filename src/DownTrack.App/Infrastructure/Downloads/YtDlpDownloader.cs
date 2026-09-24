@@ -82,5 +82,5 @@ public sealed class YtDlpDownloader(
         };
 
     private static string Quote(string value) =>
-        """ + value.Replace(""", "\"") + """;
+        "\"" + value.Replace("\"", "\\\"") + "\"";
 }
