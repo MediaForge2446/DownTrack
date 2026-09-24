@@ -120,9 +120,11 @@
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Visibility" Value="Collapsed"/>
-                                <DataTrigger Binding="{Binding IsResolving}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsResolving}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
                         </Ellipse.Style>
                     </Ellipse>
@@ -280,9 +282,11 @@
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Setter Property="Visibility" Value="Collapsed"/>
-                                <DataTrigger Binding="{Binding Items.Count}" Value="0">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Items.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
                         <TextBlock Text=""
@@ -312,9 +316,11 @@
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Setter Property="Visibility" Value="Collapsed"/>
-                                <DataTrigger Binding="{Binding IsResolving}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsResolving}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
                         </Border.Style>
                         <StackPanel>
