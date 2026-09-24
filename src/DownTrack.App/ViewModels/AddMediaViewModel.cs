@@ -35,6 +35,15 @@ public sealed class AddMediaViewModel : ObservableObject
             foreach (var row in Items)
                 row.Format = MediaFormat.Mp3;
         });
+
+        LocalizationService.Instance.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is "Item[]" or nameof(LocalizationService.ActiveCode))
+            {
+                if (!IsResolving && Items.Count == 0)
+                    Status = LocalizationService.Instance.T("AddMedia.PastePrompt");
+            }
+        };
     }
 
     public string CurrentFolder { get; }
