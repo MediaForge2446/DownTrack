@@ -21,7 +21,7 @@ public sealed class YouTubeMetadataResolver(
         if (!Uri.TryCreate(trimmedUrl, UriKind.Absolute, out var uri) ||
             !IsSupportedYouTubeHost(uri.Host))
         {
-            throw new ArgumentException("Please paste a valid YouTube video or playlist URL.");
+            throw new ArgumentException(LocalizationService.Instance.T("Errors.InvalidYouTubeUrl"));
         }
 
         await toolManager.EnsureReadyAsync(progress, cancellationToken);
@@ -46,7 +46,7 @@ public sealed class YouTubeMetadataResolver(
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new TimeoutException("Media analysis timed out after 3 minutes.");
+            throw new TimeoutException(LocalizationService.Instance.T("Errors.AnalysisTimeout"));
         }
 
         if (result.ExitCode != 0)
@@ -57,8 +57,8 @@ public sealed class YouTubeMetadataResolver(
 
             throw new InvalidOperationException(
                 string.IsNullOrWhiteSpace(detail)
-                    ? $"Could not analyze the media (exit code {result.ExitCode})."
-                    : detail.Trim());
+                    ? LocalizationService.Instance.T("Errors.AnalysisFailedCode", result.ExitCode)
+                    : LocalizationService.Instance.T("Errors.AnalysisFailed", detail.Trim()));
         }
 
         var json = ExtractJson(result.StandardOutput);
@@ -94,7 +94,7 @@ public sealed class YouTubeMetadataResolver(
         return new MediaDownloadSpec
         {
             SourceUrl = sourceUrl ?? string.Empty,
-            Title = GetString(item, "title") ?? id ?? "YouTube media",
+            Title = GetString(item, "title") ?? id ?? LocalizationService.Instance.T("Media.Untitled"),
             ThumbnailUrl = GetString(item, "thumbnail")
         };
     }
