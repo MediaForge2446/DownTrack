@@ -127,7 +127,7 @@ jobs:
           }
 
       - name: Build lightweight Web Installer payload
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
@@ -153,7 +153,7 @@ jobs:
           Get-ChildItem $releaseDir | Select-Object Name,Length
 
       - name: Verify lightweight Web Installer
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
@@ -167,7 +167,7 @@ jobs:
           Write-Host "Web installer hash: $((Get-FileHash -Algorithm SHA256 $webSetup).Hash)"
 
       - name: Upload Web Installer artifacts
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
           name: DownTrack-WebInstaller
@@ -177,7 +177,7 @@ jobs:
           if-no-files-found: error
 
       - name: Publish Nightly Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
