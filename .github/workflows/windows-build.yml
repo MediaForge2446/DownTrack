@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: downtrack-windows-build-${{ github.ref }}
@@ -125,6 +125,71 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
           }
+
+      - name: Build lightweight Web Installer payload
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $releaseDir = Join-Path $env:GITHUB_WORKSPACE "artifacts\release"
+          New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
+          $payload = Join-Path $releaseDir "DownTrack-Payload.zip"
+          if (Test-Path $payload) { Remove-Item $payload -Force }
+          Compress-Archive -Path (Join-Path $env:GITHUB_WORKSPACE "artifacts\publish\*") -DestinationPath $payload -CompressionLevel Optimal
+          $hash = (Get-FileHash -Algorithm SHA256 $payload).Hash.ToLowerInvariant()
+          $size = (Get-Item $payload).Length
+          $template = Get-Content -Raw (Join-Path $env:GITHUB_WORKSPACE "installer\DownTrackWebSetup.iss.template")
+          $script = $template.Replace("__PAYLOAD_SIZE__", [string]$size).Replace("__PAYLOAD_HASH__", $hash)
+          $webScript = Join-Path $env:RUNNER_TEMP "DownTrackWebSetup.iss"
+          Set-Content -Path $webScript -Value $script -Encoding UTF8
+          $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+          $issc = if ($programFilesX86) { Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe" } else { $null }
+          if (-not $issc -or -not (Test-Path $issc)) { $issc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe" }
+          if (-not (Test-Path $issc)) { throw "Inno Setup compiler was not found." }
+          & $issc $webScript
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Write-Host "Payload SHA-256: $hash"
+          Write-Host "Payload bytes: $size"
+          Get-ChildItem $releaseDir | Select-Object Name,Length
+
+      - name: Verify lightweight Web Installer
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $webSetup = "artifacts/installer/DownTrack-WebSetup.exe"
+          $payload = "artifacts/release/DownTrack-Payload.zip"
+          if (-not (Test-Path $webSetup)) { throw "Web installer was not created." }
+          if (-not (Test-Path $payload)) { throw "Web installer payload was not created." }
+          $webSize = (Get-Item $webSetup).Length
+          if ($webSize -gt 15MB) { throw "Web installer is unexpectedly large: $webSize bytes." }
+          Write-Host "Web installer bytes: $webSize"
+          Write-Host "Web installer hash: $((Get-FileHash -Algorithm SHA256 $webSetup).Hash)"
+
+      - name: Upload Web Installer artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DownTrack-WebInstaller
+          path: |
+            artifacts/installer/DownTrack-WebSetup.exe
+            artifacts/release/DownTrack-Payload.zip
+          if-no-files-found: error
+
+      - name: Publish Nightly Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          gh release view nightly --repo $env:GITHUB_REPOSITORY 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create nightly --repo $env:GITHUB_REPOSITORY --title "DownTrack Nightly" --notes "Latest validated DownTrack build from main." --prerelease --latest=false
+            if ($LASTEXITCODE -ne 0) { throw "Failed to create nightly release." }
+          }
+          gh release upload nightly "artifacts/release/DownTrack-Payload.zip" "artifacts/installer/DownTrack-WebSetup.exe" "artifacts/installer/Setup.exe" --repo $env:GITHUB_REPOSITORY --clobber
+          if ($LASTEXITCODE -ne 0) { throw "Failed to publish nightly release assets." }
 
       - name: Upload Setup.exe
         uses: actions/upload-artifact@v4
