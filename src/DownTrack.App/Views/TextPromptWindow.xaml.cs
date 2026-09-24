@@ -14,7 +14,7 @@ public partial class TextPromptWindow : Window
 
         Loaded += (_, _) =>
         {
-            Owner ??= Application.Current.MainWindow;
+            Owner ??= System.Windows.Application.Current.MainWindow;
             ValueBox.Focus();
         };
     }
