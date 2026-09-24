@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using DownTrack.Infrastructure.Localization;
 
 namespace DownTrack.Views;
 
@@ -11,15 +10,11 @@ public partial class MainWindow : Window
     private const uint MonitorDefaultToNearest = 2;
     private Rect _restoreBounds;
     private bool _workAreaMaximized;
-    private bool _updatingLanguageSelector;
 
     public MainWindow()
     {
         InitializeComponent();
         StateChanged += MainWindow_StateChanged;
-
-        LocalizationService.Instance.PropertyChanged += Localization_PropertyChanged;
-        RefreshLanguageSelector();
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -27,7 +22,7 @@ public partial class MainWindow : Window
         MaximizeToWorkArea();
     }
 
-    private void MainWindow_StateChanged(object? sender, System.EventArgs e)
+    private void MainWindow_StateChanged(object? sender, EventArgs e)
     {
         if (WindowState == WindowState.Maximized)
         {
@@ -38,7 +33,7 @@ public partial class MainWindow : Window
 
         RootBorder.CornerRadius = _workAreaMaximized
             ? new CornerRadius(0)
-            : new CornerRadius(20);
+            : new CornerRadius(18);
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -52,20 +47,20 @@ public partial class MainWindow : Window
             return;
         }
 
-        if (e.LeftButton == MouseButtonState.Pressed &&
-            !_workAreaMaximized)
-        {
+        if (e.LeftButton == MouseButtonState.Pressed && !_workAreaMaximized)
             DragMove();
-        }
     }
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new SettingsWindow(
-            ((ViewModels.MainWindowViewModel)DataContext).ToolManager)
+        if (DataContext is not ViewModels.MainWindowViewModel viewModel)
+            return;
+
+        var dialog = new SettingsWindow(viewModel.ToolManager)
         {
             Owner = this
         };
+
         dialog.ShowDialog();
     }
 
@@ -77,13 +72,15 @@ public partial class MainWindow : Window
             viewModel.GoHomeCommand.Execute(null);
     }
 
-    private void RootList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    private void RootList_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if (DataContext is ViewModels.MainWindowViewModel viewModel &&
-            RootList.SelectedItem is DownTrack.Core.Models.RootFolder root)
-        {
-            viewModel.SelectRoot(root);
-        }
+        if (DataContext is not ViewModels.MainWindowViewModel viewModel ||
+            RootList.SelectedItem is not DownTrack.Core.Models.RootFolder root)
+            return;
+
+        viewModel.SelectRoot(root);
     }
 
     private void Minimize_Click(object sender, RoutedEventArgs e) =>
@@ -135,7 +132,7 @@ public partial class MainWindow : Window
             Height = _restoreBounds.Height;
         }
 
-        RootBorder.CornerRadius = new CornerRadius(20);
+        RootBorder.CornerRadius = new CornerRadius(18);
     }
 
     private void SaveRestoreBounds()
@@ -143,8 +140,8 @@ public partial class MainWindow : Window
         if (_workAreaMaximized)
             return;
 
-        var width = Width > 0 ? Width : 1320;
-        var height = Height > 0 ? Height : 820;
+        var width = Width > 0 ? Width : 1440;
+        var height = Height > 0 ? Height : 900;
         var left = double.IsNaN(Left) ? 90 : Left;
         var top = double.IsNaN(Top) ? 70 : Top;
 
@@ -177,12 +174,11 @@ public partial class MainWindow : Window
             var transform = source?.CompositionTarget?.TransformFromDevice
                 ?? new System.Windows.Media.Matrix();
 
-            var left = info.rcWork.Left * transform.M11;
-            var top = info.rcWork.Top * transform.M22;
-            var width = (info.rcWork.Right - info.rcWork.Left) * transform.M11;
-            var height = (info.rcWork.Bottom - info.rcWork.Top) * transform.M22;
-
-            return new Rect(left, top, width, height);
+            return new Rect(
+                info.rcWork.Left * transform.M11,
+                info.rcWork.Top * transform.M22,
+                (info.rcWork.Right - info.rcWork.Left) * transform.M11,
+                (info.rcWork.Bottom - info.rcWork.Top) * transform.M22);
         }
         catch
         {
