@@ -13,13 +13,13 @@ public sealed class PendingDescriptionConverter : IValueConverter
             ? change.ChangeType switch
             {
                 PendingChangeType.CreateFolder =>
-                    LocalizationService.Instance.T("Pending.CreateFolder", Path.GetFileName(change.TargetPath)),
+                    LocalizationService.Instance.T("Pending.CreateFolder", Path.GetFileName(change.TargetPath) ?? string.Empty),
                 PendingChangeType.Rename =>
-                    LocalizationService.Instance.T("Pending.Rename", Path.GetFileName(change.SourcePath), Path.GetFileName(change.TargetPath)),
+                    LocalizationService.Instance.T("Pending.Rename", Path.GetFileName(change.SourcePath) ?? string.Empty, Path.GetFileName(change.TargetPath) ?? string.Empty),
                 PendingChangeType.Delete =>
-                    LocalizationService.Instance.T("Pending.Delete", Path.GetFileName(change.SourcePath)),
+                    LocalizationService.Instance.T("Pending.Delete", Path.GetFileName(change.SourcePath) ?? string.Empty),
                 PendingChangeType.Download =>
-                    LocalizationService.Instance.T("Pending.Download", change.Media?.Title ?? Path.GetFileName(change.TargetPath)),
+                    LocalizationService.Instance.T("Pending.Download", change.Media?.Title ?? Path.GetFileName(change.TargetPath) ?? string.Empty ?? string.Empty),
                 _ => LocalizationService.Instance.T("Pending.Generic")
             }
             : string.Empty;
