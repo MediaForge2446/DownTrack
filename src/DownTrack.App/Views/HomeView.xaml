@@ -55,10 +55,15 @@
                         Command="{Binding AddRootFolderCommand}"
                         Height="42"
                         MinWidth="154">
+                    <Button Style="{StaticResource PrimaryButton}"
+                        Command="{Binding AddRootFolderCommand}"
+                        Height="42"
+                        MinWidth="154">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="＋" FontSize="15" Margin="0,0,8,0"/>
                         <TextBlock Text="{loc:Loc Key=Home.AddRootFolder}"/>
                     </StackPanel>
+                </Button>
                 </Button>
 
                 <StackPanel Orientation="Horizontal"
