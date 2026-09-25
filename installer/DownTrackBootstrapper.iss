@@ -864,9 +864,8 @@ begin
 
   if ResultCode <> 0 then
     RaiseException(
-      Format(
-        'Payload extraction returned exit code %d.',
-        [ResultCode]));
+      'Payload extraction returned exit code ' +
+      IntToStr(ResultCode) + '.');
 
   Result :=
     FileExists(InstallPath + '\DownTrack.exe');
