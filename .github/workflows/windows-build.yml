@@ -157,11 +157,25 @@ jobs:
           $manifestPath = Join-Path $releaseDir "latest.ini"
           Set-Content -Path $manifestPath -Value $manifest -Encoding UTF8
           $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
-          $issc = if ($programFilesX86) { Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe" } else { $null }
-          if (-not $issc -or -not (Test-Path $issc)) { $issc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe" }
-          if (-not (Test-Path $issc)) { throw "Inno Setup compiler (ISCC.exe) was not found." }
-          & $issc "installer\DownTrackBootstrapper.iss"
+          $vswhere = Join-Path $programFilesX86 "Microsoft Visual Studio\\Installer\\vswhere.exe"
+          if (-not (Test-Path $vswhere)) { throw "Visual Studio vswhere.exe was not found." }
+          $vsPath = (& $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath).Trim()
+          if (-not $vsPath) { throw "Visual C++ x64 tools were not found." }
+
+          $vcvars = Join-Path $vsPath "VC\\Auxiliary\\Build\\vcvars64.bat"
+          if (-not (Test-Path $vcvars)) { throw "vcvars64.bat was not found." }
+
+          $kitsRoot = Join-Path $env:ProgramFiles "Windows Kits\\10\\bin"
+          $rc = Get-ChildItem $kitsRoot -Filter rc.exe -Recurse -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match "\\x64\\rc\\.exe$" } |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+          if (-not $rc) { throw "Windows SDK resource compiler (rc.exe) was not found." }
+
+          $buildCommand = 'call "' + $vcvars + '" -arch=x64 && "' + $rc + '" /nologo installer\\bootstrapper\\DownTrackBootstrapper.rc && cl /nologo /O2 /MT /EHsc /std:c++17 /DUNICODE /D_UNICODE /W4 /Fe:"artifacts\\installer\\DownTrack-WebSetup.exe" installer\\bootstrapper\\DownTrackBootstrapper.cpp installer\\bootstrapper\\DownTrackBootstrapper.res /link /SUBSYSTEM:WINDOWS'
+          cmd.exe /c $buildCommand
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
           $bootstrapper = Join-Path $installerDir "DownTrack-WebSetup.exe"
           if (-not (Test-Path $bootstrapper)) { throw "DownTrack-WebSetup.exe was not created." }
           $bootstrapperSize = (Get-Item $bootstrapper).Length
