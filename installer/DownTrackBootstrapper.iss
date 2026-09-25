@@ -957,6 +957,15 @@ begin
   SetupForm.Update;
 end;
 
+procedure SetInstallState(
+  const TitleText, Status: String);
+begin
+  LogoText.Caption := TitleText;
+  StatusText.Caption := Status;
+  SetupForm.Update;
+end;
+
+
 procedure InstallLatest(Sender: TObject);
 var
   PayloadPath: String;
@@ -1061,14 +1070,6 @@ begin
     Exit;
 
   SetupForm.Close;
-end;
-
-procedure SetInstallState(
-  const TitleText, Status: String);
-begin
-  LogoText.Caption := TitleText;
-  StatusText.Caption := Status;
-  SetupForm.Update;
 end;
 
 procedure InitializeInstallerUi;
