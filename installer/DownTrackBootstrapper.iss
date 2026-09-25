@@ -104,7 +104,7 @@ Uninstallable=no
 CreateAppDir=no
 DisableProgramGroupPage=yes
 DisableDirPage=yes
-DisableWelcomePage=yes
+DisableWelcomePage=no
 DisableReadyPage=yes
 DisableFinishedPage=yes
 DisableStartupPrompt=yes
@@ -119,7 +119,6 @@ VersionInfoCompany=MediaForge2446
 
 [Code]
 var
-  InstallerPage: TWizardPage;
   HeaderPanel: TPanel;
   BodyPanel: TPanel;
   AccentBar: TPanel;
@@ -708,7 +707,7 @@ begin
     VersionText.Alignment := taRightJustify;
     DetailText.Alignment := taRightJustify;
 
-    AccentBar.Left := InstallerPage.SurfaceWidth - ScaleX(34);
+    AccentBar.Left := WizardForm.ClientWidth - ScaleX(34);
     LogoText.Left := ScaleX(180);
     TaglineText.Left := ScaleX(120);
     LanguageCombo.Left := ScaleX(52);
@@ -1076,34 +1075,36 @@ procedure InitializeInstallerUi;
 var
   SavedMode: String;
   I: Integer;
+  UiParent: TWinControl;
 begin
+  { Use Inno's real Welcome page as the host. This avoids a custom-page
+    lifecycle edge case that can terminate the bootstrapper before the
+    window becomes visible on some Windows configurations. }
+
   WizardForm.ClientWidth := ScaleX(800);
   WizardForm.ClientHeight := ScaleY(500);
   WizardForm.Position := poScreenCenter;
   WizardForm.Color := $00F7F8FC;
+
+  WizardForm.WelcomeLabel1.Visible := False;
+  WizardForm.WelcomeLabel2.Visible := False;
   WizardForm.NextButton.Visible := False;
   WizardForm.BackButton.Visible := False;
   WizardForm.CancelButton.Visible := False;
 
-  InstallerPage :=
-    CreateCustomPage(
-      wpWelcome,
-      '',
-      '');
+  UiParent := WizardForm.WelcomeLabel1.Parent;
 
-  InstallerPage.Surface.Color := $00F7F8FC;
-
-  HeaderPanel := TPanel.Create(InstallerPage.Surface);
-  HeaderPanel.Parent := InstallerPage.Surface;
+  HeaderPanel := TPanel.Create(WizardForm);
+  HeaderPanel.Parent := UiParent;
   HeaderPanel.Left := 0;
   HeaderPanel.Top := 0;
-  HeaderPanel.Width := InstallerPage.Surface.ClientWidth;
+  HeaderPanel.Width := WizardForm.ClientWidth;
   HeaderPanel.Height := ScaleY(92);
   HeaderPanel.BevelOuter := bvNone;
   HeaderPanel.Color := $00FFFFFF;
 
-  AccentBar := TPanel.Create(InstallerPage.Surface);
-  AccentBar.Parent := InstallerPage.Surface;
+  AccentBar := TPanel.Create(WizardForm);
+  AccentBar.Parent := UiParent;
   AccentBar.Left := ScaleX(28);
   AccentBar.Top := ScaleY(24);
   AccentBar.Width := ScaleX(6);
@@ -1111,8 +1112,8 @@ begin
   AccentBar.BevelOuter := bvNone;
   AccentBar.Color := $007B61FF;
 
-  LogoText := TNewStaticText.Create(InstallerPage.Surface);
-  LogoText.Parent := InstallerPage.Surface;
+  LogoText := TNewStaticText.Create(WizardForm);
+  LogoText.Parent := UiParent;
   LogoText.Left := ScaleX(52);
   LogoText.Top := ScaleY(18);
   LogoText.Width := ScaleX(350);
@@ -1120,8 +1121,8 @@ begin
   LogoText.Font.Size := 23;
   LogoText.Font.Style := [fsBold];
 
-  TaglineText := TNewStaticText.Create(InstallerPage.Surface);
-  TaglineText.Parent := InstallerPage.Surface;
+  TaglineText := TNewStaticText.Create(WizardForm);
+  TaglineText.Parent := UiParent;
   TaglineText.Left := ScaleX(53);
   TaglineText.Top := ScaleY(53);
   TaglineText.Width := ScaleX(430);
@@ -1130,8 +1131,8 @@ begin
   TaglineText.Font.Color := $0069788A;
   TaglineText.WordWrap := True;
 
-  LanguageLabel := TNewStaticText.Create(InstallerPage.Surface);
-  LanguageLabel.Parent := InstallerPage.Surface;
+  LanguageLabel := TNewStaticText.Create(WizardForm);
+  LanguageLabel.Parent := UiParent;
   LanguageLabel.Left := ScaleX(520);
   LanguageLabel.Top := ScaleY(22);
   LanguageLabel.Width := ScaleX(58);
@@ -1139,8 +1140,8 @@ begin
   LanguageLabel.Font.Size := 8;
   LanguageLabel.Font.Color := $0069788A;
 
-  LanguageCombo := TNewComboBox.Create(InstallerPage.Surface);
-  LanguageCombo.Parent := InstallerPage.Surface;
+  LanguageCombo := TNewComboBox.Create(WizardForm);
+  LanguageCombo.Parent := UiParent;
   LanguageCombo.Left := ScaleX(585);
   LanguageCombo.Top := ScaleY(17);
   LanguageCombo.Width := ScaleX(160);
@@ -1171,17 +1172,17 @@ begin
   LanguageCombo.Items.Add('简体中文');
   LanguageCombo.Items.Add('繁體中文');
 
-  BodyPanel := TPanel.Create(InstallerPage.Surface);
-  BodyPanel.Parent := InstallerPage.Surface;
+  BodyPanel := TPanel.Create(WizardForm);
+  BodyPanel.Parent := UiParent;
   BodyPanel.Left := ScaleX(34);
   BodyPanel.Top := ScaleY(116);
-  BodyPanel.Width := InstallerPage.Surface.ClientWidth - ScaleX(68);
+  BodyPanel.Width := WizardForm.ClientWidth - ScaleX(68);
   BodyPanel.Height := ScaleY(250);
-  BodyPanel.BevelOuter := bvLowered;
+  BodyPanel.BevelOuter := bvRaised;
   BodyPanel.Color := $00FFFFFF;
 
-  StatusText := TNewStaticText.Create(InstallerPage.Surface);
-  StatusText.Parent := InstallerPage.Surface;
+  StatusText := TNewStaticText.Create(WizardForm);
+  StatusText.Parent := UiParent;
   StatusText.Left := ScaleX(52);
   StatusText.Top := ScaleY(142);
   StatusText.Width := ScaleX(690);
@@ -1189,8 +1190,8 @@ begin
   StatusText.Font.Size := 12;
   StatusText.Font.Style := [fsBold];
 
-  VersionText := TNewStaticText.Create(InstallerPage.Surface);
-  VersionText.Parent := InstallerPage.Surface;
+  VersionText := TNewStaticText.Create(WizardForm);
+  VersionText.Parent := UiParent;
   VersionText.Left := ScaleX(52);
   VersionText.Top := ScaleY(180);
   VersionText.Width := ScaleX(690);
@@ -1198,8 +1199,8 @@ begin
   VersionText.Font.Size := 10;
   VersionText.Font.Color := $0069788A;
 
-  DetailText := TNewStaticText.Create(InstallerPage.Surface);
-  DetailText.Parent := InstallerPage.Surface;
+  DetailText := TNewStaticText.Create(WizardForm);
+  DetailText.Parent := UiParent;
   DetailText.Left := ScaleX(52);
   DetailText.Top := ScaleY(214);
   DetailText.Width := ScaleX(690);
@@ -1207,8 +1208,8 @@ begin
   DetailText.Font.Size := 9;
   DetailText.Font.Color := $007B61FF;
 
-  ProgressBar := TNewProgressBar.Create(InstallerPage.Surface);
-  ProgressBar.Parent := InstallerPage.Surface;
+  ProgressBar := TNewProgressBar.Create(WizardForm);
+  ProgressBar.Parent := UiParent;
   ProgressBar.Left := ScaleX(52);
   ProgressBar.Top := ScaleY(264);
   ProgressBar.Width := ScaleX(690);
@@ -1217,17 +1218,17 @@ begin
   ProgressBar.Max := 100;
   ProgressBar.Position := 0;
 
-  FooterPanel := TPanel.Create(InstallerPage.Surface);
-  FooterPanel.Parent := InstallerPage.Surface;
+  FooterPanel := TPanel.Create(WizardForm);
+  FooterPanel.Parent := UiParent;
   FooterPanel.Left := 0;
   FooterPanel.Top := ScaleY(408);
-  FooterPanel.Width := InstallerPage.Surface.ClientWidth;
+  FooterPanel.Width := WizardForm.ClientWidth;
   FooterPanel.Height := ScaleY(92);
   FooterPanel.BevelOuter := bvNone;
   FooterPanel.Color := $00F0F3F9;
 
-  PrimaryButton := TNewButton.Create(InstallerPage.Surface);
-  PrimaryButton.Parent := InstallerPage.Surface;
+  PrimaryButton := TNewButton.Create(WizardForm);
+  PrimaryButton.Parent := UiParent;
   PrimaryButton.Left := ScaleX(452);
   PrimaryButton.Top := ScaleY(432);
   PrimaryButton.Width := ScaleX(290);
@@ -1235,8 +1236,8 @@ begin
   PrimaryButton.Font.Style := [fsBold];
   PrimaryButton.OnClick := @InstallLatest;
 
-  SecondaryButton := TNewButton.Create(InstallerPage.Surface);
-  SecondaryButton.Parent := InstallerPage.Surface;
+  SecondaryButton := TNewButton.Create(WizardForm);
+  SecondaryButton.Parent := UiParent;
   SecondaryButton.Left := ScaleX(334);
   SecondaryButton.Top := ScaleY(432);
   SecondaryButton.Width := ScaleX(100);
@@ -1251,9 +1252,7 @@ begin
     CurrentLanguage := SavedMode;
 
   I := 0;
-  if SameText(SavedMode, 'auto') then
-    I := 0
-  else
+  if not SameText(SavedMode, 'auto') then
   begin
     while (I < 20) and
       not SameText(
@@ -1266,7 +1265,6 @@ begin
   LanguageCombo.ItemIndex := I;
   ApplyLanguageToForm;
 end;
-
 
 procedure InitializeWizard;
 begin
@@ -1282,13 +1280,8 @@ end;
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
-  if CurPageID = InstallerPage.ID then
+  if CurPageID = wpWelcome then
   begin
-    { IMPORTANT: never perform network I/O here.
-      Inno Setup can call CurPageChanged before the window has been
-      painted. A synchronous download here makes the installer appear
-      to do nothing after the Windows "Run anyway" prompt. }
-
     StatusText.Caption := T('Checking');
     VersionText.Caption := T('Progress');
     DetailText.Caption := T('Progress');
