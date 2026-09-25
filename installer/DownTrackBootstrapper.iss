@@ -123,8 +123,16 @@ SetupIconFile=..\src\DownTrack.App\Assets\Brand\downtrack.ico
 Source: "DownTrackInstallerTranslations.txt"; Flags: dontcopy
 
 [Code]
+function SetForegroundWindow(hWnd: Integer): Boolean;
+  external 'SetForegroundWindow@user32.dll stdcall';
+function BringWindowToTop(hWnd: Integer): Boolean;
+  external 'BringWindowToTop@user32.dll stdcall';
+
 var
   ContentPanel: TPanel;
+  Dot1: TPanel;
+  Dot2: TPanel;
+  Dot3: TPanel;
   HeaderPanel: TPanel;
   BodyPanel: TPanel;
   AccentBar: TPanel;
@@ -148,6 +156,7 @@ var
   InstallDirectory: String;
   ManifestLoaded: Boolean;
   Installing: Boolean;
+  AutoStartTriggered: Boolean;
   CurrentLanguage: String;
   SelectedLanguageMode: String;
   Translations: TStringList;
@@ -355,12 +364,11 @@ begin
   VersionText.Alignment := taCenter;
   DetailText.Alignment := taCenter;
 
-  AccentBar.Left := ScaleX(325);
-  LogoMark.Left := ScaleX(28);
-  LogoText.Left := ScaleX(76);
-  TaglineText.Left := ScaleX(77);
-  LanguageLabel.Left := ScaleX(470);
-  LanguageCombo.Left := ScaleX(520);
+  AccentBar.Left := ScaleX(28);
+  LogoText.Left := ScaleX(46);
+  TaglineText.Left := ScaleX(47);
+  LanguageLabel.Left := ScaleX(505);
+  LanguageCombo.Left := ScaleX(560);
 
   if Rtl then
   begin
@@ -368,11 +376,11 @@ begin
     TaglineText.Alignment := taRightJustify;
     LanguageLabel.Alignment := taRightJustify;
 
-    LogoMark.Left := WizardForm.ClientWidth - ScaleX(64);
+    AccentBar.Left := WizardForm.ClientWidth - ScaleX(33);
     LogoText.Left := WizardForm.ClientWidth - ScaleX(266);
-    TaglineText.Left := WizardForm.ClientWidth - ScaleX(407);
-    LanguageCombo.Left := ScaleX(28);
-    LanguageLabel.Left := ScaleX(165);
+    TaglineText.Left := WizardForm.ClientWidth - ScaleX(397);
+    LanguageCombo.Left := ScaleX(30);
+    LanguageLabel.Left := ScaleX(210);
   end;
 
   WizardForm.Caption := T('Title');
@@ -735,17 +743,16 @@ var
   SavedMode: String;
   I: Integer;
 begin
-  { Compact, single-window DownTrack presentation. }
-  WizardForm.ClientWidth := ScaleX(680);
-  WizardForm.ClientHeight := ScaleY(420);
+  { Compact, calm layout inspired by DownTrack's web design. }
+  WizardForm.ClientWidth := ScaleX(760);
+  WizardForm.ClientHeight := ScaleY(455);
   WizardForm.Position := poScreenCenter;
   WizardForm.Caption := 'DownTrack';
-  WizardForm.Color := $00FBF9FF;
+  WizardForm.Color := $00F6F4FC;
   WizardForm.Font.Name := 'Segoe UI';
   WizardForm.Font.Size := 9;
-  WizardForm.FormStyle := fsNormal;
 
-  { Remove every stock Inno visual/control. }
+  { Keep the native window, but remove every stock wizard visual/control. }
   WizardForm.NextButton.Visible := False;
   WizardForm.BackButton.Visible := False;
   WizardForm.CancelButton.Visible := False;
@@ -758,71 +765,63 @@ begin
 
   ContentPanel := TPanel.Create(WizardForm);
   ContentPanel.Parent := WizardForm;
-  ContentPanel.Align := alClient;
+  ContentPanel.Left := 0;
+  ContentPanel.Top := 0;
+  ContentPanel.Width := WizardForm.ClientWidth;
+  ContentPanel.Height := WizardForm.ClientHeight;
   ContentPanel.BevelOuter := bvNone;
-  ContentPanel.Color := $00FBF9FF;
+  ContentPanel.Color := $00F6F4FC;
+  ContentPanel.BringToFront;
 
   HeaderPanel := TPanel.Create(WizardForm);
   HeaderPanel.Parent := ContentPanel;
   HeaderPanel.Align := alTop;
-  HeaderPanel.Height := ScaleY(62);
+  HeaderPanel.Height := ScaleY(64);
   HeaderPanel.BevelOuter := bvNone;
   HeaderPanel.Color := $00FFFFFF;
 
-  LogoMark := TPanel.Create(WizardForm);
-  LogoMark.Parent := HeaderPanel;
-  LogoMark.Left := ScaleX(28);
-  LogoMark.Top := ScaleY(13);
-  LogoMark.Width := ScaleX(36);
-  LogoMark.Height := ScaleY(36);
-  LogoMark.BevelOuter := bvNone;
-  LogoMark.Color := $00F04C77;
-
-  LogoMarkText := TNewStaticText.Create(WizardForm);
-  LogoMarkText.Parent := LogoMark;
-  LogoMarkText.Left := 0;
-  LogoMarkText.Top := ScaleY(4);
-  LogoMarkText.Width := LogoMark.Width;
-  LogoMarkText.Height := ScaleY(28);
-  LogoMarkText.Alignment := taCenter;
-  LogoMarkText.Font.Size := 16;
-  LogoMarkText.Font.Style := [fsBold];
-  LogoMarkText.Font.Color := $00FFFFFF;
-  LogoMarkText.Caption := 'D';
+  AccentBar := TPanel.Create(WizardForm);
+  AccentBar.Parent := HeaderPanel;
+  AccentBar.Left := ScaleX(28);
+  AccentBar.Top := ScaleY(16);
+  AccentBar.Width := ScaleX(4);
+  AccentBar.Height := ScaleY(31);
+  AccentBar.BevelOuter := bvNone;
+  AccentBar.Color := $007A4CFF;
 
   LogoText := TNewStaticText.Create(WizardForm);
   LogoText.Parent := HeaderPanel;
-  LogoText.Left := ScaleX(76);
-  LogoText.Top := ScaleY(12);
-  LogoText.Width := ScaleX(190);
-  LogoText.Height := ScaleY(25);
-  LogoText.Font.Size := 16;
+  LogoText.Left := ScaleX(46);
+  LogoText.Top := ScaleY(13);
+  LogoText.Width := ScaleX(220);
+  LogoText.Height := ScaleY(28);
+  LogoText.Font.Size := 17;
   LogoText.Font.Style := [fsBold];
 
   TaglineText := TNewStaticText.Create(WizardForm);
   TaglineText.Parent := HeaderPanel;
-  TaglineText.Left := ScaleX(77);
-  TaglineText.Top := ScaleY(37);
-  TaglineText.Width := ScaleX(330);
-  TaglineText.Height := ScaleY(16);
-  TaglineText.Font.Size := 7;
-  TaglineText.Font.Color := $007D8496;
+  TaglineText.Left := ScaleX(47);
+  TaglineText.Top := ScaleY(39);
+  TaglineText.Width := ScaleX(350);
+  TaglineText.Height := ScaleY(17);
+  TaglineText.Font.Size := 8;
+  TaglineText.Font.Color := $00827A93;
 
   LanguageLabel := TNewStaticText.Create(WizardForm);
   LanguageLabel.Parent := HeaderPanel;
-  LanguageLabel.Left := ScaleX(470);
+  LanguageLabel.Left := ScaleX(505);
   LanguageLabel.Top := ScaleY(20);
-  LanguageLabel.Width := ScaleX(45);
-  LanguageLabel.Height := ScaleY(16);
-  LanguageLabel.Font.Size := 7;
-  LanguageLabel.Font.Color := $007D8496;
+  LanguageLabel.Width := ScaleX(50);
+  LanguageLabel.Height := ScaleY(17);
+  LanguageLabel.Font.Size := 8;
+  LanguageLabel.Font.Color := $00827A93;
 
   LanguageCombo := TNewComboBox.Create(WizardForm);
   LanguageCombo.Parent := HeaderPanel;
-  LanguageCombo.Left := ScaleX(520);
-  LanguageCombo.Top := ScaleY(14);
-  LanguageCombo.Width := ScaleX(132);
-  LanguageCombo.Height := ScaleY(28);
+  LanguageCombo.Left := ScaleX(560);
+  LanguageCombo.Top := ScaleY(13);
+  LanguageCombo.Width := ScaleX(170);
+  LanguageCombo.Height := ScaleY(30);
   LanguageCombo.Style := csDropDownList;
   LanguageCombo.DropDownCount := 12;
   LanguageCombo.OnChange := @LanguageChanged;
@@ -851,54 +850,75 @@ begin
 
   BodyPanel := TPanel.Create(WizardForm);
   BodyPanel.Parent := ContentPanel;
-  BodyPanel.Align := alClient;
+  BodyPanel.Left := ScaleX(28);
+  BodyPanel.Top := ScaleY(84);
+  BodyPanel.Width := ContentPanel.Width - ScaleX(56);
+  BodyPanel.Height := ScaleY(252);
   BodyPanel.BevelOuter := bvNone;
-  BodyPanel.Color := $00FBF9FF;
+  BodyPanel.Color := $00FFFFFF;
 
-  AccentBar := TPanel.Create(WizardForm);
-  AccentBar.Parent := BodyPanel;
-  AccentBar.Left := ScaleX(325);
-  AccentBar.Top := ScaleY(26);
-  AccentBar.Width := ScaleX(30);
-  AccentBar.Height := ScaleY(4);
-  AccentBar.BevelOuter := bvNone;
-  AccentBar.Color := $00A873FF;
+  Dot1 := TPanel.Create(WizardForm);
+  Dot1.Parent := BodyPanel;
+  Dot1.Left := (BodyPanel.Width div 2) - ScaleX(21);
+  Dot1.Top := ScaleY(33);
+  Dot1.Width := ScaleX(8);
+  Dot1.Height := ScaleY(8);
+  Dot1.BevelOuter := bvNone;
+  Dot1.Color := $007A4CFF;
+
+  Dot2 := TPanel.Create(WizardForm);
+  Dot2.Parent := BodyPanel;
+  Dot2.Left := (BodyPanel.Width div 2) - ScaleX(4);
+  Dot2.Top := ScaleY(33);
+  Dot2.Width := ScaleX(8);
+  Dot2.Height := ScaleY(8);
+  Dot2.BevelOuter := bvNone;
+  Dot2.Color := $00FF4F88;
+
+  Dot3 := TPanel.Create(WizardForm);
+  Dot3.Parent := BodyPanel;
+  Dot3.Left := (BodyPanel.Width div 2) + ScaleX(13);
+  Dot3.Top := ScaleY(33);
+  Dot3.Width := ScaleX(8);
+  Dot3.Height := ScaleY(8);
+  Dot3.BevelOuter := bvNone;
+  Dot3.Color := $0029C7D9;
 
   StatusText := TNewStaticText.Create(WizardForm);
   StatusText.Parent := BodyPanel;
-  StatusText.Left := ScaleX(42);
-  StatusText.Top := ScaleY(67);
-  StatusText.Width := BodyPanel.Width - ScaleX(84);
-  StatusText.Height := ScaleY(30);
+  StatusText.Left := ScaleX(30);
+  StatusText.Top := ScaleY(75);
+  StatusText.Width := BodyPanel.Width - ScaleX(60);
+  StatusText.Height := ScaleY(31);
   StatusText.Alignment := taCenter;
-  StatusText.Font.Size := 14;
+  StatusText.Font.Size := 15;
   StatusText.Font.Style := [fsBold];
 
   VersionText := TNewStaticText.Create(WizardForm);
   VersionText.Parent := BodyPanel;
-  VersionText.Left := ScaleX(42);
-  VersionText.Top := ScaleY(103);
-  VersionText.Width := BodyPanel.Width - ScaleX(84);
-  VersionText.Height := ScaleY(21);
+  VersionText.Left := ScaleX(30);
+  VersionText.Top := ScaleY(111);
+  VersionText.Width := BodyPanel.Width - ScaleX(60);
+  VersionText.Height := ScaleY(22);
   VersionText.Alignment := taCenter;
-  VersionText.Font.Size := 9;
-  VersionText.Font.Color := $007D8496;
+  VersionText.Font.Size := 10;
+  VersionText.Font.Color := $007D7691;
 
   DetailText := TNewStaticText.Create(WizardForm);
   DetailText.Parent := BodyPanel;
-  DetailText.Left := ScaleX(42);
-  DetailText.Top := ScaleY(135);
-  DetailText.Width := BodyPanel.Width - ScaleX(84);
-  DetailText.Height := ScaleY(21);
+  DetailText.Left := ScaleX(30);
+  DetailText.Top := ScaleY(145);
+  DetailText.Width := BodyPanel.Width - ScaleX(60);
+  DetailText.Height := ScaleY(20);
   DetailText.Alignment := taCenter;
   DetailText.Font.Size := 9;
-  DetailText.Font.Color := $007B61FF;
+  DetailText.Font.Color := $007A4CFF;
 
   ProgressBar := TNewProgressBar.Create(WizardForm);
   ProgressBar.Parent := BodyPanel;
-  ProgressBar.Left := ScaleX(80);
-  ProgressBar.Top := ScaleY(177);
-  ProgressBar.Width := BodyPanel.Width - ScaleX(160);
+  ProgressBar.Left := ScaleX(48);
+  ProgressBar.Top := ScaleY(185);
+  ProgressBar.Width := BodyPanel.Width - ScaleX(96);
   ProgressBar.Height := ScaleY(9);
   ProgressBar.Min := 0;
   ProgressBar.Max := 100;
@@ -907,25 +927,25 @@ begin
   FooterPanel := TPanel.Create(WizardForm);
   FooterPanel.Parent := ContentPanel;
   FooterPanel.Align := alBottom;
-  FooterPanel.Height := ScaleY(76);
+  FooterPanel.Height := ScaleY(82);
   FooterPanel.BevelOuter := bvNone;
-  FooterPanel.Color := $00FFFFFF;
+  FooterPanel.Color := $00F0EFF7;
 
   SecondaryButton := TNewButton.Create(WizardForm);
   SecondaryButton.Parent := FooterPanel;
-  SecondaryButton.Left := FooterPanel.Width - ScaleX(225);
-  SecondaryButton.Top := ScaleY(19);
+  SecondaryButton.Left := FooterPanel.Width - ScaleX(228);
+  SecondaryButton.Top := ScaleY(22);
   SecondaryButton.Width := ScaleX(92);
-  SecondaryButton.Height := ScaleY(34);
+  SecondaryButton.Height := ScaleY(36);
   SecondaryButton.Caption := T('Close');
   SecondaryButton.OnClick := @CloseInstaller;
 
   PrimaryButton := TNewButton.Create(WizardForm);
   PrimaryButton.Parent := FooterPanel;
-  PrimaryButton.Left := FooterPanel.Width - ScaleX(124);
-  PrimaryButton.Top := ScaleY(19);
-  PrimaryButton.Width := ScaleX(108);
-  PrimaryButton.Height := ScaleY(34);
+  PrimaryButton.Left := FooterPanel.Width - ScaleX(126);
+  PrimaryButton.Top := ScaleY(22);
+  PrimaryButton.Width := ScaleX(106);
+  PrimaryButton.Height := ScaleY(36);
   PrimaryButton.Font.Style := [fsBold];
   PrimaryButton.Caption := T('Start');
   PrimaryButton.OnClick := @InstallLatest;
@@ -950,39 +970,45 @@ begin
   ApplyLanguageToForm;
 end;
 
+procedure InstallerActivated(Sender: TObject);
+begin
+  if AutoStartTriggered or Installing then
+    Exit;
+
+  AutoStartTriggered := True;
+
+  { Make it a normal app window: bring it to the foreground, but never
+    make it top-most. }
+  BringWindowToTop(WizardForm.Handle);
+  SetForegroundWindow(WizardForm.Handle);
+
+  { Paint the initial screen before the first network operation. }
+  StatusText.Caption := T('Checking');
+  VersionText.Caption := T('Progress');
+  DetailText.Caption := T('Progress');
+  ProgressBar.Position := 0;
+  WizardForm.Update;
+
+  InstallLatest(PrimaryButton);
+end;
+
 procedure InitializeWizard;
 begin
   PopulateTranslations;
   InitializeInstallerUi;
 
-  { Show the normal application window immediately. Do not use topmost
-    window state and do not perform network I/O in the startup handler. }
-  WizardForm.Show;
-  BringToFrontAndRestore;
-  WizardForm.Refresh;
+  AutoStartTriggered := False;
+
+  { Auto-start when the normal window becomes active. This gives Windows
+    a chance to paint the UI first, then starts manifest/payload work. }
+  WizardForm.OnActivate := @InstallerActivated;
+
   WizardForm.Update;
-
-  StatusText.Caption := T('Checking');
-  VersionText.Caption := T('Progress');
-  DetailText.Caption := T('Progress');
-  ProgressBar.Position := 0;
-  PrimaryButton.Enabled := False;
-  SecondaryButton.Enabled := True;
-
-  { Automatic installation starts only after the Windows message loop has
-    painted the window. This makes launch feel immediate while retaining
-    completely automatic update/install behavior. }
-  SetTimer(
-    WizardForm.Handle,
-    1,
-    600,
-    CreateCallback(@StartupInstallTimer));
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
-  { No network work here; automatic installation is started once from
-    InitializeWizard after the UI has been painted. }
+  { No network work here. }
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
