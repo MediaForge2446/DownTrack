@@ -157,6 +157,7 @@ var
   ManifestLoaded: Boolean;
   Installing: Boolean;
   AutoStartTriggered: Boolean;
+  LastPaintedProgress: Integer;
   CurrentLanguage: String;
   SelectedLanguageMode: String;
   Translations: TStringList;
@@ -418,13 +419,24 @@ function DownloadProgress(
   const Url, FileName: String;
   const Progress, ProgressMax: Int64): Boolean;
 var
+  P: Integer;
   DownloadedMb: Int64;
   TotalMb: Int64;
 begin
   Result := True;
+  P := 0;
 
   if ProgressMax > 0 then
-    ProgressBar.Position := (Progress * 100) div ProgressMax;
+    P := (Progress * 100) div ProgressMax;
+
+  { Repaint only when the visible percentage changes. This avoids the
+    jitter/flicker caused by repainting the entire Inno window for every
+    network callback. }
+  if (P = LastPaintedProgress) and (P < 100) then
+    Exit;
+
+  LastPaintedProgress := P;
+  ProgressBar.Position := P;
 
   DownloadedMb := Progress div 1048576;
   TotalMb := PayloadSize div 1048576;
@@ -998,17 +1010,19 @@ begin
   InitializeInstallerUi;
 
   AutoStartTriggered := False;
+  LastPaintedProgress := -1;
 
-  { Auto-start when the normal window becomes active. This gives Windows
-    a chance to paint the UI first, then starts manifest/payload work. }
-  WizardForm.OnActivate := @InstallerActivated;
-
+  { Normal application-style activation: bring this window to the front
+    once at launch, but do not use top-most mode. }
+  WizardForm.Show;
+  BringWindowToTop(WizardForm.Handle);
+  SetForegroundWindow(WizardForm.Handle);
+  WizardForm.SetFocus;
   WizardForm.Update;
-end;
 
-procedure CurPageChanged(CurPageID: Integer);
-begin
-  { No network work here. }
+  { Start automatically on activation; this keeps the first paint separate
+    from the network request. }
+  WizardForm.OnActivate := @InstallerActivated;
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
