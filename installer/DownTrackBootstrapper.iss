@@ -991,7 +991,6 @@ begin
       @DownloadProgress);
 
     StatusText.Caption := T('Verifying');
-    DetailText.Caption := PayloadSize div 1048576;
     DetailText.Caption :=
       IntToStr(PayloadSize div 1048576) + ' MB';
     ProgressBar.Position := 70;
