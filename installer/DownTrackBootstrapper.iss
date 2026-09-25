@@ -118,6 +118,10 @@ VersionInfoProductName=DownTrack
 VersionInfoCompany=MediaForge2446
 SetupIconFile=..\src\DownTrack.App\Assets\Brand\downtrack.ico
 
+
+[Files]
+Source: "DownTrackInstallerTranslations.txt"; Flags: dontcopy
+
 [Code]
 var
   ContentPanel: TPanel;
@@ -283,408 +287,48 @@ begin
 end;
 
 procedure PopulateTranslations;
+var
+  Lines: TArrayOfString;
+  I: Integer;
+  TranslationPath: String;
 begin
   Translations := TStringList.Create;
+  TranslationPath :=
+    ExpandConstant('{tmp}\\DownTrackInstallerTranslations.txt');
 
-  Translations.Add('en.Title=DownTrack');
-  Translations.Add('en.Tagline=Your media. Your library. Always up to date.');
-  Translations.Add('en.Language=Language');
-  Translations.Add('en.Automatic=Automatic (Windows)');
-  Translations.Add('en.Checking=Checking the latest version…');
-  Translations.Add('en.Latest=Latest version: %1');
-  Translations.Add('en.Downloading=Downloading DownTrack…');
-  Translations.Add('en.Verifying=Verifying your download…');
-  Translations.Add('en.Installing=Installing DownTrack…');
-  Translations.Add('en.Complete=DownTrack is ready.');
-  Translations.Add('en.UpToDate=You already have the latest version.');
-  Translations.Add('en.Start=Install latest version');
-  Translations.Add('en.Open=Open DownTrack');
-  Translations.Add('en.Retry=Try again');
-  Translations.Add('en.Close=Close');
-  Translations.Add('en.Error=We couldn’t complete the installation.');
-  Translations.Add('en.Progress=This will only take a few moments.');
-  Translations.Add('en.CloseDownTrack=Please close DownTrack and try again.');
+  try
+    ExtractTemporaryFile('DownTrackInstallerTranslations.txt');
 
-  Translations.Add('he.Title=DownTrack');
-  Translations.Add('he.Tagline=המדיה שלך. הספרייה שלך. תמיד מעודכנת.');
-  Translations.Add('he.Language=שפה');
-  Translations.Add('he.Automatic=אוטומטי (Windows)');
-  Translations.Add('he.Checking=בודק את הגרסה העדכנית ביותר…');
-  Translations.Add('he.Latest=הגרסה האחרונה: %1');
-  Translations.Add('he.Downloading=מוריד את DownTrack…');
-  Translations.Add('he.Verifying=מאמת את ההורדה…');
-  Translations.Add('he.Installing=מתקין את DownTrack…');
-  Translations.Add('he.Complete=DownTrack מוכן.');
-  Translations.Add('he.UpToDate=הגרסה העדכנית ביותר כבר מותקנת.');
-  Translations.Add('he.Start=התקן את הגרסה האחרונה');
-  Translations.Add('he.Open=פתח את DownTrack');
-  Translations.Add('he.Retry=נסה שוב');
-  Translations.Add('he.Close=סגור');
-  Translations.Add('he.Error=לא ניתן היה להשלים את ההתקנה.');
-  Translations.Add('he.Progress=זה ייקח רק כמה רגעים.');
-  Translations.Add('he.CloseDownTrack=סגור את DownTrack ונסה שוב.');
+    if not LoadStringsFromFile(TranslationPath, Lines) then
+      RaiseException('Could not load installer translations.');
 
-  Translations.Add('es.Title=DownTrack');
-  Translations.Add('es.Tagline=Tus medios. Tu biblioteca. Siempre actualizada.');
-  Translations.Add('es.Language=Idioma');
-  Translations.Add('es.Automatic=Automático (Windows)');
-  Translations.Add('es.Checking=Comprobando la versión más reciente…');
-  Translations.Add('es.Latest=Última versión: %1');
-  Translations.Add('es.Downloading=Descargando DownTrack…');
-  Translations.Add('es.Verifying=Verificando la descarga…');
-  Translations.Add('es.Installing=Instalando DownTrack…');
-  Translations.Add('es.Complete=DownTrack está listo.');
-  Translations.Add('es.UpToDate=Ya tienes la última versión.');
-  Translations.Add('es.Start=Instalar la última versión');
-  Translations.Add('es.Open=Abrir DownTrack');
-  Translations.Add('es.Retry=Intentar de nuevo');
-  Translations.Add('es.Close=Cerrar');
-  Translations.Add('es.Error=No se pudo completar la instalación.');
-  Translations.Add('es.Progress=Esto solo tardará unos momentos.');
-  Translations.Add('es.CloseDownTrack=Cierra DownTrack y vuelve a intentarlo.');
-
-  Translations.Add('fr.Title=DownTrack');
-  Translations.Add('fr.Tagline=Vos médias. Votre bibliothèque. Toujours à jour.');
-  Translations.Add('fr.Language=Langue');
-  Translations.Add('fr.Automatic=Automatique (Windows)');
-  Translations.Add('fr.Checking=Vérification de la dernière version…');
-  Translations.Add('fr.Latest=Dernière version : %1');
-  Translations.Add('fr.Downloading=Téléchargement de DownTrack…');
-  Translations.Add('fr.Verifying=Vérification du téléchargement…');
-  Translations.Add('fr.Installing=Installation de DownTrack…');
-  Translations.Add('fr.Complete=DownTrack est prêt.');
-  Translations.Add('fr.UpToDate=Vous avez déjà la dernière version.');
-  Translations.Add('fr.Start=Installer la dernière version');
-  Translations.Add('fr.Open=Ouvrir DownTrack');
-  Translations.Add('fr.Retry=Réessayer');
-  Translations.Add('fr.Close=Fermer');
-  Translations.Add('fr.Error=Impossible de terminer l’installation.');
-  Translations.Add('fr.Progress=Cela ne prendra que quelques instants.');
-  Translations.Add('fr.CloseDownTrack=Fermez DownTrack puis réessayez.');
-
-  Translations.Add('de.Title=DownTrack');
-  Translations.Add('de.Tagline=Deine Medien. Deine Bibliothek. Immer aktuell.');
-  Translations.Add('de.Language=Sprache');
-  Translations.Add('de.Automatic=Automatisch (Windows)');
-  Translations.Add('de.Checking=Neueste Version wird geprüft…');
-  Translations.Add('de.Latest=Neueste Version: %1');
-  Translations.Add('de.Downloading=DownTrack wird heruntergeladen…');
-  Translations.Add('de.Verifying=Download wird überprüft…');
-  Translations.Add('de.Installing=DownTrack wird installiert…');
-  Translations.Add('de.Complete=DownTrack ist bereit.');
-  Translations.Add('de.UpToDate=Die neueste Version ist bereits installiert.');
-  Translations.Add('de.Start=Neueste Version installieren');
-  Translations.Add('de.Open=DownTrack öffnen');
-  Translations.Add('de.Retry=Erneut versuchen');
-  Translations.Add('de.Close=Schließen');
-  Translations.Add('de.Error=Die Installation konnte nicht abgeschlossen werden.');
-  Translations.Add('de.Progress=Dies dauert nur wenige Augenblicke.');
-  Translations.Add('de.CloseDownTrack=Bitte DownTrack schließen und erneut versuchen.');
-
-  Translations.Add('it.Title=DownTrack');
-  Translations.Add('it.Tagline=I tuoi contenuti. La tua libreria. Sempre aggiornata.');
-  Translations.Add('it.Language=Lingua');
-  Translations.Add('it.Automatic=Automatico (Windows)');
-  Translations.Add('it.Checking=Controllo dell’ultima versione…');
-  Translations.Add('it.Latest=Ultima versione: %1');
-  Translations.Add('it.Downloading=Download di DownTrack…');
-  Translations.Add('it.Verifying=Verifica del download…');
-  Translations.Add('it.Installing=Installazione di DownTrack…');
-  Translations.Add('it.Complete=DownTrack è pronto.');
-  Translations.Add('it.UpToDate=Hai già l’ultima versione.');
-  Translations.Add('it.Start=Installa l’ultima versione');
-  Translations.Add('it.Open=Apri DownTrack');
-  Translations.Add('it.Retry=Riprova');
-  Translations.Add('it.Close=Chiudi');
-  Translations.Add('it.Error=Impossibile completare l’installazione.');
-  Translations.Add('it.Progress=Ci vorranno solo pochi istanti.');
-  Translations.Add('it.CloseDownTrack=Chiudi DownTrack e riprova.');
-
-  Translations.Add('pt.Title=DownTrack');
-  Translations.Add('pt.Tagline=Sua mídia. Sua biblioteca. Sempre atualizada.');
-  Translations.Add('pt.Language=Idioma');
-  Translations.Add('pt.Automatic=Automático (Windows)');
-  Translations.Add('pt.Checking=Verificando a versão mais recente…');
-  Translations.Add('pt.Latest=Versão mais recente: %1');
-  Translations.Add('pt.Downloading=Baixando o DownTrack…');
-  Translations.Add('pt.Verifying=Verificando o download…');
-  Translations.Add('pt.Installing=Instalando o DownTrack…');
-  Translations.Add('pt.Complete=O DownTrack está pronto.');
-  Translations.Add('pt.UpToDate=Você já tem a versão mais recente.');
-  Translations.Add('pt.Start=Instalar a versão mais recente');
-  Translations.Add('pt.Open=Abrir o DownTrack');
-  Translations.Add('pt.Retry=Tentar novamente');
-  Translations.Add('pt.Close=Fechar');
-  Translations.Add('pt.Error=Não foi possível concluir a instalação.');
-  Translations.Add('pt.Progress=Isso levará apenas alguns instantes.');
-  Translations.Add('pt.CloseDownTrack=Feche o DownTrack e tente novamente.');
-
-  Translations.Add('nl.Title=DownTrack');
-  Translations.Add('nl.Tagline=Jouw media. Jouw bibliotheek. Altijd actueel.');
-  Translations.Add('nl.Language=Taal');
-  Translations.Add('nl.Automatic=Automatisch (Windows)');
-  Translations.Add('nl.Checking=Laatste versie controleren…');
-  Translations.Add('nl.Latest=Nieuwste versie: %1');
-  Translations.Add('nl.Downloading=DownTrack downloaden…');
-  Translations.Add('nl.Verifying=Download controleren…');
-  Translations.Add('nl.Installing=DownTrack installeren…');
-  Translations.Add('nl.Complete=DownTrack is klaar.');
-  Translations.Add('nl.UpToDate=Je hebt al de nieuwste versie.');
-  Translations.Add('nl.Start=Nieuwste versie installeren');
-  Translations.Add('nl.Open=DownTrack openen');
-  Translations.Add('nl.Retry=Opnieuw proberen');
-  Translations.Add('nl.Close=Sluiten');
-  Translations.Add('nl.Error=De installatie kon niet worden voltooid.');
-  Translations.Add('nl.Progress=Dit duurt maar een paar momenten.');
-  Translations.Add('nl.CloseDownTrack=Sluit DownTrack en probeer het opnieuw.');
-
-  Translations.Add('pl.Title=DownTrack');
-  Translations.Add('pl.Tagline=Twoje media. Twoja biblioteka. Zawsze aktualne.');
-  Translations.Add('pl.Language=Język');
-  Translations.Add('pl.Automatic=Automatycznie (Windows)');
-  Translations.Add('pl.Checking=Sprawdzanie najnowszej wersji…');
-  Translations.Add('pl.Latest=Najnowsza wersja: %1');
-  Translations.Add('pl.Downloading=Pobieranie DownTrack…');
-  Translations.Add('pl.Verifying=Weryfikowanie pobranego pliku…');
-  Translations.Add('pl.Installing=Instalowanie DownTrack…');
-  Translations.Add('pl.Complete=DownTrack jest gotowy.');
-  Translations.Add('pl.UpToDate=Masz już najnowszą wersję.');
-  Translations.Add('pl.Start=Zainstaluj najnowszą wersję');
-  Translations.Add('pl.Open=Otwórz DownTrack');
-  Translations.Add('pl.Retry=Spróbuj ponownie');
-  Translations.Add('pl.Close=Zamknij');
-  Translations.Add('pl.Error=Nie udało się ukończyć instalacji.');
-  Translations.Add('pl.Progress=To potrwa tylko chwilę.');
-  Translations.Add('pl.CloseDownTrack=Zamknij DownTrack i spróbuj ponownie.');
-
-  Translations.Add('cs.Title=DownTrack');
-  Translations.Add('cs.Tagline=Vaše média. Vaše knihovna. Vždy aktuální.');
-  Translations.Add('cs.Language=Jazyk');
-  Translations.Add('cs.Automatic=Automaticky (Windows)');
-  Translations.Add('cs.Checking=Kontrola nejnovější verze…');
-  Translations.Add('cs.Latest=Nejnovější verze: %1');
-  Translations.Add('cs.Downloading=Stahování DownTrack…');
-  Translations.Add('cs.Verifying=Ověřování stažení…');
-  Translations.Add('cs.Installing=Instalace DownTrack…');
-  Translations.Add('cs.Complete=DownTrack je připraven.');
-  Translations.Add('cs.UpToDate=Nejnovější verzi už máte.');
-  Translations.Add('cs.Start=Instalovat nejnovější verzi');
-  Translations.Add('cs.Open=Otevřít DownTrack');
-  Translations.Add('cs.Retry=Zkusit znovu');
-  Translations.Add('cs.Close=Zavřít');
-  Translations.Add('cs.Error=Instalaci se nepodařilo dokončit.');
-  Translations.Add('cs.Progress=Zabere to jen pár okamžiků.');
-  Translations.Add('cs.CloseDownTrack=Zavřete DownTrack a zkuste to znovu.');
-
-  Translations.Add('tr.Title=DownTrack');
-  Translations.Add('tr.Tagline=Medyanız. Kitaplığınız. Her zaman güncel.');
-  Translations.Add('tr.Language=Dil');
-  Translations.Add('tr.Automatic=Otomatik (Windows)');
-  Translations.Add('tr.Checking=En yeni sürüm kontrol ediliyor…');
-  Translations.Add('tr.Latest=En yeni sürüm: %1');
-  Translations.Add('tr.Downloading=DownTrack indiriliyor…');
-  Translations.Add('tr.Verifying=İndirme doğrulanıyor…');
-  Translations.Add('tr.Installing=DownTrack yükleniyor…');
-  Translations.Add('tr.Complete=DownTrack hazır.');
-  Translations.Add('tr.UpToDate=Zaten en yeni sürüme sahipsiniz.');
-  Translations.Add('tr.Start=En yeni sürümü yükle');
-  Translations.Add('tr.Open=DownTrack’i aç');
-  Translations.Add('tr.Retry=Tekrar dene');
-  Translations.Add('tr.Close=Kapat');
-  Translations.Add('tr.Error=Yükleme tamamlanamadı.');
-  Translations.Add('tr.Progress=Bu yalnızca birkaç dakika sürecek.');
-  Translations.Add('tr.CloseDownTrack=DownTrack’i kapatıp tekrar deneyin.');
-
-  Translations.Add('uk.Title=DownTrack');
-  Translations.Add('uk.Tagline=Ваші медіа. Ваша бібліотека. Завжди актуальні.');
-  Translations.Add('uk.Language=Мова');
-  Translations.Add('uk.Automatic=Автоматично (Windows)');
-  Translations.Add('uk.Checking=Перевірка останньої версії…');
-  Translations.Add('uk.Latest=Остання версія: %1');
-  Translations.Add('uk.Downloading=Завантаження DownTrack…');
-  Translations.Add('uk.Verifying=Перевірка завантаження…');
-  Translations.Add('uk.Installing=Встановлення DownTrack…');
-  Translations.Add('uk.Complete=DownTrack готовий.');
-  Translations.Add('uk.UpToDate=У вас уже остання версія.');
-  Translations.Add('uk.Start=Встановити останню версію');
-  Translations.Add('uk.Open=Відкрити DownTrack');
-  Translations.Add('uk.Retry=Спробувати ще раз');
-  Translations.Add('uk.Close=Закрити');
-  Translations.Add('uk.Error=Не вдалося завершити встановлення.');
-  Translations.Add('uk.Progress=Це займе лише кілька хвилин.');
-  Translations.Add('uk.CloseDownTrack=Закрийте DownTrack і спробуйте ще раз.');
-
-  Translations.Add('ru.Title=DownTrack');
-  Translations.Add('ru.Tagline=Ваши медиа. Ваша библиотека. Всегда актуальны.');
-  Translations.Add('ru.Language=Язык');
-  Translations.Add('ru.Automatic=Автоматически (Windows)');
-  Translations.Add('ru.Checking=Проверка последней версии…');
-  Translations.Add('ru.Latest=Последняя версия: %1');
-  Translations.Add('ru.Downloading=Загрузка DownTrack…');
-  Translations.Add('ru.Verifying=Проверка загрузки…');
-  Translations.Add('ru.Installing=Установка DownTrack…');
-  Translations.Add('ru.Complete=DownTrack готов.');
-  Translations.Add('ru.UpToDate=У вас уже установлена последняя версия.');
-  Translations.Add('ru.Start=Установить последнюю версию');
-  Translations.Add('ru.Open=Открыть DownTrack');
-  Translations.Add('ru.Retry=Повторить');
-  Translations.Add('ru.Close=Закрыть');
-  Translations.Add('ru.Error=Не удалось завершить установку.');
-  Translations.Add('ru.Progress=Это займет всего несколько минут.');
-  Translations.Add('ru.CloseDownTrack=Закройте DownTrack и попробуйте снова.');
-
-  Translations.Add('ar.Title=DownTrack');
-  Translations.Add('ar.Tagline=وسائطك. مكتبتك. محدثة دائمًا.');
-  Translations.Add('ar.Language=اللغة');
-  Translations.Add('ar.Automatic=تلقائي (Windows)');
-  Translations.Add('ar.Checking=جارٍ التحقق من أحدث إصدار…');
-  Translations.Add('ar.Latest=أحدث إصدار: %1');
-  Translations.Add('ar.Downloading=جارٍ تنزيل DownTrack…');
-  Translations.Add('ar.Verifying=جارٍ التحقق من التنزيل…');
-  Translations.Add('ar.Installing=جارٍ تثبيت DownTrack…');
-  Translations.Add('ar.Complete=DownTrack جاهز.');
-  Translations.Add('ar.UpToDate=لديك بالفعل أحدث إصدار.');
-  Translations.Add('ar.Start=تثبيت أحدث إصدار');
-  Translations.Add('ar.Open=فتح DownTrack');
-  Translations.Add('ar.Retry=حاول مرة أخرى');
-  Translations.Add('ar.Close=إغلاق');
-  Translations.Add('ar.Error=تعذر إكمال التثبيت.');
-  Translations.Add('ar.Progress=لن يستغرق ذلك سوى بضع لحظات.');
-  Translations.Add('ar.CloseDownTrack=أغلق DownTrack وحاول مرة أخرى.');
-
-  Translations.Add('el.Title=DownTrack');
-  Translations.Add('el.Tagline=Τα πολυμέσα σας. Η βιβλιοθήκη σας. Πάντα ενημερωμένα.');
-  Translations.Add('el.Language=Γλώσσα');
-  Translations.Add('el.Automatic=Αυτόματα (Windows)');
-  Translations.Add('el.Checking=Έλεγχος της πιο πρόσφατης έκδοσης…');
-  Translations.Add('el.Latest=Τελευταία έκδοση: %1');
-  Translations.Add('el.Downloading=Λήψη DownTrack…');
-  Translations.Add('el.Verifying=Επαλήθευση λήψης…');
-  Translations.Add('el.Installing=Εγκατάσταση DownTrack…');
-  Translations.Add('el.Complete=Το DownTrack είναι έτοιμο.');
-  Translations.Add('el.UpToDate=Έχετε ήδη την πιο πρόσφατη έκδοση.');
-  Translations.Add('el.Start=Εγκατάσταση τελευταίας έκδοσης');
-  Translations.Add('el.Open=Άνοιγμα DownTrack');
-  Translations.Add('el.Retry=Δοκιμή ξανά');
-  Translations.Add('el.Close=Κλείσιμο');
-  Translations.Add('el.Error=Δεν ήταν δυνατή η ολοκλήρωση της εγκατάστασης.');
-  Translations.Add('el.Progress=Θα χρειαστούν μόνο λίγα λεπτά.');
-  Translations.Add('el.CloseDownTrack=Κλείστε το DownTrack και δοκιμάστε ξανά.');
-
-  Translations.Add('ro.Title=DownTrack');
-  Translations.Add('ro.Tagline=Media ta. Biblioteca ta. Mereu actualizată.');
-  Translations.Add('ro.Language=Limbă');
-  Translations.Add('ro.Automatic=Automat (Windows)');
-  Translations.Add('ro.Checking=Se verifică cea mai recentă versiune…');
-  Translations.Add('ro.Latest=Cea mai recentă versiune: %1');
-  Translations.Add('ro.Downloading=Se descarcă DownTrack…');
-  Translations.Add('ro.Verifying=Se verifică descărcarea…');
-  Translations.Add('ro.Installing=Se instalează DownTrack…');
-  Translations.Add('ro.Complete=DownTrack este gata.');
-  Translations.Add('ro.UpToDate=Aveți deja cea mai recentă versiune.');
-  Translations.Add('ro.Start=Instalează cea mai recentă versiune');
-  Translations.Add('ro.Open=Deschide DownTrack');
-  Translations.Add('ro.Retry=Încearcă din nou');
-  Translations.Add('ro.Close=Închide');
-  Translations.Add('ro.Error=Instalarea nu a putut fi finalizată.');
-  Translations.Add('ro.Progress=Va dura doar câteva momente.');
-  Translations.Add('ro.CloseDownTrack=Închide DownTrack și încearcă din nou.');
-
-  Translations.Add('ja.Title=DownTrack');
-  Translations.Add('ja.Tagline=あなたのメディア。あなたのライブラリ。いつでも最新。');
-  Translations.Add('ja.Language=言語');
-  Translations.Add('ja.Automatic=自動（Windows）');
-  Translations.Add('ja.Checking=最新バージョンを確認しています…');
-  Translations.Add('ja.Latest=最新バージョン: %1');
-  Translations.Add('ja.Downloading=DownTrackをダウンロードしています…');
-  Translations.Add('ja.Verifying=ダウンロードを確認しています…');
-  Translations.Add('ja.Installing=DownTrackをインストールしています…');
-  Translations.Add('ja.Complete=DownTrackの準備ができました。');
-  Translations.Add('ja.UpToDate=すでに最新バージョンです。');
-  Translations.Add('ja.Start=最新バージョンをインストール');
-  Translations.Add('ja.Open=DownTrackを開く');
-  Translations.Add('ja.Retry=もう一度試す');
-  Translations.Add('ja.Close=閉じる');
-  Translations.Add('ja.Error=インストールを完了できませんでした。');
-  Translations.Add('ja.Progress=完了まであと少しです。');
-  Translations.Add('ja.CloseDownTrack=DownTrackを閉じて、もう一度お試しください。');
-
-  Translations.Add('ko.Title=DownTrack');
-  Translations.Add('ko.Tagline=내 미디어. 내 라이브러리. 항상 최신 상태.');
-  Translations.Add('ko.Language=언어');
-  Translations.Add('ko.Automatic=자동 (Windows)');
-  Translations.Add('ko.Checking=최신 버전을 확인하는 중…');
-  Translations.Add('ko.Latest=최신 버전: %1');
-  Translations.Add('ko.Downloading=DownTrack을 다운로드하는 중…');
-  Translations.Add('ko.Verifying=다운로드를 확인하는 중…');
-  Translations.Add('ko.Installing=DownTrack을 설치하는 중…');
-  Translations.Add('ko.Complete=DownTrack을 사용할 준비가 되었습니다.');
-  Translations.Add('ko.UpToDate=이미 최신 버전이 설치되어 있습니다.');
-  Translations.Add('ko.Start=최신 버전 설치');
-  Translations.Add('ko.Open=DownTrack 열기');
-  Translations.Add('ko.Retry=다시 시도');
-  Translations.Add('ko.Close=닫기');
-  Translations.Add('ko.Error=설치를 완료하지 못했습니다.');
-  Translations.Add('ko.Progress=잠시만 기다려 주세요.');
-  Translations.Add('ko.CloseDownTrack=DownTrack을 닫고 다시 시도하세요.');
-
-  Translations.Add('zhcn.Title=DownTrack');
-  Translations.Add('zhcn.Tagline=你的媒体。你的媒体库。始终保持最新。');
-  Translations.Add('zhcn.Language=语言');
-  Translations.Add('zhcn.Automatic=自动（Windows）');
-  Translations.Add('zhcn.Checking=正在检查最新版本…');
-  Translations.Add('zhcn.Latest=最新版本：%1');
-  Translations.Add('zhcn.Downloading=正在下载 DownTrack…');
-  Translations.Add('zhcn.Verifying=正在验证下载…');
-  Translations.Add('zhcn.Installing=正在安装 DownTrack…');
-  Translations.Add('zhcn.Complete=DownTrack 已准备就绪。');
-  Translations.Add('zhcn.UpToDate=你已经拥有最新版本。');
-  Translations.Add('zhcn.Start=安装最新版本');
-  Translations.Add('zhcn.Open=打开 DownTrack');
-  Translations.Add('zhcn.Retry=重试');
-  Translations.Add('zhcn.Close=关闭');
-  Translations.Add('zhcn.Error=无法完成安装。');
-  Translations.Add('zhcn.Progress=只需等待片刻。');
-  Translations.Add('zhcn.CloseDownTrack=请关闭 DownTrack 后重试。');
-
-  Translations.Add('zhtw.Title=DownTrack');
-  Translations.Add('zhtw.Tagline=你的媒體。你的資料庫。永遠保持最新。');
-  Translations.Add('zhtw.Language=語言');
-  Translations.Add('zhtw.Automatic=自動（Windows）');
-  Translations.Add('zhtw.Checking=正在檢查最新版本…');
-  Translations.Add('zhtw.Latest=最新版本：%1');
-  Translations.Add('zhtw.Downloading=正在下載 DownTrack…');
-  Translations.Add('zhtw.Verifying=正在驗證下載…');
-  Translations.Add('zhtw.Installing=正在安裝 DownTrack…');
-  Translations.Add('zhtw.Complete=DownTrack 已準備就緒。');
-  Translations.Add('zhtw.UpToDate=你已經擁有最新版本。');
-  Translations.Add('zhtw.Start=安裝最新版本');
-  Translations.Add('zhtw.Open=開啟 DownTrack');
-  Translations.Add('zhtw.Retry=重試');
-  Translations.Add('zhtw.Close=關閉');
-  Translations.Add('zhtw.Error=無法完成安裝。');
-  Translations.Add('zhtw.Progress=只需要稍候片刻。');
-  Translations.Add('zhtw.CloseDownTrack=請關閉 DownTrack 後再試一次。');
+    for I := 0 to GetArrayLength(Lines) - 1 do
+      if Trim(Lines[I]) <> '' then
+        Translations.Add(Lines[I]);
+  except
+    Log(GetExceptionMessage);
+  end;
 end;
-
-function SetForegroundWindow(hWnd: HWND): Boolean;
-external 'SetForegroundWindow@user32.dll stdcall';
-
-function BringWindowToTop(hWnd: HWND): Boolean;
-external 'BringWindowToTop@user32.dll stdcall';
-
-function ShowWindow(hWnd: HWND; nCmdShow: Integer): Boolean;
-external 'ShowWindow@user32.dll stdcall';
 
 function SetTimer(
   hWnd: HWND;
   nIDEvent: UINT_PTR;
   uElapse: UINT;
-  lpTimerFunc: Integer): UINT_PTR;
+  lpTimerFunc: NativeInt): UINT_PTR;
 external 'SetTimer@user32.dll stdcall';
 
 function KillTimer(hWnd: HWND; uIDEvent: UINT_PTR): Boolean;
 external 'KillTimer@user32.dll stdcall';
+
+procedure StartupInstallTimer(
+  hWnd: HWND;
+  Msg: UINT;
+  TimerId: UINT_PTR;
+  Tick: DWORD);
+begin
+  KillTimer(hWnd, TimerId);
+  InstallLatest(nil);
+end;
 
 procedure ApplyLanguageToForm;
 var
@@ -1311,15 +955,12 @@ begin
   PopulateTranslations;
   InitializeInstallerUi;
 
-  { Paint the single DownTrack window before any network operation. }
+  { Show the normal application window immediately. Do not use topmost
+    window state and do not perform network I/O in the startup handler. }
   WizardForm.Show;
-  WizardForm.BringToFront;
-  BringWindowToTop(WizardForm.Handle);
-  SetForegroundWindow(WizardForm.Handle);
+  BringToFrontAndRestore;
   WizardForm.Refresh;
   WizardForm.Update;
-  Sleep(250);
-  WizardForm.Refresh;
 
   StatusText.Caption := T('Checking');
   VersionText.Caption := T('Progress');
@@ -1328,8 +969,14 @@ begin
   PrimaryButton.Enabled := False;
   SecondaryButton.Enabled := True;
 
-  { Automatic startup: no user click is required. }
-  InstallLatest(nil);
+  { Automatic installation starts only after the Windows message loop has
+    painted the window. This makes launch feel immediate while retaining
+    completely automatic update/install behavior. }
+  SetTimer(
+    WizardForm.Handle,
+    1,
+    600,
+    CreateCallback(@StartupInstallTimer));
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
