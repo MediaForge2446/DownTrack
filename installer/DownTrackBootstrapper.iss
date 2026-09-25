@@ -692,7 +692,6 @@ procedure ActivateInstallerWindow;
 begin
   WizardForm.Show;
   WizardForm.BringToFront;
-  WizardForm.SetFocus;
   BringWindowToTop(WizardForm.Handle);
   SetForegroundWindow(WizardForm.Handle);
   ShowWindow(WizardForm.Handle, 5);
