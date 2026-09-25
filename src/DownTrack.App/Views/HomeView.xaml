@@ -17,8 +17,7 @@
                 <TextBlock Text="{loc:Loc Key=Library.Overline}"
                            FontSize="10"
                            FontWeight="Bold"
-                           Foreground="{DynamicResource AccentBlueBrush}"
-                           CharacterSpacing="80"/>
+                           Foreground="{DynamicResource AccentBlueBrush}"/>
                 <TextBlock Text="{loc:Loc Key=Library.Title}"
                            Margin="0,7,0,0"
                            FontSize="32"
