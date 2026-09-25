@@ -119,15 +119,13 @@ VersionInfoCompany=MediaForge2446
 
 [Code]
 var
-  InstallerForm: TSetupForm;
   ContentPanel: TPanel;
-  HeroPanel: TPanel;
-  LogoMark: TPanel;
-  LogoMarkText: TNewStaticText;
   HeaderPanel: TPanel;
   BodyPanel: TPanel;
   AccentBar: TPanel;
   FooterPanel: TPanel;
+  LogoMark: TPanel;
+  LogoMarkText: TNewStaticText;
   LogoText: TNewStaticText;
   TaglineText: TNewStaticText;
   LanguageLabel: TNewStaticText;
@@ -704,16 +702,16 @@ begin
     TaglineText.Alignment := taRightJustify;
     LanguageLabel.Alignment := taRightJustify;
 
-    AccentBar.Left := InstallerForm.ClientWidth - ScaleX(39);
-    LogoMark.Left := InstallerForm.ClientWidth - ScaleX(94);
-    LogoText.Left := InstallerForm.ClientWidth - ScaleX(368);
-    TaglineText.Left := InstallerForm.ClientWidth - ScaleX(469);
+    AccentBar.Left := WizardForm.ClientWidth - ScaleX(39);
+    LogoMark.Left := WizardForm.ClientWidth - ScaleX(94);
+    LogoText.Left := WizardForm.ClientWidth - ScaleX(368);
+    TaglineText.Left := WizardForm.ClientWidth - ScaleX(469);
     LanguageCombo.Left := ScaleX(45);
     LanguageLabel.Left := ScaleX(220);
   end;
 
-  InstallerForm.Caption := T('Title');
-  InstallerForm.Update;
+  WizardForm.Caption := T('Title');
+  WizardForm.Update;
 end;
 
 procedure LanguageChanged(Sender: TObject);
@@ -1063,119 +1061,113 @@ begin
   WizardForm.Close;
 end;
 
-procedure InstallerFormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  if Installing then
-  begin
-    Action := caNone;
-    Exit;
-  end;
-
-  Action := caHide;
-  WizardForm.Close;
-end;
-
 procedure InitializeInstallerUi;
 var
   SavedMode: String;
   I: Integer;
 begin
-  { Completely separate presentation window. We keep the Inno wizard hidden
-    and use only the custom form, so none of Inno's standard navigation UI
-    can leak into the DownTrack experience. }
+  { The actual Inno wizard window is completely restyled as DownTrack.
+    This guarantees that there is exactly ONE visible installer window. }
 
-  InstallerForm :=
-    CreateCustomForm(900, 560, False, False);
-  InstallerForm.Caption := 'DownTrack';
-  InstallerForm.Color := $00F7F9FC;
-  InstallerForm.BorderStyle := bsSingle;
-  InstallerForm.BorderIcons := [biSystemMenu];
-  InstallerForm.Position := poScreenCenter;
-  InstallerForm.Font.Name := 'Segoe UI';
-  InstallerForm.Font.Size := 9;
-  InstallerForm.OnClose := @InstallerFormClose;
-  InstallerForm.FlipControlsOnShow := False;
+  WizardForm.ClientWidth := ScaleX(880);
+  WizardForm.ClientHeight := ScaleY(540);
+  WizardForm.Position := poScreenCenter;
+  WizardForm.Caption := 'DownTrack';
+  WizardForm.Color := $00F7F9FC;
+  WizardForm.Font.Name := 'Segoe UI';
+  WizardForm.Font.Size := 9;
 
-  ContentPanel := TPanel.Create(InstallerForm);
-  ContentPanel.Parent := InstallerForm;
+  { Hide every stock wizard element that can appear over our UI. }
+  WizardForm.NextButton.Visible := False;
+  WizardForm.BackButton.Visible := False;
+  WizardForm.CancelButton.Visible := False;
+  WizardForm.WizardBitmapImage.Visible := False;
+  WizardForm.WizardBitmapImage2.Visible := False;
+  WizardForm.WizardSmallBitmapImage.Visible := False;
+  WizardForm.WelcomeLabel1.Visible := False;
+  WizardForm.WelcomeLabel2.Visible := False;
+  WizardForm.BeveledLabel.Visible := False;
+
+  { Full-window canvas; bring it above the stock wizard controls. }
+  ContentPanel := TPanel.Create(WizardForm);
+  ContentPanel.Parent := WizardForm;
   ContentPanel.Left := 0;
   ContentPanel.Top := 0;
-  ContentPanel.Width := InstallerForm.ClientWidth;
-  ContentPanel.Height := InstallerForm.ClientHeight;
+  ContentPanel.Width := WizardForm.ClientWidth;
+  ContentPanel.Height := WizardForm.ClientHeight;
   ContentPanel.BevelOuter := bvNone;
   ContentPanel.Color := $00F7F9FC;
+  ContentPanel.BringToFront;
 
-  HeaderPanel := TPanel.Create(InstallerForm);
+  HeaderPanel := TPanel.Create(WizardForm);
   HeaderPanel.Parent := ContentPanel;
-  HeaderPanel.Left := 0;
-  HeaderPanel.Top := 0;
-  HeaderPanel.Width := InstallerForm.ClientWidth;
-  HeaderPanel.Height := ScaleY(74);
+  HeaderPanel.Align := alTop;
+  HeaderPanel.Height := ScaleY(78);
   HeaderPanel.BevelOuter := bvNone;
   HeaderPanel.Color := $00FFFFFF;
 
-  AccentBar := TPanel.Create(InstallerForm);
-  AccentBar.Parent := ContentPanel;
-  AccentBar.Left := ScaleX(34);
-  AccentBar.Top := ScaleY(18);
+  AccentBar := TPanel.Create(WizardForm);
+  AccentBar.Parent := HeaderPanel;
+  AccentBar.Left := ScaleX(30);
+  AccentBar.Top := ScaleY(19);
   AccentBar.Width := ScaleX(5);
-  AccentBar.Height := ScaleY(38);
+  AccentBar.Height := ScaleY(40);
   AccentBar.BevelOuter := bvNone;
   AccentBar.Color := $007B61FF;
 
-  LogoMark := TPanel.Create(InstallerForm);
-  LogoMark.Parent := ContentPanel;
-  LogoMark.Left := ScaleX(54);
+  LogoMark := TPanel.Create(WizardForm);
+  LogoMark.Parent := HeaderPanel;
+  LogoMark.Left := ScaleX(50);
   LogoMark.Top := ScaleY(17);
   LogoMark.Width := ScaleX(40);
   LogoMark.Height := ScaleY(40);
   LogoMark.BevelOuter := bvNone;
-  LogoMark.Color := $007B61FF;
+  LogoMark.Color := $00FF547B;
 
-  LogoMarkText := TNewStaticText.Create(InstallerForm);
+  LogoMarkText := TNewStaticText.Create(WizardForm);
   LogoMarkText.Parent := LogoMark;
   LogoMarkText.Left := 0;
   LogoMarkText.Top := ScaleY(5);
   LogoMarkText.Width := LogoMark.Width;
-  LogoMarkText.Height := ScaleY(30);
+  LogoMarkText.Height := ScaleY(29);
   LogoMarkText.Alignment := taCenter;
-  LogoMarkText.Font.Size := 18;
+  LogoMarkText.Font.Size := 17;
   LogoMarkText.Font.Style := [fsBold];
   LogoMarkText.Font.Color := $00FFFFFF;
   LogoMarkText.Caption := 'D';
 
-  LogoText := TNewStaticText.Create(InstallerForm);
-  LogoText.Parent := ContentPanel;
-  LogoText.Left := ScaleX(108);
-  LogoText.Top := ScaleY(17);
+  LogoText := TNewStaticText.Create(WizardForm);
+  LogoText.Parent := HeaderPanel;
+  LogoText.Left := ScaleX(104);
+  LogoText.Top := ScaleY(15);
   LogoText.Width := ScaleX(260);
-  LogoText.Height := ScaleY(30);
+  LogoText.Height := ScaleY(28);
   LogoText.Font.Size := 19;
   LogoText.Font.Style := [fsBold];
 
-  TaglineText := TNewStaticText.Create(InstallerForm);
-  TaglineText.Parent := ContentPanel;
-  TaglineText.Left := ScaleX(109);
-  TaglineText.Top := ScaleY(45);
-  TaglineText.Width := ScaleX(400);
+  TaglineText := TNewStaticText.Create(WizardForm);
+  TaglineText.Parent := HeaderPanel;
+  TaglineText.Left := ScaleX(105);
+  TaglineText.Top := ScaleY(43);
+  TaglineText.Width := ScaleX(430);
   TaglineText.Height := ScaleY(18);
   TaglineText.Font.Size := 8;
   TaglineText.Font.Color := $0069788A;
 
-  LanguageLabel := TNewStaticText.Create(InstallerForm);
-  LanguageLabel.Parent := ContentPanel;
-  LanguageLabel.Left := ScaleX(610);
+  LanguageLabel := TNewStaticText.Create(WizardForm);
+  LanguageLabel.Parent := HeaderPanel;
+  LanguageLabel.Left := ScaleX(612);
   LanguageLabel.Top := ScaleY(21);
-  LanguageLabel.Width := ScaleX(70);
+  LanguageLabel.Width := ScaleX(60);
   LanguageLabel.Height := ScaleY(18);
   LanguageLabel.Font.Size := 8;
   LanguageLabel.Font.Color := $0069788A;
 
-  LanguageCombo := TNewComboBox.Create(InstallerForm);
-  LanguageCombo.Parent := ContentPanel;
-  LanguageCombo.Left := ScaleX(685);
+  LanguageCombo := TNewComboBox.Create(WizardForm);
+  LanguageCombo.Parent := HeaderPanel;
+  LanguageCombo.Left := ScaleX(680);
   LanguageCombo.Top := ScaleY(16);
-  LanguageCombo.Width := ScaleX(170);
+  LanguageCombo.Width := ScaleX(165);
   LanguageCombo.Height := ScaleY(30);
   LanguageCombo.Style := csDropDownList;
   LanguageCombo.DropDownCount := 12;
@@ -1203,88 +1195,77 @@ begin
   LanguageCombo.Items.Add('简体中文');
   LanguageCombo.Items.Add('繁體中文');
 
-  HeroPanel := TPanel.Create(InstallerForm);
-  HeroPanel.Parent := ContentPanel;
-  HeroPanel.Left := ScaleX(34);
-  HeroPanel.Top := ScaleY(105);
-  HeroPanel.Width := InstallerForm.ClientWidth - ScaleX(68);
-  HeroPanel.Height := ScaleY(320);
-  HeroPanel.BevelOuter := bvNone;
-  HeroPanel.Color := $00FFFFFF;
-
-  BodyPanel := TPanel.Create(InstallerForm);
-  BodyPanel.Parent := HeroPanel;
-  BodyPanel.Left := ScaleX(1);
-  BodyPanel.Top := ScaleY(1);
-  BodyPanel.Width := HeroPanel.Width - ScaleX(2);
-  BodyPanel.Height := HeroPanel.Height - ScaleY(2);
+  BodyPanel := TPanel.Create(WizardForm);
+  BodyPanel.Parent := ContentPanel;
+  BodyPanel.Left := ScaleX(34);
+  BodyPanel.Top := ScaleY(102);
+  BodyPanel.Width := ContentPanel.Width - ScaleX(68);
+  BodyPanel.Height := ScaleY(315);
   BodyPanel.BevelOuter := bvNone;
   BodyPanel.Color := $00FFFFFF;
 
-  StatusText := TNewStaticText.Create(InstallerForm);
-  StatusText.Parent := HeroPanel;
-  StatusText.Left := ScaleX(44);
-  StatusText.Top := ScaleY(88);
-  StatusText.Width := HeroPanel.Width - ScaleX(88);
+  StatusText := TNewStaticText.Create(WizardForm);
+  StatusText.Parent := BodyPanel;
+  StatusText.Left := ScaleX(35);
+  StatusText.Top := ScaleY(83);
+  StatusText.Width := BodyPanel.Width - ScaleX(70);
   StatusText.Height := ScaleY(36);
   StatusText.Alignment := taCenter;
-  StatusText.Font.Size := 16;
+  StatusText.Font.Size := 17;
   StatusText.Font.Style := [fsBold];
 
-  VersionText := TNewStaticText.Create(InstallerForm);
-  VersionText.Parent := HeroPanel;
-  VersionText.Left := ScaleX(44);
-  VersionText.Top := ScaleY(130);
-  VersionText.Width := HeroPanel.Width - ScaleX(88);
-  VersionText.Height := ScaleY(24);
+  VersionText := TNewStaticText.Create(WizardForm);
+  VersionText.Parent := BodyPanel;
+  VersionText.Left := ScaleX(35);
+  VersionText.Top := ScaleY(126);
+  VersionText.Width := BodyPanel.Width - ScaleX(70);
+  VersionText.Height := ScaleY(25);
   VersionText.Alignment := taCenter;
   VersionText.Font.Size := 10;
   VersionText.Font.Color := $0069788A;
 
-  DetailText := TNewStaticText.Create(InstallerForm);
-  DetailText.Parent := HeroPanel;
-  DetailText.Left := ScaleX(44);
-  DetailText.Top := ScaleY(169);
-  DetailText.Width := HeroPanel.Width - ScaleX(88);
-  DetailText.Height := ScaleY(22);
+  DetailText := TNewStaticText.Create(WizardForm);
+  DetailText.Parent := BodyPanel;
+  DetailText.Left := ScaleX(35);
+  DetailText.Top := ScaleY(165);
+  DetailText.Width := BodyPanel.Width - ScaleX(70);
+  DetailText.Height := ScaleY(24);
   DetailText.Alignment := taCenter;
   DetailText.Font.Size := 9;
   DetailText.Font.Color := $007B61FF;
 
-  ProgressBar := TNewProgressBar.Create(InstallerForm);
-  ProgressBar.Parent := HeroPanel;
-  ProgressBar.Left := ScaleX(72);
-  ProgressBar.Top := ScaleY(211);
-  ProgressBar.Width := HeroPanel.Width - ScaleX(144);
+  ProgressBar := TNewProgressBar.Create(WizardForm);
+  ProgressBar.Parent := BodyPanel;
+  ProgressBar.Left := ScaleX(70);
+  ProgressBar.Top := ScaleY(210);
+  ProgressBar.Width := BodyPanel.Width - ScaleX(140);
   ProgressBar.Height := ScaleY(10);
   ProgressBar.Min := 0;
   ProgressBar.Max := 100;
   ProgressBar.Position := 0;
 
-  FooterPanel := TPanel.Create(InstallerForm);
+  FooterPanel := TPanel.Create(WizardForm);
   FooterPanel.Parent := ContentPanel;
-  FooterPanel.Left := 0;
-  FooterPanel.Top := ScaleY(455);
-  FooterPanel.Width := InstallerForm.ClientWidth;
-  FooterPanel.Height := ScaleY(105);
+  FooterPanel.Align := alBottom;
+  FooterPanel.Height := ScaleY(101);
   FooterPanel.BevelOuter := bvNone;
-  FooterPanel.Color := $00F0F3F9;
+  FooterPanel.Color := $00EEF2F8;
 
-  SecondaryButton := TNewButton.Create(InstallerForm);
+  SecondaryButton := TNewButton.Create(WizardForm);
   SecondaryButton.Parent := FooterPanel;
-  SecondaryButton.Left := FooterPanel.Width - ScaleX(304);
-  SecondaryButton.Top := ScaleY(28);
-  SecondaryButton.Width := ScaleX(108);
-  SecondaryButton.Height := ScaleY(40);
+  SecondaryButton.Left := FooterPanel.Width - ScaleX(310);
+  SecondaryButton.Top := ScaleY(30);
+  SecondaryButton.Width := ScaleX(105);
+  SecondaryButton.Height := ScaleY(38);
   SecondaryButton.Caption := T('Close');
   SecondaryButton.OnClick := @CloseInstaller;
 
-  PrimaryButton := TNewButton.Create(InstallerForm);
+  PrimaryButton := TNewButton.Create(WizardForm);
   PrimaryButton.Parent := FooterPanel;
-  PrimaryButton.Left := FooterPanel.Width - ScaleX(184);
-  PrimaryButton.Top := ScaleY(28);
-  PrimaryButton.Width := ScaleX(150);
-  PrimaryButton.Height := ScaleY(40);
+  PrimaryButton.Left := FooterPanel.Width - ScaleX(192);
+  PrimaryButton.Top := ScaleY(30);
+  PrimaryButton.Width := ScaleX(160);
+  PrimaryButton.Height := ScaleY(38);
   PrimaryButton.Font.Style := [fsBold];
   PrimaryButton.Caption := T('Start');
   PrimaryButton.OnClick := @InstallLatest;
@@ -1300,9 +1281,7 @@ begin
   if not SameText(SavedMode, 'auto') then
   begin
     while (I < 20) and
-      not SameText(
-        LangCodeFromIndex(I + 1),
-        SavedMode) do
+      not SameText(LangCodeFromIndex(I + 1), SavedMode) do
       I := I + 1;
     I := I + 1;
   end;
@@ -1316,20 +1295,18 @@ begin
   PopulateTranslations;
   InitializeInstallerUi;
 
-  { Never show the stock Inno wizard. The DownTrack window is the only UI
-    exposed to the user. }
-  WizardForm.Hide;
-  InstallerForm.Show;
-  InstallerForm.Update;
-
+  { The single native wizard window is our UI. Network I/O begins only
+    after the user presses Install. }
+  WizardForm.Update;
   StatusText.Caption := T('Checking');
+  VersionText.Caption := T('Progress');
   DetailText.Caption := T('Progress');
   ProgressBar.Position := 0;
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
-  { No-op by design. Network work starts only from the user's Install button. }
+  { Deliberately empty: no network work during page lifecycle events. }
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
