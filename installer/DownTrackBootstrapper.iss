@@ -147,8 +147,6 @@ var
   CurrentLanguage: String;
   SelectedLanguageMode: String;
   Translations: TStringList;
-  AutoStartTimerId: UINT_PTR;
-  AutoStartStarted: Boolean;
 
 procedure InstallLatest(Sender: TObject); forward;
 
@@ -688,36 +686,6 @@ external 'SetTimer@user32.dll stdcall';
 function KillTimer(hWnd: HWND; uIDEvent: UINT_PTR): Boolean;
 external 'KillTimer@user32.dll stdcall';
 
-procedure ActivateInstallerWindow;
-begin
-  WizardForm.Show;
-  WizardForm.BringToFront;
-  BringWindowToTop(WizardForm.Handle);
-  SetForegroundWindow(WizardForm.Handle);
-  ShowWindow(WizardForm.Handle, 5);
-  WizardForm.Update;
-end;
-
-procedure AutoStartTimerProc(
-  hWnd: HWND;
-  uMsg: UINT;
-  idEvent: UINT_PTR;
-  dwTime: DWORD);
-begin
-  if idEvent <> AutoStartTimerId then
-    Exit;
-
-  KillTimer(0, AutoStartTimerId);
-  AutoStartTimerId := 0;
-
-  if AutoStartStarted then
-    Exit;
-
-  AutoStartStarted := True;
-  ActivateInstallerWindow;
-  InstallLatest(nil);
-end;
-
 procedure ApplyLanguageToForm;
 var
   Rtl: Boolean;
@@ -781,7 +749,7 @@ begin
 
   SaveLanguageMode(SelectedLanguageMode);
   ApplyLanguageToForm;
-  if not Installing and AutoStartStarted then
+  if not Installing then
     PrimaryButton.Enabled := True;
 end;
 
@@ -1343,28 +1311,31 @@ begin
   PopulateTranslations;
   InitializeInstallerUi;
 
-  AutoStartStarted := False;
+  { Paint the single DownTrack window before any network operation. }
+  WizardForm.Show;
+  WizardForm.BringToFront;
+  BringWindowToTop(WizardForm.Handle);
+  SetForegroundWindow(WizardForm.Handle);
+  WizardForm.Refresh;
+  WizardForm.Update;
+  Sleep(250);
+  WizardForm.Refresh;
+
   StatusText.Caption := T('Checking');
   VersionText.Caption := T('Progress');
   DetailText.Caption := T('Progress');
   ProgressBar.Position := 0;
-  PrimaryButton.Visible := False;
+  PrimaryButton.Enabled := False;
+  SecondaryButton.Enabled := True;
 
-  { Show and activate the single normal application window FIRST. }
-  ActivateInstallerWindow;
-
-  { Only after the window is painted do we schedule the automatic check/download. }
-  AutoStartTimerId :=
-    SetTimer(
-      0,
-      0,
-      700,
-      CreateCallback(@AutoStartTimerProc));
+  { Automatic startup: no user click is required. }
+  InstallLatest(nil);
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
-  { No page navigation UI is used; network work is never started here. }
+  { No network work here; automatic installation is started once from
+    InitializeWizard after the UI has been painted. }
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
