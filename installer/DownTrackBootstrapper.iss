@@ -1093,6 +1093,156 @@ begin
 
   InstallerPage.Surface.Color := $00F7F8FC;
 
+  HeaderPanel := TPanel.Create(InstallerPage.Surface);
+  HeaderPanel.Parent := InstallerPage.Surface;
+  HeaderPanel.Left := 0;
+  HeaderPanel.Top := 0;
+  HeaderPanel.Width := InstallerPage.Surface.ClientWidth;
+  HeaderPanel.Height := ScaleY(92);
+  HeaderPanel.BevelOuter := bvNone;
+  HeaderPanel.Color := $00FFFFFF;
+
+  AccentBar := TPanel.Create(InstallerPage.Surface);
+  AccentBar.Parent := InstallerPage.Surface;
+  AccentBar.Left := ScaleX(28);
+  AccentBar.Top := ScaleY(24);
+  AccentBar.Width := ScaleX(6);
+  AccentBar.Height := ScaleY(44);
+  AccentBar.BevelOuter := bvNone;
+  AccentBar.Color := $007B61FF;
+
+  LogoText := TNewStaticText.Create(InstallerPage.Surface);
+  LogoText.Parent := InstallerPage.Surface;
+  LogoText.Left := ScaleX(52);
+  LogoText.Top := ScaleY(18);
+  LogoText.Width := ScaleX(350);
+  LogoText.Height := ScaleY(34);
+  LogoText.Font.Size := 23;
+  LogoText.Font.Style := [fsBold];
+
+  TaglineText := TNewStaticText.Create(InstallerPage.Surface);
+  TaglineText.Parent := InstallerPage.Surface;
+  TaglineText.Left := ScaleX(53);
+  TaglineText.Top := ScaleY(53);
+  TaglineText.Width := ScaleX(430);
+  TaglineText.Height := ScaleY(22);
+  TaglineText.Font.Size := 9;
+  TaglineText.Font.Color := $0069788A;
+  TaglineText.WordWrap := True;
+
+  LanguageLabel := TNewStaticText.Create(InstallerPage.Surface);
+  LanguageLabel.Parent := InstallerPage.Surface;
+  LanguageLabel.Left := ScaleX(520);
+  LanguageLabel.Top := ScaleY(22);
+  LanguageLabel.Width := ScaleX(58);
+  LanguageLabel.Height := ScaleY(20);
+  LanguageLabel.Font.Size := 8;
+  LanguageLabel.Font.Color := $0069788A;
+
+  LanguageCombo := TNewComboBox.Create(InstallerPage.Surface);
+  LanguageCombo.Parent := InstallerPage.Surface;
+  LanguageCombo.Left := ScaleX(585);
+  LanguageCombo.Top := ScaleY(17);
+  LanguageCombo.Width := ScaleX(160);
+  LanguageCombo.Height := ScaleY(32);
+  LanguageCombo.Style := csDropDownList;
+  LanguageCombo.DropDownCount := 12;
+  LanguageCombo.OnChange := @LanguageChanged;
+
+  LanguageCombo.Items.Add('Automatic (Windows)');
+  LanguageCombo.Items.Add('English');
+  LanguageCombo.Items.Add('עברית');
+  LanguageCombo.Items.Add('Español');
+  LanguageCombo.Items.Add('Français');
+  LanguageCombo.Items.Add('Deutsch');
+  LanguageCombo.Items.Add('Italiano');
+  LanguageCombo.Items.Add('Português');
+  LanguageCombo.Items.Add('Nederlands');
+  LanguageCombo.Items.Add('Polski');
+  LanguageCombo.Items.Add('Čeština');
+  LanguageCombo.Items.Add('Türkçe');
+  LanguageCombo.Items.Add('Українська');
+  LanguageCombo.Items.Add('Русский');
+  LanguageCombo.Items.Add('العربية');
+  LanguageCombo.Items.Add('Ελληνικά');
+  LanguageCombo.Items.Add('Română');
+  LanguageCombo.Items.Add('日本語');
+  LanguageCombo.Items.Add('한국어');
+  LanguageCombo.Items.Add('简体中文');
+  LanguageCombo.Items.Add('繁體中文');
+
+  BodyPanel := TPanel.Create(InstallerPage.Surface);
+  BodyPanel.Parent := InstallerPage.Surface;
+  BodyPanel.Left := ScaleX(34);
+  BodyPanel.Top := ScaleY(116);
+  BodyPanel.Width := InstallerPage.Surface.ClientWidth - ScaleX(68);
+  BodyPanel.Height := ScaleY(250);
+  BodyPanel.BevelOuter := bvLowered;
+  BodyPanel.Color := $00FFFFFF;
+
+  StatusText := TNewStaticText.Create(InstallerPage.Surface);
+  StatusText.Parent := InstallerPage.Surface;
+  StatusText.Left := ScaleX(52);
+  StatusText.Top := ScaleY(142);
+  StatusText.Width := ScaleX(690);
+  StatusText.Height := ScaleY(34);
+  StatusText.Font.Size := 12;
+  StatusText.Font.Style := [fsBold];
+
+  VersionText := TNewStaticText.Create(InstallerPage.Surface);
+  VersionText.Parent := InstallerPage.Surface;
+  VersionText.Left := ScaleX(52);
+  VersionText.Top := ScaleY(180);
+  VersionText.Width := ScaleX(690);
+  VersionText.Height := ScaleY(28);
+  VersionText.Font.Size := 10;
+  VersionText.Font.Color := $0069788A;
+
+  DetailText := TNewStaticText.Create(InstallerPage.Surface);
+  DetailText.Parent := InstallerPage.Surface;
+  DetailText.Left := ScaleX(52);
+  DetailText.Top := ScaleY(214);
+  DetailText.Width := ScaleX(690);
+  DetailText.Height := ScaleY(24);
+  DetailText.Font.Size := 9;
+  DetailText.Font.Color := $007B61FF;
+
+  ProgressBar := TNewProgressBar.Create(InstallerPage.Surface);
+  ProgressBar.Parent := InstallerPage.Surface;
+  ProgressBar.Left := ScaleX(52);
+  ProgressBar.Top := ScaleY(264);
+  ProgressBar.Width := ScaleX(690);
+  ProgressBar.Height := ScaleY(10);
+  ProgressBar.Min := 0;
+  ProgressBar.Max := 100;
+  ProgressBar.Position := 0;
+
+  FooterPanel := TPanel.Create(InstallerPage.Surface);
+  FooterPanel.Parent := InstallerPage.Surface;
+  FooterPanel.Left := 0;
+  FooterPanel.Top := ScaleY(408);
+  FooterPanel.Width := InstallerPage.Surface.ClientWidth;
+  FooterPanel.Height := ScaleY(92);
+  FooterPanel.BevelOuter := bvNone;
+  FooterPanel.Color := $00F0F3F9;
+
+  PrimaryButton := TNewButton.Create(InstallerPage.Surface);
+  PrimaryButton.Parent := InstallerPage.Surface;
+  PrimaryButton.Left := ScaleX(452);
+  PrimaryButton.Top := ScaleY(432);
+  PrimaryButton.Width := ScaleX(290);
+  PrimaryButton.Height := ScaleY(44);
+  PrimaryButton.Font.Style := [fsBold];
+  PrimaryButton.OnClick := @InstallLatest;
+
+  SecondaryButton := TNewButton.Create(InstallerPage.Surface);
+  SecondaryButton.Parent := InstallerPage.Surface;
+  SecondaryButton.Left := ScaleX(334);
+  SecondaryButton.Top := ScaleY(432);
+  SecondaryButton.Width := ScaleX(100);
+  SecondaryButton.Height := ScaleY(44);
+  SecondaryButton.OnClick := @CloseInstaller;
+
   SavedMode := GetSavedLanguageMode;
 
   if SameText(SavedMode, 'auto') then
@@ -1116,6 +1266,7 @@ begin
   LanguageCombo.ItemIndex := I;
   ApplyLanguageToForm;
 end;
+
 
 procedure InitializeWizard;
 begin
