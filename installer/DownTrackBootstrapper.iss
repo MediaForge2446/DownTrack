@@ -1275,35 +1275,44 @@ begin
 
   WizardForm.Update;
 
-  if LoadLatestManifest then
-  begin
-    VersionText.Caption := GetLatestVersionText;
+  StatusText.Caption := T('Checking');
+  DetailText.Caption := T('Preparing');
 
-    if (GetInstalledVersion <> '') and
-       SameText(
-         GetInstalledVersion,
-         LatestVersion) then
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+begin
+  if (CurPageID = InstallerPage.ID) and not ManifestLoaded then
+  begin
+    if LoadLatestManifest then
     begin
-      StatusText.Caption := T('UpToDate');
-      DetailText.Caption := GetLatestVersionText;
-      ProgressBar.Position := 100;
-      PrimaryButton.Caption := T('Open');
-      PrimaryButton.OnClick := @OpenDownTrack;
+      VersionText.Caption := GetLatestVersionText;
+
+      if (GetInstalledVersion <> '') and
+         SameText(
+           GetInstalledVersion,
+           LatestVersion) then
+      begin
+        StatusText.Caption := T('UpToDate');
+        DetailText.Caption := GetLatestVersionText;
+        ProgressBar.Position := 100;
+        PrimaryButton.Caption := T('Open');
+        PrimaryButton.OnClick := @OpenDownTrack;
+      end
+      else
+      begin
+        StatusText.Caption := T('Checking');
+        DetailText.Caption := GetLatestVersionText;
+      end;
     end
     else
     begin
-      StatusText.Caption := T('Checking');
-      DetailText.Caption := GetLatestVersionText;
+      StatusText.Caption := T('Error');
+      DetailText.Caption := T('Retry');
+      PrimaryButton.Caption := T('Retry');
+      PrimaryButton.OnClick := @InstallLatest;
     end;
-  end
-  else
-  begin
-    StatusText.Caption := T('Error');
-    DetailText.Caption := T('Retry');
-    PrimaryButton.Caption := T('Retry');
-    PrimaryButton.OnClick := @InstallLatest;
   end;
-
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
