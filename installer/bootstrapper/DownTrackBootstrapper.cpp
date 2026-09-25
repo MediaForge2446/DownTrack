@@ -18,6 +18,9 @@
 #include <thread>
 #include <vector>
 #include <algorithm>
+#include <functional>
+#include <cwctype>
+#include <iterator>
 
 #include "resource.h"
 
@@ -581,18 +584,24 @@ bool ExtractPayload(const std::wstring& zip, const std::wstring& target) {
 }
 
 bool CreateShortcuts(const std::wstring& appPath, const std::wstring& installDir) {
-    const auto desktop = BaseDir().empty() ? L"" : BaseDir() + L"\\Desktop\\DownTrack.lnk";
+    wchar_t desktopPath[MAX_PATH]{};
+    if (SHGetFolderPathW(nullptr, CSIDL_DESKTOPDIRECTORY, nullptr, SHGFP_TYPE_CURRENT, desktopPath) != S_OK) {
+        return false;
+    }
+    const std::wstring desktop = std::wstring(desktopPath) + L"\\DownTrack.lnk";
+
     wchar_t programs[MAX_PATH]{};
     if (SHGetFolderPathW(nullptr, CSIDL_PROGRAMS, nullptr, SHGFP_TYPE_CURRENT, programs) != S_OK) {
         return false;
     }
-    const std::wstring startMenu = std::wstring(programs) + L"\\DownTrack\\DownTrack.lnk";
+    const std::wstring startFolder = std::wstring(programs) + L"\\DownTrack";
+    const std::wstring startMenu = startFolder + L"\\DownTrack.lnk";
 
     const std::wstring command =
+        L"New-Item -ItemType Directory -Force -LiteralPath '" + startFolder + L"' | Out-Null; "
         L"$w=New-Object -ComObject WScript.Shell; "
         L"$s=$w.CreateShortcut('" + desktop + L"'); "
         L"$s.TargetPath='" + appPath + L"'; $s.WorkingDirectory='" + installDir + L"'; $s.Save(); "
-        L"New-Item -ItemType Directory -Force -LiteralPath '" + std::wstring(programs) + L"\\DownTrack' | Out-Null; "
         L"$s=$w.CreateShortcut('" + startMenu + L"'); "
         L"$s.TargetPath='" + appPath + L"'; $s.WorkingDirectory='" + installDir + L"'; $s.Save();";
     return RunHiddenPowerShell(command);
@@ -951,9 +960,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 0, 0, 0, 0, hwnd, reinterpret_cast<HMENU>(ID_CLOSE),
                 GetModuleHandleW(nullptr), nullptr);
 
-            SetFont(g_language, g_font);
-            SetFont(g_primary, g_fontBold);
-            SetFont(g_secondary, g_fontBold);
+            SendMessageW(g_language, WM_SETFONT, reinterpret_cast<WPARAM>(g_font), TRUE);
+            SendMessageW(g_primary, WM_SETFONT, reinterpret_cast<WPARAM>(g_fontBold), TRUE);
+            SendMessageW(g_secondary, WM_SETFONT, reinterpret_cast<WPARAM>(g_fontBold), TRUE);
 
             const auto saved = LoadLanguageMode();
             const auto code = (saved == L"auto") ? DetectLanguage() : saved;
