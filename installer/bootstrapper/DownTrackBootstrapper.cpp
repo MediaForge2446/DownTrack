@@ -223,6 +223,7 @@ std::wstring g_payloadUrl;
 std::wstring g_payloadHash;
 uint64_t g_payloadSize = 0;
 std::atomic<bool> g_busy{false};
+std::atomic<bool> g_cancelRequested{false};
 
 std::wstring BaseDir() {
     wchar_t buffer[MAX_PATH]{};
@@ -364,6 +365,8 @@ bool DownloadFile(
     const std::wstring& destination,
     std::function<void(uint64_t, uint64_t)> progress) {
 
+    if (g_cancelRequested.load()) return false;
+
     std::wstring host, path;
     INTERNET_PORT port = INTERNET_DEFAULT_HTTPS_PORT;
     bool https = true;
@@ -448,6 +451,15 @@ bool DownloadFile(
     uint64_t received = 0;
 
     while (true) {
+        if (g_cancelRequested.load()) {
+            out.close();
+            DeleteFileW(destination.c_str());
+            WinHttpCloseHandle(request);
+            WinHttpCloseHandle(connection);
+            WinHttpCloseHandle(session);
+            return false;
+        }
+
         DWORD read = 0;
         if (!WinHttpReadData(request, buffer.data(), static_cast<DWORD>(buffer.size()), &read)) {
             out.close();
@@ -653,6 +665,7 @@ bool ReadManifest() {
     DeleteFileW(manifestPath.c_str());
 
     SetState(ScreenState::Checking, 2);
+    if (g_cancelRequested.load()) return false;
     if (!DownloadFile(kManifestUrl, manifestPath, nullptr)) return false;
 
     wchar_t buffer[4096]{};
@@ -697,6 +710,11 @@ void InstallationWorker() {
         SetState(ScreenState::Error, 0);
     };
 
+    if (g_cancelRequested.load()) {
+        g_busy = false;
+        return;
+    }
+
     if (!ReadManifest()) {
         fail(L"Unable to reach the latest DownTrack release.");
         g_busy = false;
@@ -727,6 +745,11 @@ void InstallationWorker() {
     const auto payloadPath = PayloadTempPath();
     DeleteFileW(payloadPath.c_str());
 
+    if (g_cancelRequested.load()) {
+        g_busy = false;
+        return;
+    }
+
     SetState(ScreenState::Downloading, 3, L"0 MB / " + FormatMb(payloadSize) + L" MB");
     const bool downloaded = DownloadFile(
         payloadUrl,
@@ -738,8 +761,20 @@ void InstallationWorker() {
                      FormatMb(received) + L" MB / " + FormatMb(denominator) + L" MB");
         });
 
+    if (g_cancelRequested.load()) {
+        DeleteFileW(payloadPath.c_str());
+        g_busy = false;
+        return;
+    }
+
     if (!downloaded) {
         fail(L"Download failed. Check your internet connection and try again.");
+        g_busy = false;
+        return;
+    }
+
+    if (g_cancelRequested.load()) {
+        DeleteFileW(payloadPath.c_str());
         g_busy = false;
         return;
     }
@@ -748,6 +783,12 @@ void InstallationWorker() {
     std::wstring actualHash;
     if (!Sha256File(payloadPath, actualHash) || _wcsicmp(actualHash.c_str(), payloadHash.c_str()) != 0) {
         fail(L"The downloaded file failed integrity verification.");
+        g_busy = false;
+        return;
+    }
+
+    if (g_cancelRequested.load()) {
+        DeleteFileW(payloadPath.c_str());
         g_busy = false;
         return;
     }
@@ -792,8 +833,9 @@ void InstallationWorker() {
 }
 
 void StartInstallation() {
-    if (g_busy) return;
+    if (g_busy || g_cancelRequested.load()) return;
     EnableWindow(g_primary, FALSE);
+    EnableWindow(g_secondary, TRUE);
     std::thread(InstallationWorker).detach();
 }
 
@@ -806,7 +848,8 @@ void OpenDownTrack() {
 }
 
 void CloseInstaller() {
-    if (g_busy) return;
+    KillTimer(g_hwnd, 1);
+    g_cancelRequested = true;
     DestroyWindow(g_hwnd);
 }
 
@@ -831,85 +874,100 @@ void DrawRoundRectFill(HDC hdc, const RECT& r, int radius, COLORREF color) {
 }
 
 void DrawWindow(HDC hdc, RECT client) {
-    FillRect(hdc, &client, g_windowBrush);
-
-    const COLORREF bg = RGB(248, 248, 255);
+    const COLORREF bg = RGB(247, 245, 253);
     const COLORREF white = RGB(255, 255, 255);
-    const COLORREF ink = RGB(24, 24, 40);
-    const COLORREF muted = RGB(119, 121, 142);
-    const COLORREF purple = RGB(111, 72, 246);
-    const COLORREF pink = RGB(246, 92, 132);
-    const COLORREF cyan = RGB(76, 205, 224);
+    const COLORREF ink = RGB(28, 28, 42);
+    const COLORREF muted = RGB(126, 126, 146);
+    const COLORREF purple = RGB(112, 72, 246);
+    const COLORREF pink = RGB(246, 91, 131);
+    const COLORREF cyan = RGB(79, 205, 224);
+    const COLORREF line = RGB(232, 231, 241);
 
     HBRUSH bgBrush = CreateSolidBrush(bg);
     FillRect(hdc, &client, bgBrush);
     DeleteObject(bgBrush);
 
-    RECT header{0, 0, client.right, 78};
+    const bool rtl = IsRtl();
+
+    // Minimal top bar, matching the light SaaS look of the product website.
+    RECT header{0, 0, client.right, 64};
     HBRUSH whiteBrush = CreateSolidBrush(white);
     FillRect(hdc, &header, whiteBrush);
     DeleteObject(whiteBrush);
 
-    RECT logo{28, 18, 66, 56};
-    DrawRoundRectFill(hdc, logo, 10, pink);
-    DrawTextBlock(hdc, L"D", logo, g_fontBold, RGB(255, 255, 255), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    RECT logo{rtl ? client.right - 60 : 24, 14, rtl ? client.right - 24 : 60, 50};
+    DrawRoundRectFill(hdc, logo, 9, pink);
+    DrawTextBlock(hdc, L"D", logo, g_fontBold, RGB(255, 255, 255),
+                  DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-    RECT title{78, 16, 300, 42};
-    DrawTextBlock(hdc, kWindowTitle, title, g_fontBold, ink, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+    RECT title = rtl
+        ? RECT{client.right - 300, 10, client.right - 70, 35}
+        : RECT{72, 10, 300, 35};
+    RECT tagline = rtl
+        ? RECT{client.right - 470, 34, client.right - 72, 56}
+        : RECT{72, 34, 470, 56};
 
-    RECT tagline{78, 43, 360, 66};
-    DrawTextBlock(hdc, Lng().tagline, tagline, g_font, muted, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+    DrawTextBlock(hdc, kWindowTitle, title, g_fontBold, ink,
+                  rtl ? (DT_RIGHT | DT_SINGLELINE | DT_VCENTER)
+                      : (DT_LEFT | DT_SINGLELINE | DT_VCENTER));
+    DrawTextBlock(hdc, Lng().tagline, tagline, g_font, muted,
+                  rtl ? (DT_RIGHT | DT_SINGLELINE | DT_VCENTER)
+                      : (DT_LEFT | DT_SINGLELINE | DT_VCENTER));
 
-    RECT card{28, 102, client.right - 28, 404};
+    // White central card with a soft offset shadow.
+    RECT card{20, 82, client.right - 20, client.bottom - 66};
+    RECT shadow = card;
+    shadow.left += 2; shadow.top += 4;
+    shadow.right += 2; shadow.bottom += 6;
+    DrawRoundRectFill(hdc, shadow, 18, RGB(234, 232, 243));
     DrawRoundRectFill(hdc, card, 18, white);
 
-    RECT dot1{client.right / 2 - 18, 134, client.right / 2 - 10, 142};
-    DrawRoundRectFill(hdc, dot1, 4, purple);
-    RECT dot2{client.right / 2 + 0, 134, client.right / 2 + 8, 142};
-    DrawRoundRectFill(hdc, dot2, 4, pink);
-    RECT dot3{client.right / 2 + 18, 134, client.right / 2 + 26, 142};
-    DrawRoundRectFill(hdc, dot3, 4, cyan);
+    // Small brand dots.
+    const int cx = client.right / 2;
+    DrawRoundRectFill(hdc, RECT{cx - 14, 109, cx - 7, 116}, 3, purple);
+    DrawRoundRectFill(hdc, RECT{cx - 3, 109, cx + 4, 116}, 3, pink);
+    DrawRoundRectFill(hdc, RECT{cx + 8, 109, cx + 15, 116}, 3, cyan);
 
-    RECT stateRect{48, 160, client.right - 48, 202};
     ScreenState state;
     int progress;
     std::wstring detail;
+    std::wstring errorText;
     {
         std::lock_guard<std::mutex> lock(g_mutex);
         state = g_state;
         progress = g_progress;
         detail = g_downloadDetail;
+        errorText = g_errorDetail;
     }
-    DrawTextBlock(hdc, StateTitle(state), stateRect, g_fontBold, ink, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-    RECT versionRect{48, 205, client.right - 48, 234};
-    std::wstring versionText = g_version.empty() ? Lng().moments : (L"Latest version: " + g_version);
-    if (state == ScreenState::UpToDate) versionText = g_version;
-    DrawTextBlock(hdc, versionText, versionRect, g_font, muted, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    RECT stateRect{42, 134, client.right - 42, 172};
+    DrawTextBlock(hdc, StateTitle(state), stateRect, g_fontBold, ink,
+                  DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-    RECT detailRect{48, 242, client.right - 48, 270};
-    DrawTextBlock(hdc, detail, detailRect, g_font, purple, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    RECT versionRect{42, 174, client.right - 42, 198};
+    const std::wstring versionText = g_version.empty() ? L"" : (L"v" + g_version);
+    DrawTextBlock(hdc, versionText, versionRect, g_font, muted,
+                  DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-    RECT bar{65, 288, client.right - 65, 299};
-    DrawRoundRectFill(hdc, bar, 6, RGB(230, 232, 241));
+    RECT detailRect{42, 207, client.right - 42, 233};
+    DrawTextBlock(hdc, detail, detailRect, g_font, purple,
+                  DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+    RECT bar{50, 246, client.right - 50, 256};
+    DrawRoundRectFill(hdc, bar, 5, line);
     RECT fill = bar;
-    fill.right = fill.left + ((fill.right - fill.left) * progress / 100);
-    if (fill.right > fill.left) DrawRoundRectFill(hdc, fill, 6, purple);
+    fill.right = fill.left + ((fill.right - fill.left) * std::clamp(progress, 0, 100) / 100);
+    if (fill.right > fill.left) DrawRoundRectFill(hdc, fill, 5, purple);
 
     if (state == ScreenState::Error) {
-        RECT err{48, 315, client.right - 48, 357};
-        std::wstring errorText;
-        {
-            std::lock_guard<std::mutex> lock(g_mutex);
-            errorText = g_errorDetail;
-        }
-        DrawTextBlock(hdc, errorText, err, g_font, RGB(194, 65, 83), DT_CENTER | DT_WORDBREAK);
+        RECT err{42, 270, client.right - 42, 316};
+        DrawTextBlock(hdc, errorText, err, g_font, RGB(194, 65, 83),
+                      DT_CENTER | DT_WORDBREAK | DT_VCENTER);
     }
 
-    const bool rtl = IsRtl();
-    RECT footerText{28, client.bottom - 68, client.right - 220, client.bottom - 36};
-    DrawTextBlock(hdc, Lng().moments, footerText, g_font, muted,
-                  (rtl ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_VCENTER);
+    RECT hint{42, card.bottom - 46, client.right - 42, card.bottom - 24};
+    DrawTextBlock(hdc, Lng().moments, hint, g_font, muted,
+                  DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 }
 
 void DrawButton(const DRAWITEMSTRUCT* dis) {
@@ -982,9 +1040,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_SIZE: {
             const int width = LOWORD(lParam);
             const int height = HIWORD(lParam);
-            MoveWindow(g_language, width - 210, 17, 190, 260, TRUE);
-            MoveWindow(g_primary, width - 145, height - 52, 125, 36, TRUE);
-            MoveWindow(g_secondary, width - 270, height - 52, 110, 36, TRUE);
+            const bool rtl = IsRtl();
+
+            if (rtl) {
+                MoveWindow(g_language, 22, 17, 150, 26, TRUE);
+                MoveWindow(g_primary, 24, height - 52, 150, 36, TRUE);
+                MoveWindow(g_secondary, 184, height - 52, 104, 36, TRUE);
+            } else {
+                MoveWindow(g_language, width - 172, 17, 150, 26, TRUE);
+                MoveWindow(g_primary, width - 174, height - 52, 150, 36, TRUE);
+                MoveWindow(g_secondary, width - 288, height - 52, 104, 36, TRUE);
+            }
+
             InvalidateRect(hwnd, nullptr, FALSE);
             return 0;
         }
@@ -1049,15 +1116,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
         }
 
+        case WM_CLOSE:
+            CloseInstaller();
+            return 0;
+
         case WM_DESTROY:
-            if (g_busy) {
-                // The worker is detached intentionally; the process will normally
-                // remain alive only while installation is active because Close is disabled.
-                return 0;
+            KillTimer(hwnd, 1);
+            if (g_font) {
+                DeleteObject(g_font);
+                g_font = nullptr;
             }
-            if (g_font) DeleteObject(g_font);
-            if (g_fontBold) DeleteObject(g_fontBold);
-            if (g_windowBrush) DeleteObject(g_windowBrush);
+            if (g_fontBold) {
+                DeleteObject(g_fontBold);
+                g_fontBold = nullptr;
+            }
+            if (g_windowBrush) {
+                DeleteObject(g_windowBrush);
+                g_windowBrush = nullptr;
+            }
             PostQuitMessage(0);
             return 0;
     }
@@ -1101,8 +1177,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         return 1;
     }
 
-    const int width = 720;
-    const int height = 480;
+    const int width = 620;
+    const int height = 400;
     RECT screen{};
     SystemParametersInfoW(SPI_GETWORKAREA, 0, &screen, 0);
     const int x = screen.left + ((screen.right - screen.left) - width) / 2;
@@ -1121,10 +1197,12 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
         return 1;
     }
 
-    ShowWindow(g_hwnd, nCmdShow == SW_HIDE ? SW_SHOWNORMAL : nCmdShow);
+    ShowWindow(g_hwnd, SW_SHOWNORMAL);
     UpdateWindow(g_hwnd);
+    SetActiveWindow(g_hwnd);
+    BringWindowToTop(g_hwnd);
     SetForegroundWindow(g_hwnd);
-    SetTimer(g_hwnd, 1, 450, nullptr);
+    SetTimer(g_hwnd, 1, 250, nullptr);
 
     MSG msg{};
     while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
