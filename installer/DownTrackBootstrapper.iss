@@ -1091,7 +1091,7 @@ begin
       '',
       '');
 
-  InstallerPage.SurfaceColor := $00F7F8FC;
+  InstallerPage.Surface.Color := $00F7F8FC;
 
   SavedMode := GetSavedLanguageMode;
 
