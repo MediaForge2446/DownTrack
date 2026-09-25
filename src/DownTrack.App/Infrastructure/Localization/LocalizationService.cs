@@ -483,6 +483,7 @@ public sealed class LocalizationService : System.ComponentModel.INotifyPropertyC
         }
 
         ModernTranslationCatalog.Apply(dictionaries);
+        CompleteUiTranslationCatalog.Apply(dictionaries);
         return dictionaries;
     }
 
