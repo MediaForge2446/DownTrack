@@ -226,7 +226,7 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Grid>
+                            <Grid Margin="0,0,0,8">
                                 <TextBlock Text="{loc:Loc Key=Shell.RootFolders}"
                                            FontSize="10"
                                            FontWeight="Bold"
@@ -241,21 +241,6 @@
                                                FontSize="15"/>
                                 </Button>
                             </Grid>
-
-                            <Button Grid.Row="1"
-                                    Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding AddRootFolderCommand}"
-                                    Margin="0,10,0,10"
-                                    Height="40"
-                                    HorizontalContentAlignment="Stretch">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="＋"
-                                               FontSize="14"
-                                               Width="26"/>
-                                    <TextBlock Text="{loc:Loc Key=Home.AddRootFolder}"
-                                               FontSize="11"/>
-                                </StackPanel>
-                            </Button>
 
                             <ListBox Grid.Row="2"
                                      x:Name="RootList"
