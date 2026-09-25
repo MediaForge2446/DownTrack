@@ -163,7 +163,7 @@ jobs:
           if (-not $vsPath) { throw "Visual C++ x64 tools were not found." }
           $vcvars = Join-Path $vsPath "VC\\Auxiliary\\Build\\vcvars64.bat"
           if (-not (Test-Path $vcvars)) { throw "vcvars64.bat was not found." }
-          $buildCommand = 'call "' + $vcvars + '" -arch=x64 && cl /nologo /O2 /MT /EHsc /std:c++17 /DUNICODE /D_UNICODE /W4 /Fe:"artifacts\\installer\\DownTrack-WebSetup.exe" installer\\bootstrapper\\DownTrackBootstrapper.cpp /link /SUBSYSTEM:WINDOWS'
+          $buildCommand = 'call "' + $vcvars + '" && cl /nologo /O2 /MT /EHsc /std:c++17 /DUNICODE /D_UNICODE /W4 /Fe:"artifacts\\installer\\DownTrack-WebSetup.exe" installer\\bootstrapper\\DownTrackBootstrapper.cpp /link /SUBSYSTEM:WINDOWS'
           cmd.exe /c $buildCommand
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $bootstrapper = Join-Path $installerDir "DownTrack-WebSetup.exe"
