@@ -1120,7 +1120,6 @@ end;
 procedure InitializeWizard;
 begin
   PopulateTranslations;
-  WizardForm.Hide;
   InitializeInstallerUi;
 
   WizardForm.Update;
@@ -1154,8 +1153,6 @@ begin
     PrimaryButton.OnClick := @InstallLatest;
   end;
 
-  WizardForm.Close;
-  WizardForm.Close;
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
