@@ -7,6 +7,7 @@
 #include <bcrypt.h>
 #include <shellapi.h>
 #include <shlwapi.h>
+#include <shlobj.h>
 #include <commctrl.h>
 
 #include <atomic>
@@ -21,6 +22,11 @@
 #include <functional>
 #include <cwctype>
 #include <iterator>
+
+constexpr int ID_LANGUAGE = 1001;
+constexpr int ID_INSTALL = 1002;
+constexpr int ID_OPEN = 1003;
+constexpr int ID_CLOSE = 1004;
 
 #pragma comment(lib, "winhttp.lib")
 #pragma comment(lib, "bcrypt.lib")
@@ -337,7 +343,7 @@ bool ParseUrl(const std::wstring& url, std::wstring& host, std::wstring& path, I
     c.lpszUrlPath = pathBuffer;
     c.dwUrlPathLength = static_cast<DWORD>(std::size(pathBuffer));
 
-    if (!WinHttpCrackUrlW(url.c_str(), 0, ICU_DECODE, &c)) {
+    if (!WinHttpCrackUrl(url.c_str(), 0, ICU_DECODE, &c)) {
         return false;
     }
 
@@ -531,8 +537,8 @@ bool Sha256File(const std::wstring& path, std::wstring& hex) {
 
 bool RunHiddenPowerShell(const std::wstring& command) {
     std::wstring line =
-        L"powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -Command ""
-        + command + L""";
+        L"powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -Command \\\"" 
+        + command + L"\\\"";
 
     STARTUPINFOW si{};
     si.cb = sizeof(si);
