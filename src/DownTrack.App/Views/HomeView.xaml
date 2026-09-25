@@ -4,7 +4,7 @@
              xmlns:loc="clr-namespace:DownTrack.Infrastructure.Localization"
              FlowDirection="{Binding FlowDirection, Source={x:Static loc:LocalizationService.Instance}}"
              Background="Transparent">
-    <Grid Margin="30,26,30,22">
+    <Grid Margin="32,28,32,28">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -12,8 +12,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0"
-              Margin="0,0,0,8">
+        <Grid Grid.Row="0" Margin="0,0,0,24">
             <StackPanel>
                 <TextBlock Text="{loc:Loc Key=Library.Overline}"
                            FontSize="10"
@@ -21,19 +20,19 @@
                            Foreground="{DynamicResource AccentBlueBrush}"/>
                 <TextBlock Text="{loc:Loc Key=Library.Title}"
                            Margin="0,7,0,0"
-                           FontSize="29"
+                           FontSize="32"
                            FontWeight="SemiBold"/>
                 <TextBlock Text="{loc:Loc Key=Library.Subtitle}"
-                           Margin="0,5,0,0"
-                           FontSize="12"
+                           Margin="0,6,0,0"
+                           FontSize="13"
                            Foreground="{DynamicResource MutedTextBrush}"/>
             </StackPanel>
 
             <Border HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Padding="12,8"
-                    CornerRadius="11"
-                    Background="{DynamicResource SurfaceBrush}"
+                    Padding="13,9"
+                    CornerRadius="12"
+                    Background="{DynamicResource SurfaceSoftBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1">
                 <StackPanel Orientation="Horizontal">
@@ -42,43 +41,62 @@
                              Fill="{DynamicResource SuccessBrush}"
                              VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding RootSummary}"
-                               Margin="7,0,0,0"
+                               Margin="8,0,0,0"
                                FontSize="10"
                                Foreground="{DynamicResource MutedTextBrush}"/>
                 </StackPanel>
             </Border>
         </Grid>
 
-        <Grid Grid.Row="1"
-              Margin="0,20,0,9">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="64"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="190"/>
-                <ColumnDefinition Width="190"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Margin="0,0,0,14">
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource PrimaryButton}"
+                        Command="{Binding AddRootFolderCommand}"
+                        Height="42"
+                        MinWidth="154">
+                    <Button Style="{StaticResource PrimaryButton}"
+                        Command="{Binding AddRootFolderCommand}"
+                        Height="42"
+                        MinWidth="154">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="＋" FontSize="15" Margin="0,0,8,0"/>
+                        <TextBlock Text="{loc:Loc Key=Home.AddRootFolder}"/>
+                    </StackPanel>
+                </Button>
+                </Button>
 
-            <TextBlock Grid.Column="0"
-                       Text="#"
-                       FontSize="10"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource MutedTextBrush}"/>
-            <TextBlock Grid.Column="1"
-                       Text="{loc:Loc Key=Library.Folder}"
-                       FontSize="10"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource MutedTextBrush}"/>
-            <TextBlock Grid.Column="2"
-                       Text="{loc:Loc Key=Library.Location}"
-                       FontSize="10"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource MutedTextBrush}"/>
-            <TextBlock Grid.Column="3"
-                       Text="{loc:Loc Key=Library.Action}"
-                       FontSize="10"
-                       FontWeight="Bold"
-                       Foreground="{DynamicResource MutedTextBrush}"/>
+                <StackPanel Orientation="Horizontal"
+                            Margin="10,0,0,0">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedRoot}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding SelectedRoot}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <Button Style="{StaticResource GhostButton}"
+                            Command="{Binding RenameRootCommand}"
+                            Height="42"
+                            MinWidth="90">
+                        <TextBlock Text="{loc:Loc Key=Shell.Rename}"/>
+                    </Button>
+
+                    <Button Style="{StaticResource DangerButton}"
+                            Command="{Binding DeleteRootCommand}"
+                            Height="42"
+                            MinWidth="82"
+                            Margin="8,0,0,0">
+                        <TextBlock Text="{loc:Loc Key=Shell.Delete}"/>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
         </Grid>
 
         <Border Grid.Row="2"
@@ -88,10 +106,49 @@
                 CornerRadius="18"
                 Effect="{DynamicResource SoftShadowEffect}">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="54"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="16,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="58"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="150"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="#"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Grid.Column="1"
+                               Text="{loc:Loc Key=Library.Folder}"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Grid.Column="2"
+                               Text="{loc:Loc Key=Library.Location}"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Grid.Column="3"
+                               Text="{loc:Loc Key=Library.Action}"
+                               VerticalAlignment="Center"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                </Grid>
+
                 <ListView x:Name="RootList"
+                          Grid.Row="1"
                           ItemsSource="{Binding Roots}"
-                          AlternationCount="1000"
                           SelectedItem="{Binding SelectedRoot, Mode=TwoWay}"
+                          AlternationCount="1000"
                           BorderThickness="0"
                           Background="Transparent"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -107,7 +164,7 @@
                                     <ControlTemplate TargetType="ListViewItem">
                                         <Border x:Name="Row"
                                                 BorderBrush="{DynamicResource BorderBrush}"
-                                                BorderThickness="0,0,0,1"
+                                                BorderThickness="0,1,0,0"
                                                 Background="Transparent">
                                             <ContentPresenter/>
                                         </Border>
@@ -127,107 +184,106 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Border Padding="14,13">
-                <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="64"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="190"/>
-                                    <ColumnDefinition Width="190"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                            <Border Padding="16,14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="58"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="150"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex), StringFormat={}{0}}"
-                                           FontSize="11"
-                                           Foreground="{DynamicResource MutedTextBrush}"
-                                           VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex), StringFormat={}{0}}"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               VerticalAlignment="Center"/>
 
-                                <StackPanel Grid.Column="1"
-                                            Orientation="Horizontal"
-                                            VerticalAlignment="Center">
-                                    <Border Width="42"
-                                            Height="42"
-                                            CornerRadius="12"
-                                            Background="{DynamicResource SoftGradientBrush}">
-                                        <TextBlock Text="□"
-                                                   FontSize="18"
-                                                   Foreground="{DynamicResource AccentBrush}"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
-                                    </Border>
-                                    <StackPanel Margin="12,0,0,0">
-                                        <TextBlock Text="{Binding Name}"
-                                                   FontSize="14"
-                                                   FontWeight="SemiBold"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{Binding Path}"
-                                                   Margin="0,3,0,0"
-                                                   FontSize="10"
-                                                   Foreground="{DynamicResource MutedTextBrush}"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                    </StackPanel>
-                                </StackPanel>
-
-                                <TextBlock Grid.Column="2"
-                                           Text="{Binding Path}"
-                                           FontSize="10"
-                                           Foreground="{DynamicResource MutedTextBrush}"
-                                           VerticalAlignment="Center"
-                                           TextTrimming="CharacterEllipsis"/>
-
-                                <StackPanel Grid.Column="3"
-                                            Orientation="Horizontal"
-                                            VerticalAlignment="Center">
-                                    <Button Style="{StaticResource SecondaryButton}"
-                                            Command="{Binding DataContext.OpenRootCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                            CommandParameter="{Binding}"
-                                            MinWidth="82"
-                                            Height="36">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{loc:Loc Key=Library.Open}"/>
-                                            <TextBlock Text="›"
-                                                       Margin="7,0,0,0"
-                                                       FontSize="17"/>
+                                    <StackPanel Grid.Column="1"
+                                                Orientation="Horizontal"
+                                                VerticalAlignment="Center">
+                                        <Border Width="42"
+                                                Height="42"
+                                                CornerRadius="13"
+                                                Background="{DynamicResource SoftGradientBrush}">
+                                            <TextBlock Text="□"
+                                                       FontSize="18"
+                                                       Foreground="{DynamicResource AccentBrush}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Margin="12,0,16,0"
+                                                    VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Path}"
+                                                       Margin="0,3,0,0"
+                                                       FontSize="10"
+                                                       Foreground="{DynamicResource MutedTextBrush}"
+                                                       TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
-                                    </Button>
-
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="8,0,0,0">
-                                        <StackPanel.Style>
-                                            <Style TargetType="StackPanel">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected}" Value="True">
-                                                        <Setter Property="Visibility" Value="Visible"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </StackPanel.Style>
-
-                                        <Button Style="{StaticResource GhostButton}"
-                                                Command="{Binding DataContext.Home.RenameRootCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}"
-                                                Width="70"
-                                                Height="36">
-                                            <TextBlock Text="{loc:Loc Key=Shell.Rename}"/>
-                                        </Button>
-                                        <Button Style="{StaticResource DangerButton}"
-                                                Command="{Binding DataContext.Home.DeleteRootCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}"
-                                                Margin="6,0,0,0"
-                                                Width="68"
-                                                Height="36">
-                                            <TextBlock Text="{loc:Loc Key=Shell.Delete}"/>
-                                        </Button>
                                     </StackPanel>
-                                </StackPanel>
-                            </Grid></Border>
+
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding Path}"
+                                               VerticalAlignment="Center"
+                                               FontSize="10"
+                                               Foreground="{DynamicResource MutedTextBrush}"
+                                               TextTrimming="CharacterEllipsis"/>
+
+                                    <StackPanel Grid.Column="3"
+                                                Orientation="Horizontal"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Right">
+                                        <Button Style="{StaticResource SecondaryButton}"
+                                                Command="{Binding DataContext.OpenRootCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"
+                                                Height="36"
+                                                MinWidth="76">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{loc:Loc Key=Library.Open}"/>
+                                                <TextBlock Text="›" Margin="7,0,0,0" FontSize="17"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <StackPanel Orientation="Horizontal" Margin="8,0,0,0">
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=IsSelected}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </StackPanel.Style>
+
+                                            <Button Style="{StaticResource GhostButton}"
+                                                    Command="{Binding DataContext.Home.RenameRootCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Width="74"
+                                                    Height="36">
+                                                <TextBlock Text="{loc:Loc Key=Shell.Rename}" FontSize="10"/>
+                                            </Button>
+                                            <Button Style="{StaticResource DangerButton}"
+                                                    Command="{Binding DataContext.Home.DeleteRootCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Width="68"
+                                                    Height="36"
+                                                    Margin="6,0,0,0">
+                                                <TextBlock Text="{loc:Loc Key=Shell.Delete}" FontSize="10"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <Border Width="420"
-                        Padding="26"
+                <Border Width="430"
+                        Padding="28"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Background="{DynamicResource SurfaceSoftBrush}"
@@ -244,12 +300,12 @@
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
-
                     <StackPanel HorizontalAlignment="Center">
-                        <Border Width="58"
-                                Height="58"
-                                CornerRadius="16"
-                                Background="{DynamicResource SoftGradientBrush}">
+                        <Border Width="62"
+                                Height="62"
+                                CornerRadius="17"
+                                Background="{DynamicResource SoftGradientBrush}"
+                                HorizontalAlignment="Center">
                             <TextBlock Text="＋"
                                        FontSize="28"
                                        Foreground="{DynamicResource AccentBrush}"
@@ -257,8 +313,8 @@
                                        VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="{loc:Loc Key=Library.EmptyTitle}"
-                                   Margin="0,15,0,0"
-                                   FontSize="16"
+                                   Margin="0,16,0,0"
+                                   FontSize="17"
                                    FontWeight="SemiBold"
                                    TextAlignment="Center"/>
                         <TextBlock Text="{loc:Loc Key=Library.EmptySubtitle}"
@@ -269,7 +325,7 @@
                                    TextWrapping="Wrap"/>
                         <Button Style="{StaticResource PrimaryButton}"
                                 Command="{Binding AddRootFolderCommand}"
-                                Margin="0,16,0,0"
+                                Margin="0,17,0,0"
                                 MinWidth="140">
                             <TextBlock Text="{loc:Loc Key=Shell.AddFolder}"/>
                         </Button>
@@ -279,9 +335,10 @@
         </Border>
 
         <TextBlock Grid.Row="3"
-                   Text="{loc:Loc Key=Library.EmptySubtitle}"
-                   Margin="0,13,0,0"
+                   Text="{Binding ToolStatus}"
+                   Margin="0,12,0,0"
                    FontSize="10"
-                   Foreground="{DynamicResource MutedTextBrush}"/>
+                   Foreground="{DynamicResource MutedTextBrush}"
+                   TextTrimming="CharacterEllipsis"/>
     </Grid>
 </UserControl>

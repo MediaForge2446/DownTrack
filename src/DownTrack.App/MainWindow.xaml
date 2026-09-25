@@ -194,39 +194,29 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="{loc:Loc Key=Shell.Library}"
-                                   FontSize="10"
-                                   FontWeight="Bold"
-                                   Foreground="{DynamicResource MutedTextBrush}"/>
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="{loc:Loc Key=Shell.Library}"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
+                            <TextBlock Text="{loc:Loc Key=Shell.RootFolders}"
+                                       HorizontalAlignment="Right"
+                                       FontSize="9"
+                                       Foreground="{DynamicResource MutedTextBrush}"
+                                       Opacity="0.8"/>
+                        </Grid>
 
-                        <Button Grid.Row="1"
-                                Style="{StaticResource GhostButton}"
-                                Command="{Binding HomeCommand}"
-                                Margin="0,14,0,16"
-                                HorizontalContentAlignment="Stretch"
-                                Height="48">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⌂"
-                                           FontSize="17"
-                                           Width="28"/>
-                                <TextBlock Text="{loc:Loc Key=Shell.Home}"
-                                           FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Grid Grid.Row="2">
+                        <Grid Grid.Row="1">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Grid>
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
                                 <TextBlock Text="{loc:Loc Key=Shell.RootFolders}"
                                            FontSize="10"
                                            FontWeight="Bold"
@@ -242,22 +232,7 @@
                                 </Button>
                             </Grid>
 
-                            <Button Grid.Row="1"
-                                    Style="{StaticResource SecondaryButton}"
-                                    Command="{Binding AddRootFolderCommand}"
-                                    Margin="0,10,0,10"
-                                    Height="40"
-                                    HorizontalContentAlignment="Stretch">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="＋"
-                                               FontSize="14"
-                                               Width="26"/>
-                                    <TextBlock Text="{loc:Loc Key=Home.AddRootFolder}"
-                                               FontSize="11"/>
-                                </StackPanel>
-                            </Button>
-
-                            <ListBox Grid.Row="2"
+                            <ListBox Grid.Row="1"
                                      x:Name="RootList"
                                      ItemsSource="{Binding Home.Roots}"
                                      SelectedItem="{Binding CurrentRoot, Mode=TwoWay}"
@@ -298,7 +273,7 @@
                             </ListBox>
                         </Grid>
 
-                        <Button Grid.Row="3"
+                        <Button Grid.Row="2"
                                 Style="{StaticResource GhostButton}"
                                 Height="44"
                                 HorizontalContentAlignment="Stretch"
