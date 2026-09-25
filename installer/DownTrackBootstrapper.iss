@@ -1282,36 +1282,25 @@ end;
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
-  if (CurPageID = InstallerPage.ID) and not ManifestLoaded then
+  if CurPageID = InstallerPage.ID then
   begin
-    if LoadLatestManifest then
-    begin
-      VersionText.Caption := GetLatestVersionText;
+    { IMPORTANT: never perform network I/O here.
+      Inno Setup can call CurPageChanged before the window has been
+      painted. A synchronous download here makes the installer appear
+      to do nothing after the Windows "Run anyway" prompt. }
 
-      if (GetInstalledVersion <> '') and
-         SameText(
-           GetInstalledVersion,
-           LatestVersion) then
-      begin
-        StatusText.Caption := T('UpToDate');
-        DetailText.Caption := GetLatestVersionText;
-        ProgressBar.Position := 100;
-        PrimaryButton.Caption := T('Open');
-        PrimaryButton.OnClick := @OpenDownTrack;
-      end
-      else
-      begin
-        StatusText.Caption := T('Checking');
-        DetailText.Caption := GetLatestVersionText;
-      end;
-    end
-    else
-    begin
-      StatusText.Caption := T('Error');
-      DetailText.Caption := T('Retry');
-      PrimaryButton.Caption := T('Retry');
-      PrimaryButton.OnClick := @InstallLatest;
-    end;
+    StatusText.Caption := T('Checking');
+    VersionText.Caption := T('Progress');
+    DetailText.Caption := T('Progress');
+    ProgressBar.Position := 0;
+
+    PrimaryButton.Caption := T('Start');
+    PrimaryButton.Enabled := True;
+    PrimaryButton.OnClick := @InstallLatest;
+    SecondaryButton.Visible := True;
+    SecondaryButton.Enabled := True;
+
+    WizardForm.Update;
   end;
 end;
 
