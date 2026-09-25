@@ -1132,7 +1132,6 @@ begin
   WizardForm.Font.Name := 'Segoe UI';
   WizardForm.Font.Size := 9;
   WizardForm.FormStyle := fsNormal;
-  WizardForm.ShowInTaskbar := True;
 
   { Remove every stock Inno visual/control. }
   WizardForm.NextButton.Visible := False;
