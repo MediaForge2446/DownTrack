@@ -1269,7 +1269,6 @@ begin
   WizardForm.Hide;
   InitializeInstallerUi;
 
-  SetupForm.Show;
   SetupForm.Update;
 
   if LoadLatestManifest then
