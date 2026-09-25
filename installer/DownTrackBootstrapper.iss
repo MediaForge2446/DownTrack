@@ -94,6 +94,7 @@ SolidCompression=yes
 VersionInfoDescription=DownTrack lightweight web installer
 VersionInfoProductName=DownTrack
 VersionInfoCompany=MediaForge2446
+SetupIconFile=..\src\DownTrack.App\Assets\Brand\downtrack.ico
 
 [CustomMessages]
 en.Title=DownTrack
@@ -416,6 +417,48 @@ zhtw.Close=關閉
 zhtw.Error=無法完成安裝。
 zhtw.Progress=正在準備安裝…
 
+en.Language=Language
+he.Language=שפה
+es.Language=Idioma
+fr.Language=Langue
+de.Language=Sprache
+it.Language=Lingua
+pt.Language=Idioma
+nl.Language=Taal
+pl.Language=Język
+cs.Language=Jazyk
+tr.Language=Dil
+uk.Language=Мова
+ru.Language=Язык
+ar.Language=اللغة
+el.Language=Γλώσσα
+ro.Language=Limbă
+ja.Language=言語
+ko.Language=언어
+zhcn.Language=语言
+zhtw.Language=語言
+
+en.TimeHint=This usually takes just a few moments.
+he.TimeHint=זה בדרך כלל לוקח רק כמה רגעים.
+es.TimeHint=Esto normalmente solo tarda unos instantes.
+fr.TimeHint=Cela ne prend généralement que quelques instants.
+de.TimeHint=Das dauert normalerweise nur wenige Augenblicke.
+it.TimeHint=Di solito bastano pochi istanti.
+pt.TimeHint=Normalmente leva apenas alguns instantes.
+nl.TimeHint=Dit duurt meestal maar een paar momenten.
+pl.TimeHint=Zwykle zajmuje to tylko kilka chwil.
+cs.TimeHint=Obvykle to zabere jen několik okamžiků.
+tr.TimeHint=Bu işlem genellikle yalnızca birkaç dakika sürer.
+uk.TimeHint=Зазвичай це займає лише кілька хвилин.
+ru.TimeHint=Обычно это занимает всего несколько мгновений.
+ar.TimeHint=يستغرق هذا عادةً بضع لحظات فقط.
+el.TimeHint=Συνήθως χρειάζονται μόνο λίγες στιγμές.
+ro.TimeHint=De obicei durează doar câteva momente.
+ja.TimeHint=通常はほんの数分で完了します。
+ko.TimeHint=보통 몇 분이면 완료됩니다.
+zhcn.TimeHint=通常只需几分钟。
+zhtw.TimeHint=通常只需幾分鐘。
+
 [Code]
 var
   SetupForm: TSetupForm;
@@ -435,6 +478,84 @@ var
   InstallDirectory: String;
   ManifestLoaded: Boolean;
   Installing: Boolean;
+  LanguageLabel: TNewStaticText;
+  LanguageCombo: TNewComboBox;
+  LanguageReady: Boolean;
+
+function LanguageCodeByIndex(Index: Integer): String;
+begin
+  case Index of
+    0: Result := 'en';
+    1: Result := 'he';
+    2: Result := 'es';
+    3: Result := 'fr';
+    4: Result := 'de';
+    5: Result := 'it';
+    6: Result := 'pt';
+    7: Result := 'nl';
+    8: Result := 'pl';
+    9: Result := 'cs';
+    10: Result := 'tr';
+    11: Result := 'uk';
+    12: Result := 'ru';
+    13: Result := 'ar';
+    14: Result := 'el';
+    15: Result := 'ro';
+    16: Result := 'ja';
+    17: Result := 'ko';
+    18: Result := 'zhcn';
+    19: Result := 'zhtw';
+  else
+    Result := 'en';
+  end;
+end;
+
+function LanguageIndexByCode(const Code: String): Integer;
+begin
+  if CompareText(Code, 'en') = 0 then Result := 0
+  else if CompareText(Code, 'he') = 0 then Result := 1
+  else if CompareText(Code, 'es') = 0 then Result := 2
+  else if CompareText(Code, 'fr') = 0 then Result := 3
+  else if CompareText(Code, 'de') = 0 then Result := 4
+  else if CompareText(Code, 'it') = 0 then Result := 5
+  else if CompareText(Code, 'pt') = 0 then Result := 6
+  else if CompareText(Code, 'nl') = 0 then Result := 7
+  else if CompareText(Code, 'pl') = 0 then Result := 8
+  else if CompareText(Code, 'cs') = 0 then Result := 9
+  else if CompareText(Code, 'tr') = 0 then Result := 10
+  else if CompareText(Code, 'uk') = 0 then Result := 11
+  else if CompareText(Code, 'ru') = 0 then Result := 12
+  else if CompareText(Code, 'ar') = 0 then Result := 13
+  else if CompareText(Code, 'el') = 0 then Result := 14
+  else if CompareText(Code, 'ro') = 0 then Result := 15
+  else if CompareText(Code, 'ja') = 0 then Result := 16
+  else if CompareText(Code, 'ko') = 0 then Result := 17
+  else if CompareText(Code, 'zhcn') = 0 then Result := 18
+  else if CompareText(Code, 'zhtw') = 0 then Result := 19
+  else Result := 0;
+end;
+
+procedure LanguageChanged(Sender: TObject);
+var
+  ResultCode: Integer;
+  LanguageCode: String;
+begin
+  if (not LanguageReady) or Installing then
+    Exit;
+
+  LanguageCode := LanguageCodeByIndex(LanguageCombo.ItemIndex);
+  if LanguageCode = '' then
+    Exit;
+
+  if Exec(
+    ExpandConstant('{srcexe}'),
+    '/LANG=' + LanguageCode,
+    '',
+    SW_SHOWNORMAL,
+    ewNoWait,
+    ResultCode) then
+    SetupForm.Close;
+end;
 
 function P(const S: String): String;
 begin
@@ -559,7 +680,7 @@ procedure ShowCompleted;
 begin
   ProgressBar.Position := 100;
   SetInstallState(CustomMessage('Title'), CustomMessage('Complete'));
-  VersionText.Caption := GetLatestVersionText();
+  VersionText.Caption := GetLatestVersionText() + #13#10 + CustomMessage('TimeHint');
   PrimaryButton.Caption := CustomMessage('Open');
   PrimaryButton.Enabled := True;
   PrimaryButton.OnClick := @OpenDownTrack;
@@ -641,6 +762,7 @@ begin
   SetIniString('Install', 'Version', LatestVersion, InstallIni);
   SetIniString('Install', 'InstalledUtc',
     GetDateTimeString('yyyy-mm-dd hh:nn:ss', '-', ':'), InstallIni);
+  SetIniString('Install', 'InstallerLanguage', ActiveLanguage, InstallIni);
 
   CreateInstallShortcuts(
     InstallDirectory + '\DownTrack.exe',
@@ -766,6 +888,47 @@ begin
   HeaderPanel.BevelOuter := bvNone;
   HeaderPanel.Color := $00FFFFFF;
 
+  LanguageLabel := TNewStaticText.Create(SetupForm);
+  LanguageLabel.Parent := SetupForm;
+  LanguageLabel.Left := ScaleX(505);
+  LanguageLabel.Top := ScaleY(20);
+  LanguageLabel.Width := ScaleX(78);
+  LanguageLabel.Height := ScaleY(20);
+  LanguageLabel.Caption := CustomMessage('Language');
+  LanguageLabel.Font.Size := 9;
+  LanguageLabel.Font.Color := $0069788A;
+
+  LanguageCombo := TNewComboBox.Create(SetupForm);
+  LanguageCombo.Parent := SetupForm;
+  LanguageCombo.Left := ScaleX(585);
+  LanguageCombo.Top := ScaleY(16);
+  LanguageCombo.Width := ScaleX(125);
+  LanguageCombo.Height := ScaleY(28);
+  LanguageCombo.Style := csDropDownList;
+  LanguageCombo.Items.Add('English');
+  LanguageCombo.Items.Add('עברית');
+  LanguageCombo.Items.Add('Español');
+  LanguageCombo.Items.Add('Français');
+  LanguageCombo.Items.Add('Deutsch');
+  LanguageCombo.Items.Add('Italiano');
+  LanguageCombo.Items.Add('Português');
+  LanguageCombo.Items.Add('Nederlands');
+  LanguageCombo.Items.Add('Polski');
+  LanguageCombo.Items.Add('Čeština');
+  LanguageCombo.Items.Add('Türkçe');
+  LanguageCombo.Items.Add('Українська');
+  LanguageCombo.Items.Add('Русский');
+  LanguageCombo.Items.Add('العربية');
+  LanguageCombo.Items.Add('Ελληνικά');
+  LanguageCombo.Items.Add('Română');
+  LanguageCombo.Items.Add('日本語');
+  LanguageCombo.Items.Add('한국어');
+  LanguageCombo.Items.Add('简体中文');
+  LanguageCombo.Items.Add('繁體中文');
+  LanguageCombo.ItemIndex := LanguageIndexByCode(ActiveLanguage);
+  LanguageCombo.OnChange := @LanguageChanged;
+  LanguageReady := True;
+
   AccentBar := TPanel.Create(SetupForm);
   AccentBar.Parent := SetupForm;
   AccentBar.Left := ScaleX(28);
@@ -807,8 +970,8 @@ begin
   VersionText.Left := ScaleX(50);
   VersionText.Top := ScaleY(202);
   VersionText.Width := ScaleX(650);
-  VersionText.Height := ScaleY(26);
-  VersionText.Caption := CustomMessage('Progress');
+  VersionText.Height := ScaleY(44);
+  VersionText.Caption := CustomMessage('Progress') + #13#10 + CustomMessage('TimeHint');
   VersionText.Font.Size := 9;
   VersionText.Font.Color := $0069788A;
   ProgressBar := TNewProgressBar.Create(SetupForm);
@@ -847,7 +1010,7 @@ begin
        SameText(InstalledVersion, LatestVersion) then
     begin
       SetInstallState(CustomMessage('Title'), CustomMessage('UpToDate'));
-      VersionText.Caption := GetLatestVersionText();
+      VersionText.Caption := GetLatestVersionText() + #13#10 + CustomMessage('TimeHint');
       PrimaryButton.Caption := CustomMessage('Open');
       PrimaryButton.OnClick := @OpenDownTrack;
       ProgressBar.Position := 100;
