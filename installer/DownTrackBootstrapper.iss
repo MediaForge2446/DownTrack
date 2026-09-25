@@ -149,6 +149,8 @@ var
   AutoStartTimerId: UINT_PTR;
   AutoStartStarted: Boolean;
 
+procedure InstallLatest(Sender: TObject); forward;
+
 function LookupTranslation(const Id: String): String;
 var
   I: Integer;
@@ -779,7 +781,8 @@ begin
 
   SaveLanguageMode(SelectedLanguageMode);
   ApplyLanguageToForm;
-  PrimaryButton.Enabled := True;
+  if not Installing and AutoStartStarted then
+    PrimaryButton.Enabled := True;
 end;
 
 function GetLatestVersionText: String;
@@ -991,6 +994,7 @@ begin
   DetailText.Caption := T('Progress');
   PrimaryButton.Caption := T('Open');
   PrimaryButton.Enabled := True;
+  PrimaryButton.Visible := True;
   PrimaryButton.OnClick := @OpenDownTrack;
   SecondaryButton.Visible := True;
   SecondaryButton.Caption := T('Close');
@@ -1093,7 +1097,9 @@ begin
     SetInstallState(T('Title'), T('Error'));
     PrimaryButton.Caption := T('Retry');
     PrimaryButton.Enabled := True;
+    PrimaryButton.Visible := True;
     PrimaryButton.OnClick := @InstallLatest;
+  PrimaryButton.Visible := False;
     SecondaryButton.Caption := T('Close');
     SecondaryButton.Visible := True;
     SecondaryButton.Enabled := True;
@@ -1358,6 +1364,7 @@ begin
   VersionText.Caption := T('Progress');
   DetailText.Caption := T('Progress');
   ProgressBar.Position := 0;
+  PrimaryButton.Visible := False;
   WizardForm.Update;
 end;
 
