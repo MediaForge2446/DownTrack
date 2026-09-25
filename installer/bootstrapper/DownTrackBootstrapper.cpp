@@ -537,8 +537,8 @@ bool Sha256File(const std::wstring& path, std::wstring& hex) {
 
 bool RunHiddenPowerShell(const std::wstring& command) {
     std::wstring line =
-        L"powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -Command \\\"" 
-        + command + L"\\\"";
+        L"powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -Command \""
+        + command + L"\"";
 
     STARTUPINFOW si{};
     si.cb = sizeof(si);
