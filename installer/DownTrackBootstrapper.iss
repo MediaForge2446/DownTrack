@@ -679,7 +679,7 @@ function SetTimer(
   hWnd: HWND;
   nIDEvent: UINT_PTR;
   uElapse: UINT;
-  lpTimerFunc: NativeInt): UINT_PTR;
+  lpTimerFunc: Integer): UINT_PTR;
 external 'SetTimer@user32.dll stdcall';
 
 function KillTimer(hWnd: HWND; uIDEvent: UINT_PTR): Boolean;
