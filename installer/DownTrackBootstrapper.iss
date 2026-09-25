@@ -119,6 +119,11 @@ VersionInfoCompany=MediaForge2446
 
 [Code]
 var
+  InstallerForm: TSetupForm;
+  ContentPanel: TPanel;
+  HeroPanel: TPanel;
+  LogoMark: TPanel;
+  LogoMarkText: TNewStaticText;
   HeaderPanel: TPanel;
   BodyPanel: TPanel;
   AccentBar: TPanel;
